@@ -1,0 +1,225 @@
+
+! Microsoft Corporation
+! --------------------------------------------------------------------------------------------------------------------------------------------
+! Generic configuration templates
+!
+! IMPORTANT :
+!
+!	> IF YOUR ASA VERSION IS 9.8(1) OR HIGHER, AND YOU NEED TO USE BGP (BORDER GATEWAY PROTOCOL) ON TOP OF YOUR VTI INTERFACE, USE THIS CONFIGURATION SCRIPT (you are in the right place!)
+! 
+!	> IF YOUR ASA VERSION IS 9.8(1) OR HIGHER, BUT DO NOT WANT BGP SUPPORT (BORDER GATEWAY PROTOCOL) OVER THE VTI INTERFACE, PLEASE USE THE OTHER CONFIGURATION SCRIPT INSTEAD:
+!		>> "Cisco_ASA_[9.8+_ONLY]_RouteBased(IKEv2+VTI--NoBGP)"
+!
+!	> IF YOUR ASA VERSION IS BETWEEN 9.6(4) AND 9.7(x), PLEASE USE THE OTHER AVAILABLE SCRIPT THAT IS MORE SUITABLE FOR THIS VERSION:
+!		>> "Cisco_ASA_[9.6(4)--9.7.x_ONLY]_RouteBased(IKEv2-NoBGP)" 
+!		{IKEv2 RouteBased IPSec tunnel, operating 0/0 Traffic Selectors, and crypto configurations (no IKEv2 VTI Support available for these versions) }
+!
+!	> IF YOUR ASA VERSION IS BELOW 9.6(4), PLEASE USE THE OTHER AVAILABLE SCRIPT THAT IS MORE SUITABLE FOR THIS VERSION:
+!		>> "Cisco_ASA_[9.6(4)-or-BELOW_ONLY]_(IKEv2-NoBGP)_REQUIRED:Custom-Azure-IPSec-Policies_w/Narrow_TrafficSelectors"  
+!		>> YOU MUST ALSO HAVE YOUR AZURE CUSTOM IPSEC POLICIES WITH NARROW TRAFFIC SELECTORS ALREADY ENABLED ON THE CONNECTION:
+!			> https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-connect-multiple-policybased-rm-ps 
+!
+!
+!
+! This configuration template shows all the VPN configuration parameters associated with your S2S VPN connection.
+! The script you need to copy onto your ASA 9.8+ to setup a RouteBased IKEv2 VPN Tunnel to Azure with VTI Support + BGP Support is found below [#10]:
+! --------------------------------------------------------------------------------------------------------------------------------------------
+! [1] Resource names
+!     CONNECTION NAME			: This field is the name of your connection resource
+!     VIRTUAL NETWORK GATEWAY	: The name of your Azure VPN gateway resource for the connection
+!     LOCAL NETWORK GATEWAY		: The name of your local network gateway resource for the connection
+/Data/CONNECTION_NAME = Site-2-Site
+/Data/VNG_NAME        = e4dcd5aa-065c-4b26-ba6f-a298a0b0e279
+/Data/LNG_NAME        = packt-lng-portal
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! [2] Public IP address of the Azure VPN gateway
+!     Active-Standby VPN gateway (single public IP address)
+/Data/VNG_GATEWAYIP   = 23.97.241.25
+!
+! Active-Active VPN gateway (A/A mode if more than one public IP is listed below)
+
+/Data/VNG_GATEWAYIPS/IpAddress/IP = 23.97.241.25
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! [3] Public IP address of the on-premises VPN device
+/Data/LNG_GATEWAYIP   = 13.93.66.176
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! [4] VNet address prefixes: a list of all VNet address prefixes in different formats
+
+/Data/VnetSubnets/Subnet/SP_NetworkIpRange = 10.10.0.0
+  SP_NetworkSubnetMask   = 255.255.192.0
+  SP_NetworkWildcardBits = 0.0.63.255
+  SP_NetworkCIDR         = 10.10.0.0/18
+  SP_TunnelName          = SP_TunnelName
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! [5] On-premises address prefixes: a list of all on-premises address prefixes defined in LNG
+
+/Data/OnPremiseSubnets/Subnet/SP_NetworkIpRange = 192.168.1.0
+  SP_NetworkSubnetMask   = 255.255.255.0
+  SP_NetworkWildcardBits = 0.0.0.255
+  SP_NetworkCIDR         = 192.168.1.0/24
+  SP_TunnelName          = SP_TunnelName  
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! [6] Phase 1/Main Mode:
+!     IKE encryption algorithm
+!     IKE hashing algorithm
+!     IKE Diffie-Hellman group
+!     IKE SA lifetime (seconds)
+!     IKE SA data size (Kilobytes)
+/Data/IKE_ENCRYPTION_1 = aes-256
+/Data/IKE_INTEGRITY_1  = sha256
+/Data/IKE_DHGROUP_1    = 2
+/Data/IKE_SALIFETIME_1 = 28800
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! [7] Phase 2/Quick Mode:
+!     IPsec encryption algorithm
+!     IPsec hashing algorithm
+!     PFS Group (Perfect Forward Secrecy)
+!     IPsec SA (QMSA) lifetime (seconds)
+!     IPsec SA (QMSA) lifetime (kilobytes)
+/Data/IPsec_ENCRYPTION_1 	= aes-256
+/Data/IPsec_INTEGRITY_1  	= sha-256
+/Data/IPsec_PFSGROUP_1   	= None
+/Data/IPsec_SALIFETIME   	= 3600
+/Data/IPsec_KB_SALIFETIME   = 102400000
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! [8] Connection pre-shared key
+/Data/CONNECTION_PSK = supersecretkey2019!
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! [9] BGP parameters - Azure VPN gateway
+!     Enable BGP
+!     BGP ASN for Azure VPN gateway
+!     BGP speaker IP address for the Azure VPN gateway
+!     BGP peer IP address(es)
+/Data/CONNECTION_BGP_ENABLED  = False
+/Data/VNG_ASN                 = VNG_ASN
+/Data/VNG_BGPIP               = VNG_BGPIP
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! [10] BGP parameters - on-premises network / LNG
+!      BGP ASN for the on-premises network
+!      BGP speaker IP address for the on-premises network
+!
+/Data/LNG_ASN                = LNG_ASN
+/Data/LNG_BGPIP              = LNG_BGPIP
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! ########################################################################################################
+! !!! Search for "REPLACE" to find the values that require special considerations
+! ########################################################################################################
+!
+! ==================================================================================
+! Example - Cisco ASA (9.8+) in Active/Passive Azure GW Mode, with VTI + BGP Support
+! ==================================================================================
+!
+! PHASE 1 : IKEv2 POLICY
+! 	Note: The Azure policy Priority # used for the Azure tunnel is "20" here. [REPLACE AS NEEDED]
+!          
+crypto ikev2 policy 20
+ encryption aes-256 aes-192 aes
+ integrity sha512 sha384 sha256 sha
+ group 14 2
+ prf sha512 sha384 sha256 sha
+ lifetime seconds 86400
+!
+!=================
+! PHASE 2:
+!
+crypto ipsec ikev2 ipsec-proposal Azure-Ipsec-PROP-Site-2-Site-23.97.241.25
+ protocol esp encryption aes-256
+ protocol esp integrity sha-256 
+!
+crypto ipsec profile Azure-Ipsec-PROF-Site-2-Site-23.97.241.25
+ set ikev2 ipsec-proposal Azure-Ipsec-PROP-Site-2-Site-23.97.241.25
+!
+crypto ipsec security-association pmtu-aging infinite
+!
+!==================
+! INTERNAL GROUP POLICY FOR AZURE  
+!
+group-policy 23.97.241.25 internal
+group-policy 23.97.241.25 attributes
+ vpn-tunnel-protocol ikev2 
+tunnel-group 23.97.241.25 type ipsec-l2l 
+tunnel-group 23.97.241.25 general-attributes
+ default-group-policy 23.97.241.25
+tunnel-group 23.97.241.25 ipsec-attributes
+ ikev2 remote-authentication pre-shared-key supersecretkey2019!
+ ikev2 local-authentication pre-shared-key supersecretkey2019!
+ no tunnel-group-map enable peer-ip
+ tunnel-group-map default-group 23.97.241.25
+!
+!-------------------------------------------------------------------------------------------------------------------------------------!
+! ENABLING IKEv2 POLICY ON OUTSIDE INTERFACE 
+!   NOTE: your Outside/WAN interface connected to Azure is labeled as "outside". [REPLACE AS NEEDED]
+!
+crypto ikev2 enable outside
+!
+!-------------------------------------------------------------------------------------------------------------------------------------!
+! SETTING TRAFFIC CONTROL FOR AZURE TUNNELS (MSS=1350 bytes, and preserving vpn flows during tunnel rekeys)
+!
+sysopt connection tcpmss 1350
+sysopt connection preserve-vpn-flows
+!
+!-------------------------------------------------------------------------------------------------------------------------------------!
+! VTI INTERFACE SETUP FOR AZURE
+!
+! NOTE: "Tunnel1" is used as the name of the VTI interface. [REPLACE AS NEEDED]
+! IMPORTANT: 
+! 	1) We are using a /30 to define the VTI interface. This is important when setting up the static VTI route at the end of this script
+!	2) This same exact /30 VTI network range must be defined in Azure as a separate address space under the "Local Network Gateway > Configuration" Blade 
+!		in the Azure Portal (http://portal.azure.com) 
+!
+interface Tunnel1
+  nameif vti-Site-2-Site-23.97.241.25 
+  ip address LNG_BGPIP 255.255.255.252
+  tunnel source interface outside
+  tunnel destination 23.97.241.25
+  tunnel mode ipsec ipv4
+  tunnel protection ipsec profile Azure-Ipsec-PROF-Site-2-Site-23.97.241.25
+  no shutdown
+!-------------------------------------------------------------------------------------------------------------------------------------!
+! BGP ROUTER SETUP
+!
+router bgp LNG_ASN
+ bgp log-neighbor-changes
+ bgp graceful-restart
+ bgp router-id LNG_BGPIP
+ address-family ipv4 unicast
+ 
+ ! NOTE: THE LOCAL NETWORKS TO BE ADDED STATICALLY TO THIS BGP ROUTER NEED TO GO HERE BELOW:
+ 
+  network 192.168.1.0
+  network LNG_BGPIP mask 255.255.255.252
+ 
+  ! NOTE: You can add more local on-premises network ranges statically here as well, using the "network" command just like above.
+  !etc...
+  !
+  no auto-summary
+  no synchronization 
+ exit-address-family
+!
+!
+!-------------------------------------------------------------------------------------------------------------------------------------!
+! STATIC ROUTING SETUP FOR AZURE 
+!
+! STATIC ROUTE #1: Sending Azure-bound Traffic through the Outside Interface.
+!	NOTE: The next hop here is typically the ISP Default GW for your assigned public IP block. It will be x.x.x.1
+!
+route outside 23.97.241.25 255.255.255.255 {NEXT HOP HERE}
+!
+! STATIC ROUTE #2: VTI route for Azure-bound traffic (to go through the tunnel int and to your Azure Gateway public IP) 
+! 	IMPORTANT: You must add a value of "1" to the GatewayIP field below, referencing another IP (not the VTI addr) that is part of the assigned (/30) VTI network.
+!	REPLACE THE "GatewayIP" field below with a host IP that equals [VTI host address +1] !
+!
+
+!-------------------------------------------------------------------------------------------------------------------
+!
+!--------------------------------------------------END-------------------------------------------------------!

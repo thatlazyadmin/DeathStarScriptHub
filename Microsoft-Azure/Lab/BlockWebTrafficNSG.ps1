@@ -1,3 +1,6 @@
+#CreatedBy: Shaun Hardneck
+#www.thatlazyadmin.com
+
 # Login to Azure
 Connect-AzAccount
 

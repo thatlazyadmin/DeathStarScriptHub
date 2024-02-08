@@ -1,0 +1,4 @@
+DeviceTvmSoftwareInventory
+| where SoftwareName contains "AnyDesk" or SoftwareName contains "TeamViewer"
+| project DeviceName, SoftwareName, SoftwareVersion
+| distinct DeviceName, SoftwareName, SoftwareVersion

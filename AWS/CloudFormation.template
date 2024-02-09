@@ -1,0 +1,1654 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Cross Cloud Security Center IAM Role to set read permissions",
+    "Parameters": {
+        "CspmMonitorAwsRoleName": {
+            "Type": "String",
+            "Description": "Provide a role ARN name (Example: CspmMonitorAws) for CSPM offering",
+            "AllowedPattern": "[-_a-zA-Z0-9]+",
+            "Default": "CspmMonitorAws"
+        },
+        "DefenderForServersRoleName": {
+            "Type": "String",
+            "Description": "Provide a role ARN name DefenderForCloud-DefenderForServers for Servers offering",
+            "AllowedPattern": "[-_a-zA-Z0-9]+",
+            "Default": "DefenderForCloud-DefenderForServers"
+        },
+        "DefenderForServersVmScannerRoleName": {
+            "Type": "String",
+            "Description": "Provide a role ARN name DefenderForCloud-AgentlessScanner for Servers agentless scanning offering",
+            "AllowedPattern": "[-_a-zA-Z0-9]+",
+            "Default": "DefenderForCloud-AgentlessScanner"
+        },
+        "ArcAutoProvisioningRoleName": {
+            "Type": "String",
+            "Description": "Provide a role ARN name DefenderForCloud-ArcAutoProvisioning for needed offerings",
+            "AllowedPattern": "[-_a-zA-Z0-9]+",
+            "Default": "DefenderForCloud-ArcAutoProvisioning"
+        },
+        "SetupType": {
+            "Type": "String",
+            "AllowedValues": [
+                "Local",
+                "Organizational"
+            ],
+            "Default": "Organizational",
+            "Description": "(Required) Specifies the type of the Setup: either local or organizational."
+        },
+        "ConfigurationID": {
+            "Type": "String",
+            "Default": "MDCSetup",
+            "Description": "(Required) Unique identifier of the deployed configuration."
+        },
+        "IsPolicyAttachAllowed": {
+            "Type": "String",
+            "Default": "true",
+            "AllowedValues": [
+                "true",
+                "false"
+            ],
+            "Description": "(Optional) Whether MDc setup is allowed to attach policies to existing Instance profiles"
+        },
+        "ProvidedInstanceProfileName": {
+            "Type": "String",
+            "Default": "",
+            "Description": "(Optional) Specifies the instance profile Name provided by the user when SetupType=Local."
+        },
+        "ProvidedAssumeRoleArn": {
+            "Type": "String",
+            "Default": "*",
+            "Description": "(Optional) Specifies the automation assume role Arn provided by the user when SetupType=Local."
+        },
+        "TargetType": {
+            "Type": "String",
+            "Default": "*",
+            "AllowedValues": [
+                "Tags",
+                "InstanceIds",
+                "*",
+                "ResourceGroups"
+            ],
+            "Description": "(Optional) Specifies the way in which instances are targeted - applies only for local MDCSetup."
+        },
+        "TargetInstances": {
+            "Type": "String",
+            "Default": "*",
+            "Description": "(Optional) Specifies the instances to be targeted when SetupType=Local and TargetType=InstanceIds."
+        },
+        "TargetTagKey": {
+            "Type": "String",
+            "Default": "",
+            "Description": "(Optional) Specifies the tag key of instances to be targeted when SetupType=Local and TargetType=Tags"
+        },
+        "TargetTagValue": {
+            "Type": "String",
+            "Default": "",
+            "Description": "(Optional) Specifies the tag value of instances to be targeted when SetupType=Local and TargetType=Tags"
+        },
+        "ResourceGroupName": {
+            "Type": "String",
+            "Default": "",
+            "Description": "(Optional) Specifies the resource group name to be targeted when SetupType=Local and TargetType=ResourceGroups"
+        }
+    },
+    "Conditions": {
+        "IsTagValueNotSpecified": {
+            "Fn::Equals": [
+                {
+                    "Ref": "TargetTagValue"
+                },
+                ""
+            ]
+        },
+        "IsTagKeyAndValueTargeted": {
+            "Fn::And": [
+                {
+                    "Fn::Equals": [
+                        {
+                            "Ref": "SetupType"
+                        },
+                        "Local"
+                    ]
+                },
+                {
+                    "Fn::Equals": [
+                        {
+                            "Ref": "TargetType"
+                        },
+                        "Tags"
+                    ]
+                },
+                {
+                    "Fn::Not": [
+                        {
+                            "Condition": "IsTagValueNotSpecified"
+                        }
+                    ]
+                }
+            ]
+        },
+        "IsTagKeyOnlyTargeted": {
+            "Fn::And": [
+                {
+                    "Fn::Equals": [
+                        {
+                            "Ref": "SetupType"
+                        },
+                        "Local"
+                    ]
+                },
+                {
+                    "Fn::Equals": [
+                        {
+                            "Ref": "TargetType"
+                        },
+                        "Tags"
+                    ]
+                },
+                {
+                    "Condition": "IsTagValueNotSpecified"
+                }
+            ]
+        },
+        "IsResourceGroupTargeted": {
+            "Fn::And": [
+                {
+                    "Fn::Equals": [
+                        {
+                            "Ref": "SetupType"
+                        },
+                        "Local"
+                    ]
+                },
+                {
+                    "Fn::Equals": [
+                        {
+                            "Ref": "TargetType"
+                        },
+                        "ResourceGroups"
+                    ]
+                }
+            ]
+        },
+        "IsOrgMDCSetup": {
+            "Fn::Equals": [
+                {
+                    "Ref": "SetupType"
+                },
+                "Organizational"
+            ]
+        },
+        "IsNoAutomationAssumeRoleProvided": {
+            "Fn::Or": [
+                {
+                    "Fn::Equals": [
+                        {
+                            "Ref": "SetupType"
+                        },
+                        "Organizational"
+                    ]
+                },
+                {
+                    "Fn::Equals": [
+                        {
+                            "Ref": "ProvidedAssumeRoleArn"
+                        },
+                        "*"
+                    ]
+                }
+            ]
+        },
+        "IsNoInstanceProfileProvided": {
+            "Fn::Or": [
+                {
+                    "Fn::Equals": [
+                        {
+                            "Ref": "SetupType"
+                        },
+                        "Organizational"
+                    ]
+                },
+                {
+                    "Fn::Equals": [
+                        {
+                            "Ref": "ProvidedInstanceProfileName"
+                        },
+                        ""
+                    ]
+                }
+            ]
+        },
+        "IsInstanceProfileProvided": {
+            "Fn::Not": [
+                {
+                    "Condition": "IsNoInstanceProfileProvided"
+                }
+            ]
+        },
+        "TargetAllAutomation": {
+            "Fn::Equals": [
+                {
+                    "Ref": "TargetInstances"
+                },
+                "*"
+            ]
+        },
+        "TargetAll": {
+            "Fn::Equals": [
+                {
+                    "Ref": "TargetInstances"
+                },
+                "*"
+            ]
+        },
+        "PolicyAttachAllowed": {
+            "Fn::Equals": [
+                {
+                    "Ref": "IsPolicyAttachAllowed"
+                },
+                "true"
+            ]
+        }
+    },
+    "Resources": {
+        "ASCDefendersOIDCIdentityProvider": {
+            "Description": "Identity provider resource using for MDC authentication with the required thumbprint list and the issuer url",
+            "Type": "AWS::IAM::OIDCProvider",
+            "Properties": {
+                "ClientIdList": [
+                    "api://4d8bed1f-eee7-4d8e-b0dc-8462049a4479",
+                    "api://AzureSecurityCenter.MultiCloud.DefenderForServers",
+                    "api://AzureSecurityCenter.MultiCloud.DefenderForServers.VmScanner"
+                ],
+                "ThumbprintList": [
+                    "626d44e704d1ceabe3bf0d53397464ac8080142c"
+                ],
+                "Url": "https://sts.windows.net/33e01921-4d64-4f8c-a055-5bdaffd5e33d/"
+            }
+        },
+        "CspmMonitorAwsRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "Description": "MDC - CSPM ready only role",
+                "ManagedPolicyArns": [
+                    "arn:aws:iam::aws:policy/ReadOnlyAccess"
+                ],
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Federated": {
+                                    "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:oidc-provider/sts.windows.net/33e01921-4d64-4f8c-a055-5bdaffd5e33d/"
+                                }
+                            },
+                            "Action": "sts:AssumeRoleWithWebIdentity",
+                            "Condition": {
+                                "StringEquals": {
+                                    "sts.windows.net/33e01921-4d64-4f8c-a055-5bdaffd5e33d/:aud": "api://4d8bed1f-eee7-4d8e-b0dc-8462049a4479",
+                                    "sts:RoleSessionName": "MicrosoftDefenderForClouds_f8a9f5a5-fbb5-4c50-9f67-84b1899a9f74"
+                                }
+                            }
+                        }
+                    ]
+                },
+                "Policies": [
+                    {
+                        "PolicyName": {
+                            "Ref": "CspmMonitorAwsRoleName"
+                        },
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Effect": "Deny",
+                                    "Action": [
+                                        "consolidatedbilling:*",
+                                        "freetier:*",
+                                        "invoicing:*",
+                                        "payments:*",
+                                        "billing:*",
+                                        "tax:*",
+                                        "cur:*"
+                                    ],
+                                    "Resource": "*"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "RoleName": {
+                    "Ref": "CspmMonitorAwsRoleName"
+                }
+            }
+        },
+        "DefenderForServersRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "Description": "Azure Security Center - Defender For Servers role",
+                "ManagedPolicyArns": [],
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Federated": {
+                                    "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:oidc-provider/sts.windows.net/33e01921-4d64-4f8c-a055-5bdaffd5e33d/"
+                                }
+                            },
+                            "Action": "sts:AssumeRoleWithWebIdentity",
+                            "Condition": {
+                                "StringEquals": {
+                                    "sts.windows.net/33e01921-4d64-4f8c-a055-5bdaffd5e33d/:aud": "api://AzureSecurityCenter.MultiCloud.DefenderForServers"
+                                }
+                            }
+                        }
+                    ]
+                },
+                "Policies": [
+                    {
+                        "PolicyName": "AzureSecurityCenter_DefenderForServers",
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Sid": "JitNetworkAccess",
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "ec2:RevokeSecurityGroupIngress",
+                                        "ec2:AuthorizeSecurityGroupIngress",
+                                        "ec2:DescribeInstances",
+                                        "ec2:DescribeSecurityGroupRules",
+                                        "ec2:DescribeVpcs",
+                                        "ec2:CreateSecurityGroup",
+                                        "ec2:DeleteSecurityGroup",
+                                        "ec2:ModifyNetworkInterfaceAttribute",
+                                        "ec2:ModifySecurityGroupRules",
+                                        "ec2:ModifyInstanceAttribute",
+                                        "ec2:DescribeSubnets",
+                                        "ec2:DescribeSecurityGroups"
+                                    ],
+                                    "Resource": "*"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "RoleName": {
+                    "Ref": "DefenderForServersRoleName"
+                }
+            }
+        },
+        "DefenderForServersVmScannerRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "Description": "Azure Security Center - Defender For Servers VmScanner role",
+                "ManagedPolicyArns": [],
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Federated": {
+                                    "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:oidc-provider/sts.windows.net/33e01921-4d64-4f8c-a055-5bdaffd5e33d/"
+                                }
+                            },
+                            "Action": "sts:AssumeRoleWithWebIdentity",
+                            "Condition": {
+                                "StringEquals": {
+                                    "sts.windows.net/33e01921-4d64-4f8c-a055-5bdaffd5e33d/:aud": "api://AzureSecurityCenter.MultiCloud.DefenderForServers.VmScanner",
+                                    "sts:RoleSessionName": "MicrosoftDefenderForClouds_f8a9f5a5-fbb5-4c50-9f67-84b1899a9f74"
+                                }
+                            }
+                        }
+                    ]
+                },
+                "Policies": [
+                    {
+                        "PolicyName": "AzureSecurityCenter_DefenderForServers_VmScanner",
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Sid": "VmScannerDeleteSnapshotAccess",
+                                    "Effect": "Allow",
+                                    "Action": "ec2:DeleteSnapshot",
+                                    "Resource": "arn:aws:ec2:*::snapshot/*",
+                                    "Condition": {
+                                        "StringEquals": {
+                                            "ec2:ResourceTag/CreatedBy": "Microsoft Defender for Cloud"
+                                        }
+                                    }
+                                },
+                                {
+                                    "Sid": "VmScannerAccess",
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "ec2:ModifySnapshotAttribute",
+                                        "ec2:DeleteTags",
+                                        "ec2:CreateTags",
+                                        "ec2:CreateSnapshots",
+                                        "ec2:CopySnapshot",
+                                        "ec2:CreateSnapshot"
+                                    ],
+                                    "Resource": [
+                                        "arn:aws:ec2:*:*:instance/*",
+                                        "arn:aws:ec2:*::snapshot/*",
+                                        "arn:aws:ec2:*:*:volume/*"
+                                    ]
+                                },
+                                {
+                                    "Sid": "VmScannerVerificationAccess",
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "ec2:DescribeSnapshots",
+                                        "ec2:DescribeInstanceStatus"
+                                    ],
+                                    "Resource": "*"
+                                },
+                                {
+                                    "Sid": "VmScannerEncryptionKeyCreation",
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "kms:CreateKey",
+                                        "kms:ListKeys"
+                                    ],
+                                    "Resource": "*"
+                                },
+                                {
+                                    "Sid": "VmScannerEncryptionKeyManagement",
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "kms:TagResource",
+                                        "kms:GetKeyRotationStatus",
+                                        "kms:PutKeyPolicy",
+                                        "kms:GetKeyPolicy",
+                                        "kms:CreateAlias",
+                                        "kms:TagResource",
+                                        "kms:ListResourceTags"
+                                    ],
+                                    "Resource": [
+                                        {
+                                            "Fn::Sub": "arn:aws:kms:*:${AWS::AccountId}:key/*"
+                                        },
+                                        {
+                                            "Fn::Sub": "arn:aws:kms:*:${AWS::AccountId}:alias/DefenderForCloudKey"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "Sid": "VmScannerEncryptionKeyUsage",
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "kms:GenerateDataKeyWithoutPlaintext",
+                                        "kms:DescribeKey",
+                                        "kms:RetireGrant",
+                                        "kms:CreateGrant",
+                                        "kms:ReEncryptFrom"
+                                    ],
+                                    "Resource": {
+                                        "Fn::Sub": "arn:aws:kms:*:*:key/*"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "RoleName": {
+                    "Ref": "DefenderForServersVmScannerRoleName"
+                }
+            }
+        },
+        "ArcAutoProvisioningRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "Description": "MDC - ARC Auto provisioning role",
+                "ManagedPolicyArns": [],
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Federated": {
+                                    "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:oidc-provider/sts.windows.net/33e01921-4d64-4f8c-a055-5bdaffd5e33d/"
+                                }
+                            },
+                            "Action": "sts:AssumeRoleWithWebIdentity",
+                            "Condition": {
+                                "StringEquals": {
+                                    "sts.windows.net/33e01921-4d64-4f8c-a055-5bdaffd5e33d/:aud": "api://AzureSecurityCenter.MultiCloud.DefenderForServers",
+                                    "sts:RoleSessionName": "MicrosoftDefenderForClouds_f8a9f5a5-fbb5-4c50-9f67-84b1899a9f74"
+                                }
+                            }
+                        }
+                    ]
+                },
+                "Policies": [
+                    {
+                        "PolicyName": "DefenderForCloud_ArcAutoProvisioning",
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Sid": "RunInstallationCommands",
+                                    "Effect": "Allow",
+                                    "Action": "ssm:SendCommand",
+                                    "Resource": [
+                                        "arn:aws:ssm:*::document/AWS-RunPowerShellScript",
+                                        "arn:aws:ssm:*::document/AWS-RunShellScript",
+                                        {
+                                            "Fn::Sub": "arn:aws:ec2:*:${AWS::AccountId}:instance/*"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "Sid": "CheckInstallationCommandStatus",
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "ssm:CancelCommand",
+                                        "ssm:DescribeInstanceInformation",
+                                        "ssm:GetCommandInvocation"
+                                    ],
+                                    "Resource": "*"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "RoleName": {
+                    "Ref": "ArcAutoProvisioningRoleName"
+                }
+            }
+        },
+        "RoleForAutomation": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "ssm.amazonaws.com"
+                                ]
+                            },
+                            "Action": [
+                                "sts:AssumeRole"
+                            ]
+                        }
+                    ]
+                },
+                "Policies": [
+                    {
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "iam:ListRoles",
+                                        "config:DescribeConfigurationRecorders",
+                                        "compute-optimizer:GetEnrollmentStatus",
+                                        "support:DescribeTrustedAdvisorChecks"
+                                    ],
+                                    "Resource": "*"
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "ssm:UpdateServiceSetting",
+                                        "ssm:GetServiceSetting"
+                                    ],
+                                    "Resource": [
+                                        {
+                                            "Fn::Join": [
+                                                "",
+                                                [
+                                                    "arn:",
+                                                    {
+                                                        "Ref": "AWS::Partition"
+                                                    },
+                                                    ":ssm:*:*:servicesetting/ssm/opsitem/ssm-patchmanager"
+                                                ]
+                                            ]
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                "",
+                                                [
+                                                    "arn:",
+                                                    {
+                                                        "Ref": "AWS::Partition"
+                                                    },
+                                                    ":ssm:*:*:servicesetting/ssm/opsitem/EC2"
+                                                ]
+                                            ]
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                "",
+                                                [
+                                                    "arn:",
+                                                    {
+                                                        "Ref": "AWS::Partition"
+                                                    },
+                                                    ":ssm:*:*:servicesetting/ssm/opsdata/ExplorerOnboarded"
+                                                ]
+                                            ]
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                "",
+                                                [
+                                                    "arn:",
+                                                    {
+                                                        "Ref": "AWS::Partition"
+                                                    },
+                                                    ":ssm:*:*:servicesetting/ssm/opsdata/Association"
+                                                ]
+                                            ]
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                "",
+                                                [
+                                                    "arn:",
+                                                    {
+                                                        "Ref": "AWS::Partition"
+                                                    },
+                                                    ":ssm:*:*:servicesetting/ssm/opsdata/ComputeOptimizer"
+                                                ]
+                                            ]
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                "",
+                                                [
+                                                    "arn:",
+                                                    {
+                                                        "Ref": "AWS::Partition"
+                                                    },
+                                                    ":ssm:*:*:servicesetting/ssm/opsdata/ConfigCompliance"
+                                                ]
+                                            ]
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                "",
+                                                [
+                                                    "arn:",
+                                                    {
+                                                        "Ref": "AWS::Partition"
+                                                    },
+                                                    ":ssm:*:*:servicesetting/ssm/opsdata/OpsData-TrustedAdvisor"
+                                                ]
+                                            ]
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                "",
+                                                [
+                                                    "arn:",
+                                                    {
+                                                        "Ref": "AWS::Partition"
+                                                    },
+                                                    ":ssm:*:*:servicesetting/ssm/opsdata/SupportCenterCase"
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "iam:CreateServiceLinkedRole"
+                                    ],
+                                    "Resource": {
+                                        "Fn::Join": [
+                                            "",
+                                            [
+                                                "arn:",
+                                                {
+                                                    "Ref": "AWS::Partition"
+                                                },
+                                                ":iam::*:role/aws-service-role/ssm.",
+                                                {
+                                                    "Ref": "AWS::URLSuffix"
+                                                },
+                                                "/AWSServiceRoleForAmazonSSM"
+                                            ]
+                                        ]
+                                    },
+                                    "Condition": {
+                                        "StringEquals": {
+                                            "iam:AWSServiceName": "ssm.amazonaws.com"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "PolicyName": "SSMMDCSetupEnableExplorerInlinePolicy"
+                    },
+                    {
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "ssm:GetAutomationExecution",
+                                        "ec2:DescribeIamInstanceProfileAssociations",
+                                        "ec2:DisassociateIamInstanceProfile",
+                                        "ec2:DescribeInstances",
+                                        "ssm:StartAutomationExecution",
+                                        "iam:GetInstanceProfile",
+                                        "iam:ListInstanceProfilesForRole"
+                                    ],
+                                    "Resource": "*"
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "iam:AttachRolePolicy"
+                                    ],
+                                    "Resource": [
+                                        {
+                                            "Fn::If": [
+                                                "PolicyAttachAllowed",
+                                                "*",
+                                                {
+                                                    "Fn::Join": [
+                                                        "",
+                                                        [
+                                                            "arn:",
+                                                            {
+                                                                "Ref": "AWS::Partition"
+                                                            },
+                                                            ":iam::",
+                                                            {
+                                                                "Ref": "AWS::AccountId"
+                                                            },
+                                                            ":role/AmazonSSMRoleForInstancesMDCSetup"
+                                                        ]
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "Condition": {
+                                        "ArnEquals": {
+                                            "iam:PolicyARN": [
+                                                {
+                                                    "Fn::Join": [
+                                                        "",
+                                                        [
+                                                            "arn:",
+                                                            {
+                                                                "Ref": "AWS::Partition"
+                                                            },
+                                                            ":iam::aws:policy/AmazonSSMManagedInstanceCore"
+                                                        ]
+                                                    ]
+                                                },
+                                                {
+                                                    "Fn::Join": [
+                                                        "",
+                                                        [
+                                                            "arn:",
+                                                            {
+                                                                "Ref": "AWS::Partition"
+                                                            },
+                                                            ":iam::aws:policy/AmazonSSMPatchAssociation"
+                                                        ]
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    }
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "iam:AddRoleToInstanceProfile"
+                                    ],
+                                    "Resource": [
+                                        {
+                                            "Fn::Join": [
+                                                "",
+                                                [
+                                                    "arn:",
+                                                    {
+                                                        "Ref": "AWS::Partition"
+                                                    },
+                                                    ":iam::",
+                                                    {
+                                                        "Ref": "AWS::AccountId"
+                                                    },
+                                                    ":instance-profile/AmazonSSMRoleForInstancesMDCSetup"
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "ec2:AssociateIamInstanceProfile"
+                                    ],
+                                    "Resource": "*",
+                                    "Condition": {
+                                        "StringEquals": {
+                                            "ec2:NewInstanceProfile": {
+                                                "Fn::Join": [
+                                                    "",
+                                                    [
+                                                        "arn:",
+                                                        {
+                                                            "Ref": "AWS::Partition"
+                                                        },
+                                                        ":iam::",
+                                                        {
+                                                            "Ref": "AWS::AccountId"
+                                                        },
+                                                        ":instance-profile/AmazonSSMRoleForInstancesMDCSetup"
+                                                    ]
+                                                ]
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "iam:CreateInstanceProfile"
+                                    ],
+                                    "Resource": [
+                                        {
+                                            "Fn::Join": [
+                                                "",
+                                                [
+                                                    "arn:",
+                                                    {
+                                                        "Ref": "AWS::Partition"
+                                                    },
+                                                    ":iam::",
+                                                    {
+                                                        "Ref": "AWS::AccountId"
+                                                    },
+                                                    ":instance-profile/AmazonSSMRoleForInstancesMDCSetup"
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "iam:GetRole"
+                                    ],
+                                    "Resource": [
+                                        {
+                                            "Fn::Join": [
+                                                "",
+                                                [
+                                                    "arn:",
+                                                    {
+                                                        "Ref": "AWS::Partition"
+                                                    },
+                                                    ":iam::",
+                                                    {
+                                                        "Ref": "AWS::AccountId"
+                                                    },
+                                                    ":role/AmazonSSMRoleForInstancesMDCSetup"
+                                                ]
+                                            ]
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                "",
+                                                [
+                                                    "arn:",
+                                                    {
+                                                        "Ref": "AWS::Partition"
+                                                    },
+                                                    ":iam::",
+                                                    {
+                                                        "Ref": "AWS::AccountId"
+                                                    },
+                                                    ":role/AWS-MDCSetup-HostMgmtRole-",
+                                                    {
+                                                        "Ref": "AWS::Region"
+                                                    },
+                                                    "-",
+                                                    {
+                                                        "Ref": "ConfigurationID"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "iam:PassRole"
+                                    ],
+                                    "Resource": [
+                                        {
+                                            "Fn::Join": [
+                                                "",
+                                                [
+                                                    "arn:",
+                                                    {
+                                                        "Ref": "AWS::Partition"
+                                                    },
+                                                    ":iam::",
+                                                    {
+                                                        "Ref": "AWS::AccountId"
+                                                    },
+                                                    ":role/AmazonSSMRoleForInstancesMDCSetup"
+                                                ]
+                                            ]
+                                        }
+                                    ],
+                                    "Condition": {
+                                        "StringEquals": {
+                                            "iam:PassedToService": [
+                                                "ec2.amazonaws.com"
+                                            ]
+                                        }
+                                    }
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "iam:PassRole"
+                                    ],
+                                    "Resource": [
+                                        {
+                                            "Fn::Join": [
+                                                "",
+                                                [
+                                                    "arn:",
+                                                    {
+                                                        "Ref": "AWS::Partition"
+                                                    },
+                                                    ":iam::",
+                                                    {
+                                                        "Ref": "AWS::AccountId"
+                                                    },
+                                                    ":role/AWS-MDCSetup-HostMgmtRole-",
+                                                    {
+                                                        "Ref": "AWS::Region"
+                                                    },
+                                                    "-",
+                                                    {
+                                                        "Ref": "ConfigurationID"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ],
+                                    "Condition": {
+                                        "StringEquals": {
+                                            "iam:PassedToService": [
+                                                "ssm.amazonaws.com"
+                                            ]
+                                        }
+                                    }
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "iam:CreateRole"
+                                    ],
+                                    "Resource": [
+                                        {
+                                            "Fn::Join": [
+                                                "",
+                                                [
+                                                    "arn:",
+                                                    {
+                                                        "Ref": "AWS::Partition"
+                                                    },
+                                                    ":iam::",
+                                                    {
+                                                        "Ref": "AWS::AccountId"
+                                                    },
+                                                    ":role/AmazonSSMRoleForInstancesMDCSetup"
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "PolicyName": {
+                            "Fn::Join": [
+                                "",
+                                [
+                                    "AWS-MDCSetup-SSMHostMgmt-CreateAndAttachRoleInlinePolicy-",
+                                    {
+                                        "Ref": "AWS::Region"
+                                    },
+                                    "-",
+                                    {
+                                        "Ref": "ConfigurationID"
+                                    }
+                                ]
+                            ]
+                        }
+                    }
+                ],
+                "RoleName": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "AWS-MDCSetup-HostMgmtRole-",
+                            {
+                                "Ref": "AWS::Region"
+                            },
+                            "-",
+                            {
+                                "Ref": "ConfigurationID"
+                            }
+                        ]
+                    ]
+                }
+            }
+        },
+        "CreateAndAttachIAMToInstance": {
+            "Type": "AWS::SSM::Document",
+            "Properties": {
+                "Content": {
+                    "description": "Composite document for MDC Setup Managing Instances association. This document ensures IAM role for instance profile is created in account with all required policies",
+                    "schemaVersion": "0.3",
+                    "assumeRole": "{{AutomationAssumeRole}}",
+                    "parameters": {
+                        "AutomationAssumeRole": {
+                            "type": "String"
+                        },
+                        "InstanceId": {
+                            "type": "String"
+                        },
+                        "IsPolicyAttachAllowed": {
+                            "type": "String"
+                        }
+                    },
+                    "mainSteps": [
+                        {
+                            "name": "getExistingRoleName",
+                            "action": "aws:executeScript",
+                            "inputs": {
+                                "Runtime": "python3.6",
+                                "Handler": "getInstanceProfileName",
+                                "InputPayload": {
+                                    "InstanceId": "{{InstanceId}}"
+                                },
+                                "Script": "import boto3\n\ndef getInstanceProfileName(events, context):\n    ec2_client = boto3.client(\"ec2\")\n    response = ec2_client.describe_instances(InstanceIds=[events[\"InstanceId\"]])\n    if 'IamInstanceProfile' in response['Reservations'][0]['Instances'][0]:\n        return {'RoleName': response['Reservations'][0]['Instances'][0]['IamInstanceProfile']['Arn'].split('instance-profile/')[1]}\n    return {'RoleName': 'NoRoleFound'}"
+                            },
+                            "outputs": [
+                                {
+                                    "Name": "existingInstanceProfileRoleName",
+                                    "Selector": "$.Payload.RoleName",
+                                    "Type": "String"
+                                }
+                            ],
+                            "nextStep": "branchIfProfileExists"
+                        },
+                        {
+                            "name": "branchIfProfileExists",
+                            "action": "aws:branch",
+                            "inputs": {
+                                "Choices": [
+                                    {
+                                        "NextStep": "createRoleIfNotExists",
+                                        "Variable": "{{getExistingRoleName.existingInstanceProfileRoleName}}",
+                                        "StringEquals": "NoRoleFound"
+                                    }
+                                ],
+                                "Default": "checkIfPolicyAttachAllowed"
+                            }
+                        },
+                        {
+                            "name": "checkIfPolicyAttachAllowed",
+                            "action": "aws:branch",
+                            "inputs": {
+                                "Choices": [
+                                    {
+                                        "NextStep": "getRoleFromInstanceProfile",
+                                        "Variable": "{{IsPolicyAttachAllowed}}",
+                                        "StringEquals": "true"
+                                    }
+                                ],
+                                "Default": "createRoleIfNotExists"
+                            }
+                        },
+                        {
+                            "name": "getRoleFromInstanceProfile",
+                            "action": "aws:executeAwsApi",
+                            "inputs": {
+                                "Service": "iam",
+                                "Api": "GetInstanceProfile",
+                                "InstanceProfileName": "{{getExistingRoleName.existingInstanceProfileRoleName}}"
+                            },
+                            "outputs": [
+                                {
+                                    "Name": "existingRoleName",
+                                    "Selector": "$.InstanceProfile.Roles[0].RoleName",
+                                    "Type": "String"
+                                }
+                            ],
+                            "nextStep": "attachAmazonSSMManagedInstanceCoreToExistingRole"
+                        },
+                        {
+                            "name": "attachAmazonSSMManagedInstanceCoreToExistingRole",
+                            "action": "aws:executeAwsApi",
+                            "inputs": {
+                                "Service": "iam",
+                                "Api": "AttachRolePolicy",
+                                "RoleName": "{{getRoleFromInstanceProfile.existingRoleName}}",
+                                "PolicyArn": "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+                            },
+                            "nextStep": "attachAmazonSSMPatchAssociationToExistingRole"
+                        },
+                        {
+                            "name": "attachAmazonSSMPatchAssociationToExistingRole",
+                            "action": "aws:executeAwsApi",
+                            "inputs": {
+                                "Service": "iam",
+                                "Api": "AttachRolePolicy",
+                                "RoleName": "{{getRoleFromInstanceProfile.existingRoleName}}",
+                                "PolicyArn": "arn:aws:iam::aws:policy/AmazonSSMPatchAssociation"
+                            },
+                            "isEnd": true
+                        },
+                        {
+                            "name": "createRoleIfNotExists",
+                            "action": "aws:executeAwsApi",
+                            "inputs": {
+                                "Service": "iam",
+                                "Api": "CreateRole",
+                                "Path": "/",
+                                "RoleName": "AmazonSSMRoleForInstancesMDCSetup",
+                                "AssumeRolePolicyDocument": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"ec2.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}",
+                                "Description": "EC2 role for SSM for MDC Setup"
+                            },
+                            "description": "Create AmazonSSMRoleForInstancesMDCSetup Role For SSM MDC Setup",
+                            "onFailure": "Continue",
+                            "nextStep": "assertRoleForInstanceProfileExists"
+                        },
+                        {
+                            "name": "assertRoleForInstanceProfileExists",
+                            "action": "aws:assertAwsResourceProperty",
+                            "inputs": {
+                                "Service": "iam",
+                                "Api": "GetRole",
+                                "PropertySelector": "$.Role.RoleName",
+                                "DesiredValues": [
+                                    "AmazonSSMRoleForInstancesMDCSetup"
+                                ],
+                                "RoleName": "AmazonSSMRoleForInstancesMDCSetup"
+                            },
+                            "nextStep": "attachAmazonSSMManagedInstanceCoreToRole"
+                        },
+                        {
+                            "name": "attachAmazonSSMManagedInstanceCoreToRole",
+                            "action": "aws:executeAwsApi",
+                            "inputs": {
+                                "Service": "iam",
+                                "Api": "AttachRolePolicy",
+                                "RoleName": "AmazonSSMRoleForInstancesMDCSetup",
+                                "PolicyArn": "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+                            },
+                            "nextStep": "attachAmazonSSMPatchAssociationToRole"
+                        },
+                        {
+                            "name": "attachAmazonSSMPatchAssociationToRole",
+                            "action": "aws:executeAwsApi",
+                            "inputs": {
+                                "Service": "iam",
+                                "Api": "AttachRolePolicy",
+                                "RoleName": "AmazonSSMRoleForInstancesMDCSetup",
+                                "PolicyArn": "arn:aws:iam::aws:policy/AmazonSSMPatchAssociation"
+                            },
+                            "nextStep": "createInstanceProfileIfNotExists"
+                        },
+                        {
+                            "name": "createInstanceProfileIfNotExists",
+                            "action": "aws:executeAwsApi",
+                            "inputs": {
+                                "InstanceProfileName": "AmazonSSMRoleForInstancesMDCSetup",
+                                "Service": "iam",
+                                "Api": "CreateInstanceProfile"
+                            },
+                            "onFailure": "Continue",
+                            "nextStep": "addRoleToInstanceProfile"
+                        },
+                        {
+                            "name": "addRoleToInstanceProfile",
+                            "action": "aws:executeAwsApi",
+                            "inputs": {
+                                "InstanceProfileName": "AmazonSSMRoleForInstancesMDCSetup",
+                                "RoleName": "AmazonSSMRoleForInstancesMDCSetup",
+                                "Service": "iam",
+                                "Api": "AddRoleToInstanceProfile"
+                            },
+                            "onFailure": "Continue",
+                            "nextStep": "executeAttachIAMToInstance"
+                        },
+                        {
+                            "name": "executeAttachIAMToInstance",
+                            "action": "aws:executeAutomation",
+                            "maxAttempts": 10,
+                            "timeoutSeconds": 60,
+                            "inputs": {
+                                "DocumentName": "AWS-AttachIAMToInstance",
+                                "RuntimeParameters": {
+                                    "RoleName": "AmazonSSMRoleForInstancesMDCSetup",
+                                    "ForceReplace": false,
+                                    "AutomationAssumeRole": "{{ AutomationAssumeRole }}",
+                                    "InstanceId": "{{ InstanceId }}"
+                                }
+                            },
+                            "isEnd": true
+                        }
+                    ]
+                },
+                "DocumentType": "Automation",
+                "Name": {
+                    "Fn::Sub": "AWSMDCSetup-CreateAndAttachIAMToInstance-${ConfigurationID}"
+                },
+                "TargetType": "/AWS::EC2::Instance"
+            }
+        },
+        "UpdateExistingInstanceProfile": {
+            "Type": "AWS::SSM::Document",
+            "Properties": {
+                "Content": {
+                    "description": "Composite document for MDC Setup Managing Instances association. This document updates the user provided instance profile with roles and policies",
+                    "schemaVersion": "0.3",
+                    "assumeRole": "{{AutomationAssumeRole}}",
+                    "parameters": {
+                        "AutomationAssumeRole": {
+                            "type": "String"
+                        },
+                        "InstanceId": {
+                            "type": "String"
+                        },
+                        "InstanceProfile": {
+                            "type": "String"
+                        }
+                    },
+                    "mainSteps": [
+                        {
+                            "name": "getRoleFromInstanceProfile",
+                            "action": "aws:executeAwsApi",
+                            "inputs": {
+                                "Service": "iam",
+                                "Api": "GetInstanceProfile",
+                                "InstanceProfileName": "{{InstanceProfile}}"
+                            },
+                            "outputs": [
+                                {
+                                    "Name": "existingRoleName",
+                                    "Selector": "$.InstanceProfile.Roles[0].RoleName",
+                                    "Type": "String"
+                                }
+                            ],
+                            "nextStep": "attachAmazonSSMManagedInstanceCoreToExistingRole"
+                        },
+                        {
+                            "name": "attachAmazonSSMManagedInstanceCoreToExistingRole",
+                            "action": "aws:executeAwsApi",
+                            "inputs": {
+                                "Service": "iam",
+                                "Api": "AttachRolePolicy",
+                                "RoleName": "{{getRoleFromInstanceProfile.existingRoleName}}",
+                                "PolicyArn": "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+                            },
+                            "nextStep": "attachAmazonSSMPatchAssociationToExistingRole"
+                        },
+                        {
+                            "name": "attachAmazonSSMPatchAssociationToExistingRole",
+                            "action": "aws:executeAwsApi",
+                            "inputs": {
+                                "Service": "iam",
+                                "Api": "AttachRolePolicy",
+                                "RoleName": "{{getRoleFromInstanceProfile.existingRoleName}}",
+                                "PolicyArn": "arn:aws:iam::aws:policy/AmazonSSMPatchAssociation"
+                            },
+                            "isEnd": true
+                        }
+                    ]
+                },
+                "DocumentType": "Automation",
+                "Name": {
+                    "Fn::Sub": "AWSMDCSetup-UpdateExistingInstanceProfile-${ConfigurationID}"
+                },
+                "TargetType": "/AWS::EC2::Instance"
+            }
+        },
+        "SystemAssociationForManagingInstances": {
+            "Type": "AWS::SSM::Association",
+            "Properties": {
+                "Name": {
+                    "Ref": "CreateAndAttachIAMToInstance"
+                },
+                "AssociationName": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "AWS-MDCSetup-SSMHostMgmt-AttachIAMToInstance-",
+                            {
+                                "Ref": "ConfigurationID"
+                            }
+                        ]
+                    ]
+                },
+                "Parameters": {
+                    "AutomationAssumeRole": [
+                        {
+                            "Fn::If": [
+                                "IsNoAutomationAssumeRoleProvided",
+                                {
+                                    "Fn::GetAtt": [
+                                        "RoleForAutomation",
+                                        "Arn"
+                                    ]
+                                },
+                                {
+                                    "Ref": "ProvidedAssumeRoleArn"
+                                }
+                            ]
+                        }
+                    ],
+                    "IsPolicyAttachAllowed": [
+                        {
+                            "Ref": "IsPolicyAttachAllowed"
+                        }
+                    ]
+                },
+                "AutomationTargetParameterName": "InstanceId",
+                "Targets": {
+                    "Fn::If": [
+                        "IsOrgMDCSetup",
+                        [
+                            {
+                                "Key": "InstanceIds",
+                                "Values": [
+                                    "*"
+                                ]
+                            }
+                        ],
+                        {
+                            "Fn::If": [
+                                "IsTagKeyAndValueTargeted",
+                                [
+                                    {
+                                        "Key": {
+                                            "Fn::Join": [
+                                                "",
+                                                [
+                                                    "tag:",
+                                                    {
+                                                        "Ref": "TargetTagKey"
+                                                    }
+                                                ]
+                                            ]
+                                        },
+                                        "Values": [
+                                            {
+                                                "Ref": "TargetTagValue"
+                                            }
+                                        ]
+                                    }
+                                ],
+                                {
+                                    "Fn::If": [
+                                        "IsTagKeyOnlyTargeted",
+                                        [
+                                            {
+                                                "Key": "tag-key",
+                                                "Values": [
+                                                    {
+                                                        "Ref": "TargetTagKey"
+                                                    }
+                                                ]
+                                            }
+                                        ],
+                                        {
+                                            "Fn::If": [
+                                                "IsResourceGroupTargeted",
+                                                [
+                                                    {
+                                                        "Key": "ResourceGroup",
+                                                        "Values": [
+                                                            {
+                                                                "Ref": "ResourceGroupName"
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                {
+                                                    "Fn::If": [
+                                                        "TargetAll",
+                                                        [
+                                                            {
+                                                                "Key": "InstanceIds",
+                                                                "Values": [
+                                                                    "*"
+                                                                ]
+                                                            }
+                                                        ],
+                                                        [
+                                                            {
+                                                                "Key": "ParameterValues",
+                                                                "Values": {
+                                                                    "Fn::Split": [
+                                                                        ",",
+                                                                        {
+                                                                            "Ref": "TargetInstances"
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            }
+                                                        ]
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "ScheduleExpression": "rate(30 days)"
+            },
+            "Condition": "IsNoInstanceProfileProvided"
+        },
+        "SystemAssociationForUpdateManagingInstances": {
+            "Type": "AWS::SSM::Association",
+            "Properties": {
+                "Name": {
+                    "Ref": "UpdateExistingInstanceProfile"
+                },
+                "AssociationName": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "AWS-MDCSetup-SSMHostMgmt-UpdateIAMForInstanceMgmt-",
+                            {
+                                "Ref": "ConfigurationID"
+                            }
+                        ]
+                    ]
+                },
+                "Parameters": {
+                    "AutomationAssumeRole": [
+                        {
+                            "Fn::If": [
+                                "IsNoAutomationAssumeRoleProvided",
+                                {
+                                    "Fn::GetAtt": [
+                                        "RoleForAutomation",
+                                        "Arn"
+                                    ]
+                                },
+                                {
+                                    "Ref": "ProvidedAssumeRoleArn"
+                                }
+                            ]
+                        }
+                    ],
+                    "InstanceProfile": [
+                        {
+                            "Ref": "ProvidedInstanceProfileName"
+                        }
+                    ]
+                },
+                "AutomationTargetParameterName": "InstanceId",
+                "Targets": {
+                    "Fn::If": [
+                        "IsOrgMDCSetup",
+                        [
+                            {
+                                "Key": "InstanceIds",
+                                "Values": [
+                                    "*"
+                                ]
+                            }
+                        ],
+                        {
+                            "Fn::If": [
+                                "IsTagKeyAndValueTargeted",
+                                [
+                                    {
+                                        "Key": {
+                                            "Fn::Join": [
+                                                "",
+                                                [
+                                                    "tag:",
+                                                    {
+                                                        "Ref": "TargetTagKey"
+                                                    }
+                                                ]
+                                            ]
+                                        },
+                                        "Values": [
+                                            {
+                                                "Ref": "TargetTagValue"
+                                            }
+                                        ]
+                                    }
+                                ],
+                                {
+                                    "Fn::If": [
+                                        "IsTagKeyOnlyTargeted",
+                                        [
+                                            {
+                                                "Key": "tag-key",
+                                                "Values": [
+                                                    {
+                                                        "Ref": "TargetTagKey"
+                                                    }
+                                                ]
+                                            }
+                                        ],
+                                        {
+                                            "Fn::If": [
+                                                "IsResourceGroupTargeted",
+                                                [
+                                                    {
+                                                        "Key": "ResourceGroup",
+                                                        "Values": [
+                                                            {
+                                                                "Ref": "ResourceGroupName"
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                {
+                                                    "Fn::If": [
+                                                        "TargetAll",
+                                                        [
+                                                            {
+                                                                "Key": "InstanceIds",
+                                                                "Values": [
+                                                                    "*"
+                                                                ]
+                                                            }
+                                                        ],
+                                                        [
+                                                            {
+                                                                "Key": "ParameterValues",
+                                                                "Values": {
+                                                                    "Fn::Split": [
+                                                                        ",",
+                                                                        {
+                                                                            "Ref": "TargetInstances"
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            }
+                                                        ]
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "ScheduleExpression": "rate(30 days)"
+            },
+            "Condition": "IsInstanceProfileProvided"
+        }
+    },
+    "Outputs": {
+        "CrossCloudSecurityCenterReadOnlyARN": {
+            "Value": {
+                "Fn::GetAtt": [
+                    "CspmMonitorAwsRole",
+                    "Arn"
+                ]
+            },
+            "Description": "Role ARN for CSPM offering"
+        },
+        "DefenderForServersRoleARN": {
+            "Value": {
+                "Fn::GetAtt": [
+                    "DefenderForServersRole",
+                    "Arn"
+                ]
+            },
+            "Description": "Role ARN for Servers offering"
+        },
+        "DefenderForServersVmScannerRoleARN": {
+            "Value": {
+                "Fn::GetAtt": [
+                    "DefenderForServersVmScannerRole",
+                    "Arn"
+                ]
+            },
+            "Description": "Role ARN for VmScanner offering"
+        },
+        "ArcAutoProvisioningRoleARN": {
+            "Value": {
+                "Fn::GetAtt": [
+                    "ArcAutoProvisioningRole",
+                    "Arn"
+                ]
+            },
+            "Description": "Role ARN for Arc auto provisioning"
+        }
+    }
+}

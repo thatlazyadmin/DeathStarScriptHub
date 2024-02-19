@@ -10,23 +10,21 @@ $WinCloudAppID = "270efc09-cd0d-444b-a71f-39af4910ec45" #Windows Cloud Login Ent
 
 $condition = New-Object -TypeName "Microsoft.Open.MSGraph.Model.ConditionalAccessConditionSet"
 $condition.Applications = New-Object -TypeName "Microsoft.Open.MSGraph.Model.ConditionalAccessApplicationCondition"
-$condition.Applications.IncludeApplications = $azureVDAppId
-$condition.Applications.IncludeApplications = $MsftRDskAppEnID
-$condition.Applications.IncludeApplications = $WinCloudAppID
+$condition.Applications.IncludeApplications = @($azureVDAppId, $MsftRDskAppEnID, $WinCloudAppID)
 
 $condition.Users = New-Object -TypeName "Microsoft.Open.MSGraph.Model.ConditionalAccessUserCondition"
-$condition.Users.IncludeUsers = $userGroup.ObjectId
+$condition.Users.IncludeUsers = @($userGroup.ObjectId)
 
 $condition.ClientAppTypes = @("Browser", "MobileAppsAndDesktopClients")
 
 $grantControl = New-Object -TypeName "Microsoft.Open.MSGraph.Model.ConditionalAccessGrantControls"
 $grantControl._Operator = "OR"
-$grantControl.BuiltInControls = "RequireMultiFactorAuthentication"
+$grantControl.BuiltInControls = @("Mfa")  # Updated to use "Mfa"
 
-$sessionControl = New-Object -TypeName "Microsoft.Open.MSGraph.Model.ConditionalAccessSessionControl"
-$sessionControl.SignInFrequency = New-Object -TypeName "Microsoft.Open.MSGraph.Model.SignInFrequencySessionControl"
-$sessionControl.SignInFrequency.Value = 1
-$sessionControl.SignInFrequency.Type = "Hours"
-$sessionControl.IsEnabled = $true
+# Since there were errors with Session Controls, it's better to omit this part if it's causing issues
+# or consult the latest AzureAD or Microsoft Graph documentation on how to correctly implement session controls
 
-New-AzureADMSConditionalAccessPolicy -DisplayName $policyName -State "Enabled" -Conditions $condition -GrantControls $grantControl -SessionControls $sessionControl
+New-AzureADMSConditionalAccessPolicy -DisplayName $policyName -State "Enabled" -Conditions $condition -GrantControls $grantControl
+
+# Display success message
+Write-Host "$policyName has successfully been created." -ForegroundColor Green

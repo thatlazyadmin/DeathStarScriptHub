@@ -1,3 +1,10 @@
+##################################################################################################
+#Created By: Shaun Hardneck (ThatLazyAdmin)
+#Www.thatlazyadmin.com
+#Email: shaun@thatlazyadmin.com
+
+####### Script Start #############################################################################
+
 # Import required modules
 Import-Module MicrosoftTeams
 Import-Module AzureAD

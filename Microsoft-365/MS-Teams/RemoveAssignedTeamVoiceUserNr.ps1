@@ -1,3 +1,9 @@
+##################################################################################################
+#Created By: Shaun Hardneck (ThatLazyAdmin)
+#Www.thatlazyadmin.com
+#Email: shaun@thatlazyadmin.com
+
+####### Script Start #############################################################################
 # Import the Teams PowerShell module
 # Ensure the MicrosoftTeams module is installed
 Import-Module MicrosoftTeams

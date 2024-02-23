@@ -9,7 +9,7 @@ $propertyValue = (Get-ItemProperty -Path $registryPath -Name $propertyName).$pro
 
 # Check if the property value is set to 24
 if ($propertyValue -eq 24) {
-    Write-Host "The DevicePasswordHistory is correctly set to 24."
+    Write-Host "The DevicePasswordHistory is correctly set to 24." -ForegroundColor Green
 } else {
-    Write-Host "The DevicePasswordHistory is NOT set to 24. Current value is $propertyValue."
+    Write-Host "The DevicePasswordHistory is NOT set to 24. Current value is $propertyValue." -ForegroundColor Red
 }

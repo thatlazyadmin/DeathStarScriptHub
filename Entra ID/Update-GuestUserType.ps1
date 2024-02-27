@@ -1,5 +1,8 @@
+# Created By: Shaun Hardneck (ThatLazyAdmin)
+# www.thatlazyadmin.com
 # PowerShell Script: FetchAndUpdate-GuestUserTypes.ps1
 
+########################################################################################################################
 # Connect to Microsoft Entra (formerly Azure AD)
 try {
     Connect-AzureAD | Out-Null

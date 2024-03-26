@@ -1,5 +1,7 @@
 #Created By: Shaun Hardneck (ThatLazyAdmin)
 #Blog: www.thatlazyadmin.com
+#Github: https://github.com/thatlazyadmin/DeathStarScriptHub/tree/main
+#Replace 'YOU_API_TOKEN'
 
 # Display a banner
 Write-Host "Block Unwanted Websites in Your Organization" -ForegroundColor Cyan

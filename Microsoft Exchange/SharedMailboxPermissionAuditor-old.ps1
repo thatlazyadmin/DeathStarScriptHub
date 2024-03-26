@@ -21,22 +21,17 @@ foreach ($mailbox in $sharedMailboxes) {
     # Check for Send As permissions
     $sendAsPermissions = Get-RecipientPermission -Identity $mailbox.Identity | Where-Object { $_.AccessRights -eq "SendAs" -and $_.Trustee -notlike "NT AUTHORITY\SELF" }
     
-    # If no Full Access and Send As permissions are found, add the mailbox to the list with a custom permissions indicator
+    # If no Full Access and Send As permissions are found, add the mailbox to the list
     if (-not $fullAccessPermissions -and -not $sendAsPermissions) {
-        $obj = New-Object PSObject -Property @{
-            DisplayName = $mailbox.DisplayName
-            PrimarySmtpAddress = $mailbox.PrimarySmtpAddress
-            PermissionsIndicator = "No Full Access or Send As permissions"
-        }
-        $sharedMailboxesWithNoPermissions += $obj
+        $sharedMailboxesWithNoPermissions += $mailbox
     }
 }
 
 # Display the shared mailboxes with no permissions
-$sharedMailboxesWithNoPermissions | Format-Table DisplayName, PrimarySmtpAddress, PermissionsIndicator
+$sharedMailboxesWithNoPermissions | Format-Table DisplayName, PrimarySmtpAddress
 
 # Optionally, export the list to a CSV file
-$sharedMailboxesWithNoPermissions | Select-Object DisplayName, PrimarySmtpAddress, PermissionsIndicator | Export-Csv -Path "./SharedMailboxesWithNoPermissions.csv" -NoTypeInformation
+$sharedMailboxesWithNoPermissions | Select-Object DisplayName, PrimarySmtpAddress | Export-Csv -Path "./SharedMailboxesWithNoPermissions.csv" -NoTypeInformation
 
 # Disconnect the session
 Disconnect-ExchangeOnline -Confirm:$false

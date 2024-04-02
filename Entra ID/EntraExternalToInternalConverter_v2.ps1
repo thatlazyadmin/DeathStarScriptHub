@@ -9,7 +9,7 @@ Import-Module Microsoft.Graph.Users
 
 function Show-Menu {
     param (
-        [string]$Title = 'Entra External to Internal Converter Enhanced Menu'
+        [string]$Title = 'Entra ID External to Internal User Converter Enhanced Menu'
     )
     Clear-Host
     Write-Host "================ $Title ================" -ForegroundColor Cyan

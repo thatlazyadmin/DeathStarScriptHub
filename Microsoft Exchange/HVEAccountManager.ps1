@@ -25,7 +25,17 @@ Version: 1.0
 For feedback or suggestions, please contact Shaun@thatlazyadmin.com.
 
 #>
-
+# Check if connected to Exchange Online, if not, establish a connection
+try {
+    $ExchangeSession = Get-PSSession | Where-Object { $_.ComputerName -eq 'outlook.office365.com' }
+    if (-not $ExchangeSession) {
+        Write-Host "Connecting to Exchange Online. Please follow the prompts..." -ForegroundColor Yellow
+        Connect-ExchangeOnline -ShowBanner:$false
+    }
+} catch {
+    Write-Error "An error occurred connecting to Exchange Online. Please ensure you have the Exchange Online PowerShell Module installed and you have internet connectivity."
+    exit
+}
 function Show-Menu {
     param (
         [string]$Title = 'HVE Account Management Menu'

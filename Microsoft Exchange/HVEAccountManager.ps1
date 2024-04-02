@@ -38,7 +38,7 @@ try {
 }
 function Show-Menu {
     param (
-        [string]$Title = 'HVE Account Management Menu'
+        [string]$Title = 'High Volume Email (HVE) Account Management Menu'
     )
     Clear-Host
     Write-Host "================ $Title ================" -ForegroundColor Cyan

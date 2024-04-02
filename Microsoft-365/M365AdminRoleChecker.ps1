@@ -1,58 +1,70 @@
 <#
 .SYNOPSIS
-M365AdminRoleLicenseChecker.ps1 - Audits Microsoft 365 Admin role assignments and license status using Microsoft Graph.
+M365AdminRoleLicenseChecker.ps1 - Audits Microsoft 365 Admin role assignments using Microsoft Graph.
 
 .DESCRIPTION
-Authored by Shaun Hardneck (thatLazyAdmin), this script aids Microsoft 365 administrators and security architects in auditing admin role assignments and user licensing status across Microsoft 365 environments. It leverages Microsoft Graph to enumerate admin roles, identify assigned users, and check their licensing status, outputting a detailed report.
+This script aids Microsoft 365 administrators in auditing admin role assignments across Microsoft 365 environments. It leverages Microsoft Graph to enumerate admin roles, identify assigned users, and outputs a detailed report.
 
 .KEY FEATURES
-- Utilizes Microsoft Graph for comprehensive data access.
-- Enumerates Microsoft 365 Admin roles and assigned users.
-- Checks and reports on user licensing status.
+- Enumerates Microsoft 365 Admin roles and identifies assigned users.
 - Exports findings to CSV for administrative use.
 
 .AUTHOR
-Shaun Hardneck - thatLazyAdmin
-Blog: www.thatlazyadmin.com
-
+Shaun Hardneck - Security Architect and Consultant
+Blog: wwww.thatlazyadmin.com
+GitHub Repo: https://github.com/thatlazyadmin/DeathStarScriptHub/tree/main
 #>
 
 # Ensure the Microsoft Graph PowerShell SDK is installed
-# Install-Module Microsoft.Graph -Scope CurrentUser
+if (-not (Get-Module -ListAvailable -Name Microsoft.Graph)) {
+    Install-Module Microsoft.Graph -Scope CurrentUser -Force -AllowClobber
+}
+#Import-Module Microsoft.Graph
 
-# Connect to Microsoft Graph
-Connect-MgGraph -Scopes "Directory.Read.All", "User.Read.All"
+Write-Host "Microsoft 365 Admin Role Checker script is starting..." -ForegroundColor Cyan
 
-# Get all directory roles
-$adminRoles = Get-MgDirectoryRole | Where-Object { $_.DisplayName -like "*admin*" }
+# Connect to Microsoft Graph and suppress welcome message
+Connect-MgGraph -Scopes "Directory.Read.All" -NoWelcome
 
-# Initialize results array
+# Get all Microsoft 365 admin roles
+$adminRoles = Get-MgDirectoryRole -All
+
 $results = @()
 
 foreach ($role in $adminRoles) {
-    # Get members of each role
-    $roleMembers = Get-MgDirectoryRoleMember -RoleId $role.Id | Get-MgUser
+    # Retrieve role members
+    try {
+        $roleMembers = Get-MgDirectoryRoleMember -DirectoryRoleId $role.Id -All
+    } catch {
+        Write-Host "Could not retrieve members for role $($role.DisplayName): $_" -ForegroundColor Red
+        continue
+    }
 
-    foreach ($member in $roleMembers) {
-        # Determine if the user is licensed
-        $licenses = Get-MgUserLicenseDetail -UserId $member.Id
-        $isLicensed = $null -ne $licenses -and $licenses.Count -gt 0
-
-        # Create and add result to array
-        $result = [PSCustomObject]@{
-            Username     = $member.UserPrincipalName
-            DisplayName  = $member.DisplayName
-            RoleAssigned = $role.DisplayName
-            IsLicensed   = $isLicensed
+    if ($roleMembers.Count -gt 0) {
+        foreach ($member in $roleMembers) {
+            $user = Get-MgUser -UserId $member.Id
+            $results += [PSCustomObject]@{
+                'Username'     = $user.UserPrincipalName
+                'DisplayName'  = $user.DisplayName
+                'Role'         = $role.DisplayName
+            }
         }
-
-        $results += $result
+    } else {
+        $results += [PSCustomObject]@{
+            'Username'     = "No assigned user"
+            'DisplayName'  = "N/A"
+            'Role'         = $role.DisplayName
+        }
     }
 }
 
-# Output and export results
-$results | Format-Table Username, DisplayName, RoleAssigned, IsLicensed
-$results | Export-Csv -Path "Microsoft365AdminRolesAndUsers.csv" -NoTypeInformation
+# Display results on screen
+$results | Format-Table -AutoSize
 
-Write-Host "Export completed. Find the results in 'Microsoft365AdminRolesAndUsers.csv'."
+# Export results to CSV
+$results | Export-Csv -Path 'Microsoft365AdminRolesAndUsers.csv' -NoTypeInformation
+
+Write-Host "Microsoft 365 Admin Role Checker script has completed." -ForegroundColor Green
+
+# Disconnect from Microsoft Graph
 Disconnect-MgGraph

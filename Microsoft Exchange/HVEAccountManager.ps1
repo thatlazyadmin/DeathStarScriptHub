@@ -41,7 +41,7 @@ function Show-Menu {
         [string]$Title = 'HVE Account Management Menu'
     )
     Clear-Host
-    Write-Host "================ $Title ================"
+    Write-Host "================ $Title ================" -ForegroundColor Cyan
 
     Write-Host "1: List all HVE Accounts"
     Write-Host "2: Change Display Name of a HVE Account"
@@ -71,11 +71,22 @@ function Remove-HVEAccount {
 }
 
 function Create-HVEAccount {
-    $name = Read-Host "Enter the name for the new HVE Account"
-    $smtpAddress = "$name@yourdomain.com" # Replace yourdomain.com with your actual domain
-    New-MailUser -Name $name -ExternalEmailAddress $smtpAddress -Alias $name
-    Write-Host "HVE Account created with SMTP Address: $smtpAddress"
+    # Prompt for the name of the HVE Account
+    $accountName = Read-Host "Enter the name for the new HVE Account"
+
+    # Prompt for the primary SMTP address
+    $smtpAddress = Read-Host "Enter the primary SMTP address for the new HVE Account (e.g., HVEAccount_01@contoso.com)"
+
+    # Securely handling the password for the account
+    $password = Read-Host "Enter the password for the new HVE Account" -AsSecureString
+    $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
+
+    # Creating the new HVE Mail User account with specified parameters
+    New-MailUser -LOBAppAccount -Name $accountName -Password $securePassword -PrimarySmtpAddress $smtpAddress
+
+    Write-Host "HVE Account $accountName created with SMTP Address: $smtpAddress"
 }
+
 
 function Display-HVEAccountDetails {
     $name = Read-Host "Enter the alias of the HVE Account to display details"

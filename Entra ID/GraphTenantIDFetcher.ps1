@@ -7,8 +7,10 @@
 
 .NOTES
     Version:        1.0
-    Author:         Your Name
+    Author:         Shaun Hardneck
     Creation Date:  Your Date
+    Blog:           www.thatlazyadmin.com
+    GitHub:         https://github.com/thatlazyadmin/DeathStarScriptHub/tree/main
     Purpose/Change: Updated script to use Microsoft Graph PowerShell SDK
 
 .EXAMPLE

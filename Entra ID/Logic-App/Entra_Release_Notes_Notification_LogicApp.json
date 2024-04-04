@@ -1,0 +1,80 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "resources": [
+      {
+        "type": "Microsoft.Logic/workflows",
+        "apiVersion": "2019-05-01",
+        "name": "YEntraUpdateNotifier",
+        "location": "southafricanorth",
+        "properties": {
+          "definition": {
+            "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {},
+            "triggers": {
+              "When_a_feed_item_is_published": {
+                "type": "Recurrence",
+                "recurrence": {
+                  "frequency": "Hour",
+                  "interval": 1
+                },
+                "type": "ApiConnection",
+                "inputs": {
+                  "host": {
+                    "connection": {
+                      "name": "@parameters('$connections')['rss']['connectionId']"
+                    }
+                  },
+                  "method": "get",
+                  "path": "/OnNewFeed",
+                  "queries": {
+                    "feedUrl": "https://learn.microsoft.com/api/search/rss?search=%22Release+notes+-+Azure+Active+Directory%22&locale=en-us"
+                  }
+                }
+              }
+            },
+            "actions": {
+              "Send_message_to_Teams": {
+                "type": "ApiConnection",
+                "inputs": {
+                  "body": {
+                    "content": "New update in Microsoft Entra release notes. Synopsis: [Your Synopsis Here]. Author: Shaun Hardneck. Check details: @{triggerBody()?['link']}",
+                    "contentType": "html"
+                  },
+                  "host": {
+                    "connection": {
+                      "name": "@parameters('$connections')['teams']['connectionId']"
+                    }
+                  },
+                  "method": "post",
+                  "path": "/@{encodeURIComponent(encodeURIComponent('Your Teams Channel ID'))}/messages"
+                },
+                "runAfter": {},
+                "type": "ApiConnection"
+              }
+            },
+            "outputs": {}
+          },
+          "parameters": {
+            "$connections": {
+              "value": {
+                "rss": {
+                  "connectionId": "/subscriptions/YourSubscriptionId/resourceGroups/YourResourceGroup/providers/Microsoft.Web/connections/rss",
+                  "connectionName": "rss",
+                  "id": "/subscriptions/YourSubscriptionId/providers/Microsoft.Web/locations/YourAzureRegion/managedApis/rss"
+                },
+                "teams": {
+                  "connectionId": "/subscriptions/YourSubscriptionId/resourceGroups/YourResourceGroup/providers/Microsoft.Web/connections/teams",
+                  "connectionName": "teams",
+                  "id": "/subscriptions/YourSubscriptionId/providers/Microsoft.Web/locations/YourAzureRegion/managedApis/teams"
+                }
+              }
+            }
+          }
+        },
+        "dependsOn": []
+      }
+    ]
+  }
+  

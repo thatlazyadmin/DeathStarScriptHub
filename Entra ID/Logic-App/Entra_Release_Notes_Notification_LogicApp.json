@@ -1,20 +1,39 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
+    "parameters": {
+      "resourceGroupName": {
+        "type": "string",
+        "defaultValue": "lab-rsg104",
+        "metadata": {
+          "description": "The name of the resource group where the Logic App will be deployed."
+        }
+      },
+      "teamsChannelId": {
+        "type": "string",
+        "defaultValue": "19:3e86c52ae6e74c86b7248d661c28e810@thread.tacv2",
+        "metadata": {
+          "description": "The Teams channel ID where the notification will be sent."
+        }
+      }
+    },
+    "variables": {
+      "logicAppName": "EntraUpdateNotifier",
+      "location": "southafricanorth"
+    },
     "resources": [
       {
         "type": "Microsoft.Logic/workflows",
         "apiVersion": "2019-05-01",
-        "name": "YEntraUpdateNotifier",
-        "location": "southafricanorth",
+        "name": "[variables('logicAppName')]",
+        "location": "[variables('location')]",
         "properties": {
           "definition": {
             "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
             "contentVersion": "1.0.0.0",
             "parameters": {},
             "triggers": {
-              "When_a_feed_item_is_published": {
-                "type": "Recurrence",
+              "RSS": {
                 "recurrence": {
                   "frequency": "Hour",
                   "interval": 1
@@ -22,9 +41,7 @@
                 "type": "ApiConnection",
                 "inputs": {
                   "host": {
-                    "connection": {
-                      "name": "@parameters('$connections')['rss']['connectionId']"
-                    }
+                    "connectionName": "rss"
                   },
                   "method": "get",
                   "path": "/OnNewFeed",
@@ -38,20 +55,16 @@
               "Send_message_to_Teams": {
                 "type": "ApiConnection",
                 "inputs": {
-                  "body": {
-                    "content": "New update in Microsoft Entra release notes. Synopsis: [Your Synopsis Here]. Author: Shaun Hardneck. Check details: @{triggerBody()?['link']}",
-                    "contentType": "html"
-                  },
                   "host": {
-                    "connection": {
-                      "name": "@parameters('$connections')['teams']['connectionId']"
-                    }
+                    "connectionName": "teams"
                   },
                   "method": "post",
-                  "path": "/@{encodeURIComponent(encodeURIComponent('Your Teams Channel ID'))}/messages"
-                },
-                "runAfter": {},
-                "type": "ApiConnection"
+                  "path": "/@{parameters('teamsChannelId')}/messages",
+                  "body": {
+                    "content": "<strong>New Update Detected in Microsoft Entra Release Notes</strong><br/><br/>Synopsis: Insert the provided synopsis here.<br/><br/>For more details, check the link: @{triggerOutputs()['headers']['Link']}",
+                    "contentType": "html"
+                  }
+                }
               }
             },
             "outputs": {}
@@ -60,14 +73,14 @@
             "$connections": {
               "value": {
                 "rss": {
-                  "connectionId": "/subscriptions/YourSubscriptionId/resourceGroups/YourResourceGroup/providers/Microsoft.Web/connections/rss",
+                  "connectionId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('resourceGroupName'), '/providers/Microsoft.Web/connections/rss')]",
                   "connectionName": "rss",
-                  "id": "/subscriptions/YourSubscriptionId/providers/Microsoft.Web/locations/YourAzureRegion/managedApis/rss"
+                  "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', variables('location'), '/managedApis/rss')]"
                 },
                 "teams": {
-                  "connectionId": "/subscriptions/YourSubscriptionId/resourceGroups/YourResourceGroup/providers/Microsoft.Web/connections/teams",
+                  "connectionId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('resourceGroupName'), '/providers/Microsoft.Web/connections/teams')]",
                   "connectionName": "teams",
-                  "id": "/subscriptions/YourSubscriptionId/providers/Microsoft.Web/locations/YourAzureRegion/managedApis/teams"
+                  "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', variables('location'), '/managedApis/teams')]"
                 }
               }
             }
@@ -75,6 +88,7 @@
         },
         "dependsOn": []
       }
-    ]
+    ],
+    "outputs": {}
   }
   

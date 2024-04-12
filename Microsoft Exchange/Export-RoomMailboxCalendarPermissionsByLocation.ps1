@@ -1,7 +1,8 @@
 # CreatedBy: Shaun Hardneck (ThatLazyAdmin)
 # Blog: www.thatlazyadmin.com
 # Github Repo: https://github.com/thatlazyadmin/DeathStarScriptHub
-# Enhanced Script to Export Room Mailbox Calendar Permissions with Location Filtering
+
+# Enhanced Script to Export Room Mailbox Calendar Permissions Based on Building Location
 
 # Function to ensure connection to Exchange Online
 function Ensure-ExchangeOnlineConnection {
@@ -15,25 +16,33 @@ function Ensure-ExchangeOnlineConnection {
     }
 }
 
-# Main function to export room mailbox calendar permissions with location-based filtering
-function Export-RoomMailboxCalendarPermissions {
+# Main function to export room mailbox calendar permissions based on building location
+function Export-RoomMailboxCalendarPermissionsByBuilding {
     Ensure-ExchangeOnlineConnection
 
-    # Prompt for building or location
-    $location = Read-Host "Please enter the building or location of the room mailboxes"
-    Write-Host "Filtering room mailboxes for location: $location..." -ForegroundColor DarkYellow
+    # Prompt for building
+    $buildingName = Read-Host "Please enter the building name of the room mailboxes"
+    Write-Host "Filtering room mailboxes for building: $buildingName..." -ForegroundColor DarkYellow
 
-    $roomMailboxes = Get-Mailbox -RecipientTypeDetails RoomMailbox -ResultSize Unlimited |
-                     Where-Object { $_.CustomAttribute1 -eq $location }
-    
+    $allRoomMailboxes = Get-Mailbox -RecipientTypeDetails RoomMailbox -ResultSize Unlimited
+    $filteredMailboxes = @()
+
+    # Filter mailboxes by building using Get-Place
+    foreach ($mailbox in $allRoomMailboxes) {
+        $place = Get-Place -Identity $mailbox.Alias
+        if ($place.Building -eq $buildingName) {
+            $filteredMailboxes += $mailbox
+        }
+    }
+
     $results = @()
 
-    if ($roomMailboxes -eq $null -or $roomMailboxes.Count -eq 0) {
-        Write-Host "No room mailboxes found for the specified location. Exiting script." -ForegroundColor DarkYellow
+    if ($filteredMailboxes.Count -eq 0) {
+        Write-Host "No room mailboxes found for the specified building. Exiting script." -ForegroundColor Red
         return
     }
 
-    foreach ($roomMailbox in $roomMailboxes) {
+    foreach ($roomMailbox in $filteredMailboxes) {
         $calendarPermissions = Get-MailboxFolderPermission -Identity "$($roomMailbox.Identity):\Calendar" -ErrorAction SilentlyContinue
         foreach ($permission in $calendarPermissions) {
             if ($permission.User -notin @('Default', 'Anonymous')) {
@@ -50,9 +59,9 @@ function Export-RoomMailboxCalendarPermissions {
     }
 
     # Export the results to a CSV file
-    $results | Export-Csv -Path ".\RoomMailboxCalendarPermissionsEnhanced.csv" -NoTypeInformation
-    Write-Host "Export completed successfully. Check the .\RoomMailboxCalendarPermissionsEnhanced.csv file." -ForegroundColor Green
+    $results | Export-Csv -Path ".\RoomMailboxCalendarPermissionsByBuilding.csv" -NoTypeInformation
+    Write-Host "Export completed successfully. Check the .\RoomMailboxCalendarPermissionsByBuilding.csv file." -ForegroundColor Green
 }
 
 # Execute the script
-Export-RoomMailboxCalendarPermissions
+Export-RoomMailboxCalendarPermissionsByBuilding

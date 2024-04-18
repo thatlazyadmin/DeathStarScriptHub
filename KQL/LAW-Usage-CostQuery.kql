@@ -1,0 +1,20 @@
+let TopTables = materialize(
+    Usage
+    | where TimeGenerated > startofday(ago(31d))
+    | where StartTime > startofday(ago(31d))
+    | where IsBillable
+    | summarize IngestedGB=sum(Quantity) / 1.0E3 by DataType
+    | sort by IngestedGB desc
+    | take 10
+    | project DataType);
+Usage
+| where TimeGenerated > startofday(ago(365d))
+| where StartTime > startofday(ago(364d))
+| where IsBillable
+| extend Table = iff(DataType in (TopTables), DataType, "Other")
+| extend Rank = iff(Table == "Other", 2, 1)
+| summarize IngestedGB=sum(Quantity) / 1.0E3 by Table, bin(StartTime, 1d), Rank
+| sort by Rank asc, IngestedGB desc
+| project-away Rank
+| project StartTime, Table, IngestedGB
+| render columnchart

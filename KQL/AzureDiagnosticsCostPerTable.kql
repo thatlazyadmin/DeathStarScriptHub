@@ -1,0 +1,23 @@
+let costPerGB = 0.1; // Define the cost rate per GB of data ingested/stored.
+AzureDiagnostics
+| summarize TotalDataIngestedGB = sum(_BilledSize) / (1024.0 * 1024.0 * 1024.0) by ResourceType
+| extend Cost = TotalDataIngestedGB * costPerGB  // Calculate the cost for each ResourceType.
+| project ResourceType, Cost  // Display the ResourceType and its associated cost.
+
+####################################################
+# Updated version includes the Storage Size as well#
+
+let costPerGB = 0.1; // Define the cost rate per GB of data ingested/stored.
+AzureDiagnostics
+| summarize TotalDataIngestedGB = sum(_BilledSize) / (1024.0 * 1024.0 * 1024.0) by ResourceType
+| extend Cost = TotalDataIngestedGB * costPerGB  // Calculate the cost for each ResourceType.
+| project ResourceType, TotalDataIngestedGB, Cost  // Display the ResourceType, size, and cost.
+
+####################################################
+# Costing didnt work above#
+let costPerGB = 0.50; // Update this rate based on the current Azure Log Analytics pricing in USD per GB.
+AzureDiagnostics
+| summarize TotalDataIngestedGB = sum(_BilledSize) / (1024.0 * 1024.0 * 1024.0) by ResourceType
+| extend CostUSD = TotalDataIngestedGB * costPerGB  // Calculate the cost for each ResourceType in USD.
+| project ResourceType, TotalDataIngestedGB, CostUSD  // Display ResourceType, data size in GB, and cost in USD.
+

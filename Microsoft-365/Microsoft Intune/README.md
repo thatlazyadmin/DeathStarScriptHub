@@ -1,5 +1,3 @@
-GitHub README File
-
 # Intune License Retrieval Script
 
 ## Overview
@@ -11,22 +9,22 @@ This PowerShell script leverages the Microsoft Graph API to pull all available M
   ```powershell
   Install-Module Microsoft.Graph -Scope CurrentUser
 
-Usage
+## Usage
 Run the script in a PowerShell window with administrator privileges. Make sure you are authenticated to access Microsoft Graph.
 
-Authentication
+## Authentication
 The script uses delegated permissions to access directory data:
 
 Directory.Read.All
 To run this script, you will need to authenticate using Connect-MgGraph command as shown in the script.
 
-Output
+## Output
 The script outputs each Intune license available in the tenant and lists the users assigned to each license.
 
-License
+## License
 This script is released under the MIT license.
 
-Contributions
+## Contributions
 Contributions are welcome. Please fork this repository and submit a pull request for any enhancements.
 
 

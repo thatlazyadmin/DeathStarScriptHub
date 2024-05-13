@@ -1,0 +1,7 @@
+"Time","Message","Severity"
+"5/10/2024 8:10 AM","Clearing existing Azure connection","Information"
+"5/10/2024 8:10 AM","Clearing existing Azure context 
+","Information"
+"5/10/2024 8:10 AM","Clearing of existing connection and context completed.","Information"
+"5/10/2024 8:11 AM","Working in Subscription: TLZADM-PROD-SUB-01","Information"
+"5/10/2024 8:11 AM","No Log Analytics workspace found...","Error"

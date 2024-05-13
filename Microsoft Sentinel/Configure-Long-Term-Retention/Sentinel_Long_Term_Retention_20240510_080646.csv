@@ -1,0 +1,7 @@
+"Time","Message","Severity"
+"5/10/2024 8:06 AM","Clearing existing Azure connection","Information"
+"5/10/2024 8:06 AM","Clearing existing Azure context 
+","Information"
+"5/10/2024 8:06 AM","Clearing of existing connection and context completed.","Information"
+"5/10/2024 8:06 AM","Error When trying to connect to tenant : Method not found: 'System.Threading.Tasks.Task`1<Azure.Identity.AuthenticationRecord> Azure.Identity.InteractiveBrowserCredential.AuthenticateAsync(Azure.Core.TokenRequestContext, System.Threading.CancellationToken)'.
+Could not find tenant id for provided tenant domain 'f8a9f5a5-fbb5-4c50-9f67-84b1899a9f74'. Please ensure that the provided user is found in the provided tenant domain.","Error"

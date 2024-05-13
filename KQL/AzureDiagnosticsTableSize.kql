@@ -1,0 +1,11 @@
+AzureDiagnostics
+| summarize TotalSizeGB = sum(_BilledSize) / (1024.0 * 1024.0 * 1024.0) by ResourceId
+| order by TotalSizeGB desc
+
+#################################################################
+# Following Query will list the Top 15
+#################################################################
+
+AzureDiagnostics
+| summarize TotalSizeGB = sum(_BilledSize) / (1024.0 * 1024.0 * 1024.0) by ResourceId
+| top 15 by TotalSizeGB desc

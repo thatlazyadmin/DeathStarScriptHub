@@ -1,0 +1,5 @@
+union withsource=SourceTable *
+| where TimeGenerated between(datetime(2023-01-02) .. datetime(2024-05-03))
+| summarize Size = sum(_BilledSize) by SourceTable, _IsBillable
+| order by Size desc 
+| extend Size2 = format_bytes(toint(Size), 2)

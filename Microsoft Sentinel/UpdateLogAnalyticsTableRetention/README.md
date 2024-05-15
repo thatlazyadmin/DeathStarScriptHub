@@ -40,3 +40,6 @@ This script was created to streamline the process of managing table retention se
 3. **Run the script** by navigating to the directory where the script is saved and executing:
    ```powershell
    .\UpdateLogAnalyticsTableRetention.ps1
+
+## Screenshots
+

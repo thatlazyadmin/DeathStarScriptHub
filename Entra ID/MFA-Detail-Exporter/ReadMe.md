@@ -1,5 +1,6 @@
 # MFA Phone Method Exporter
 
+![alt text](<MFADetails Exporter-1.png>)
 ## Overview
 
 The **MFA Phone Method Exporter** script is designed to help administrators export a list of all the contact numbers users have used for Multi-Factor Authentication (MFA). This script connects to Microsoft Graph, retrieves user MFA phone methods, and exports the details to a CSV file.

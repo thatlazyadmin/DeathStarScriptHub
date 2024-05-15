@@ -1,10 +1,10 @@
 <#
 .SYNOPSIS
-    This script updates the device category for all managed devices in a specified Azure AD group.
+    This script updates the device category for all devices in a specified Azure AD group.
 
 .DESCRIPTION
     The script authenticates an administrator interactively and retrieves the devices in a specified Azure AD group.
-    It then updates the device category for each managed device in the group to a specified category name.
+    It then updates the device category for each device in the group to a specified category name.
 
 .PARAMETER tenantId
     The tenant ID of the Azure Active Directory.
@@ -49,42 +49,30 @@ Write-Output "Retrieved members: $($members.Count)"
 
 # Initialize an array to keep track of updated devices
 $updatedDevices = @()
-$nonManagedDevices = @()
 
 # Update device category for each device
 foreach ($member in $members) {
     $deviceId = $member.id
     $deviceName = $member.displayName
 
-    # Check if the device is a managed device
-    $deviceUrl = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices/$deviceId"
+    Write-Output "Updating device: Name = $deviceName, ID = $deviceId"
+
+    # Attempt to update the device category directly
+    $updateUrl = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices/${deviceId}"
+    $updateBody = @{
+        deviceCategoryDisplayName = $deviceCategoryName
+    } | ConvertTo-Json
+
     try {
-        $deviceDetails = Invoke-MgGraphRequest -Method Get -Uri $deviceUrl
-        if ($deviceDetails) {
-            Write-Output "Updating device: Name = $deviceName, ID = $deviceId"
-
-            $updateBody = @{
-                deviceCategoryDisplayName = $deviceCategoryName
-            } | ConvertTo-Json
-
-            $updateResponse = Invoke-MgGraphRequest -Method Patch -Uri $deviceUrl -Body $updateBody -ContentType "application/json"
-            Write-Output "Device ${deviceName} (ID: ${deviceId}) updated successfully to category: ${deviceCategoryName}."
-            $updatedDevices += @{
-                Name = $deviceName
-                ID = $deviceId
-                NewCategory = $deviceCategoryName
-            }
+        $updateResponse = Invoke-MgGraphRequest -Method Patch -Uri $updateUrl -Body $updateBody -ContentType "application/json"
+        Write-Output "Device ${deviceName} (ID: ${deviceId}) updated successfully to category: ${deviceCategoryName}."
+        $updatedDevices += @{
+            Name = $deviceName
+            ID = $deviceId
+            NewCategory = $deviceCategoryName
         }
     } catch {
-        if ($_.Exception.Response.StatusCode -eq 404) {
-            Write-Output "Device ${deviceName} (ID: ${deviceId}) is not a managed device."
-            $nonManagedDevices += @{
-                Name = $deviceName
-                ID = $deviceId
-            }
-        } else {
-            Write-Output "Failed to update device ${deviceName} (ID: ${deviceId}): $_"
-        }
+        Write-Output "Failed to update device ${deviceName} (ID: ${deviceId}): $_"
     }
 }
 
@@ -94,12 +82,6 @@ if ($updatedDevices.Count -gt 0) {
     $updatedDevices | ForEach-Object { Write-Output "Name: $($_.Name), ID: $($_.ID), New Category: $($_.NewCategory)" }
 } else {
     Write-Output "No devices were updated."
-}
-
-# Output the list of non-managed devices
-if ($nonManagedDevices.Count -gt 0) {
-    Write-Output "The following devices are not managed:"
-    $nonManagedDevices | ForEach-Object { Write-Output "Name: $($_.Name), ID: $($_.ID)" }
 }
 
 # Disconnect the session

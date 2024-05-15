@@ -42,4 +42,6 @@ This script was created to streamline the process of managing table retention se
    .\UpdateLogAnalyticsTableRetention.ps1
 
 ## Screenshots
-
+![alt text](Sentinel-03-1.png)
+![alt text](Sentinel-01.png)
+![alt text](Sentinel-02.png)

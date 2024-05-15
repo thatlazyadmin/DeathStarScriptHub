@@ -1,5 +1,5 @@
 # ==============================================================================
-# Microsoft Azure Log Analytics Table Retention Update Script
+# Azure Log Analytics Table Retention Update Script
 # Created by: Shaun Hardneck (ThatLazyAdmin)
 # Blog: www.thatlazyadmin.com
 # ==============================================================================
@@ -20,13 +20,20 @@
 # ==============================================================================
 
 # Import the necessary modules
-#Import-Module Az -ErrorAction SilentlyContinue
+# Import-Module Az -ErrorAction SilentlyContinue
 
 # Permanent banner
 function Show-Banner {
     Clear-Host
     Write-Host "============================================" -ForegroundColor White
     Write-Host "     Microsoft Azure Log Analytics Retention" -ForegroundColor DarkYellow
+    Write-Host "============================================" -ForegroundColor White
+}
+
+# Close out banner
+function Show-CloseBanner {
+    Write-Host "============================================" -ForegroundColor White
+    Write-Host "        Script Execution Completed!" -ForegroundColor DarkYellow
     Write-Host "============================================" -ForegroundColor White
 }
 
@@ -104,6 +111,12 @@ function Update-Retention {
 while ($true) {
     Select-Subscription
     Update-Retention
-    Write-Host "`nOperation completed. Returning to subscription selection..." -ForegroundColor Cyan
-    Start-Sleep -Seconds 3
+    Write-Host "`nOperation completed." -ForegroundColor Cyan
+    Show-CloseBanner
+
+    $choice = Read-Host "`nDo you want to restart the script or end the session? (Enter 'R' to restart or 'E' to end)"
+    if ($choice -eq 'E') {
+        Write-Host "Ending session..." -ForegroundColor Cyan
+        break
+    }
 }

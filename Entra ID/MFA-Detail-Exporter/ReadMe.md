@@ -52,19 +52,69 @@ Ensure you have the following installed:
 2. **Install the Microsoft Graph PowerShell SDK:**
 
 ```sh
-Copy code
 Install-Module -Name Microsoft.Graph -Scope CurrentUser
+```
 
 ## Usage:
-Open the script in your preferred PowerShell editor.
 
-Run the script:
+1. Open the script in your preferred PowerShell editor.
 
-sh
-Copy code
+2. Run the script:
+
+```sh
 .\MFADetailExporter.ps1
+```
+3. Follow the on-screen instructions to authenticate with Microsoft Graph.
 
-Follow the on-screen instructions to authenticate with Microsoft Graph.
+4. The script will export the MFA phone methods to a CSV file named UserMfaPhoneNumbers_<date>.csv.
 
-The script will export the MFA phone methods to a CSV file named UserMfaPhoneNumbers_<date>.csv.
+### Script Details
+## Banner
 
+The script features a permanent banner with a custom message:
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@##++............++++##@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@##++....    ....++####@@@@@@@@@@@@
+@@@@##++..              ..........      ..++##@@@@@@@@@@@@@@####....    ..........              ..++##@@@@
+@@..          ++##@@@@@@@@@@@@@@@@@@@@##..                        ++##@@@@@@@@@@@@@@@@@@##++..        ..@@
+@@..        @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@..                ##@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@++      ..@@
+@@++      ##@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@              ##@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@      ..@@
+@@@@..    ##@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@++            @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@..    @@@@
+@@@@@@    ##@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@++  ++####    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@..  ##@@@@
+@@@@@@..  ##@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@..  @@@@@@##  ##@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@    @@@@@@
+@@@@@@##  ++@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  ++@@@@@@@@  ++@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  ..@@@@@@
+@@@@@@@@  ..@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@++  ##@@@@@@@@..  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@##  ##@@@@@@
+@@@@@@@@..  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@    @@@@@@@@@@##  ##@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@++  @@@@@@@@
+@@@@@@@@##  ##@@@@@@@@@@@@@@@@@@@@@@@@@@@@++  ##@@@@@@@@@@@@    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  ..@@@@@@@@
+@@@@@@@@@@  ..@@@@@@@@@@@@@@@@@@@@@@@@@@##  ..@@@@@@@@@@@@@@##  ..@@@@@@@@@@@@@@@@@@@@@@@@@@##  ##@@@@@@@@
+@@@@@@@@@@++  ++@@@@@@@@@@@@@@@@@@@@@@##    @@@@@@@@@@@@@@@@@@++  ++@@@@@@@@@@@@@@@@@@@@@@@@  ..@@@@@@@@@@
+@@@@@@@@@@@@..  ++@@@@@@@@@@@@@@@@@@++    @@@@@@@@@@@@@@@@@@@@@@++  ..##@@@@@@@@@@@@@@@@##  ..@@@@@@@@@@@@
+@@@@@@@@@@@@@@++    ..++++####++..    ..@@@@@@@@@@@@@@@@@@@@@@@@@@##      ++++####++..    ++@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@++..            ..##@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@##..          ..++@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+## Suppressing Errors
+The script suppresses error messages to ensure a smooth operation:
+
+```powershell
+
+catch {
+    # Suppress error messages by continuing silently
+    continue
+}
+```
+## Exporting Data
+The data is exported to a CSV file with a date stamp for easy record-keeping:
+
+```powershell
+
+$currentDate = Get-Date -Format "yyyy-MM-dd"
+$outputFile = "UserMfaPhoneNumbers_$currentDate.csv"
+```
+
+## License
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Contact
+For further inquiries, visit the [ThatLazyAdmin](http://www.thatlazyadmin.com) Blog

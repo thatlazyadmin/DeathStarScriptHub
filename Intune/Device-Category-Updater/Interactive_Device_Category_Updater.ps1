@@ -49,6 +49,7 @@ Write-Output "Retrieved members: $($members.Count)"
 
 # Initialize an array to keep track of updated devices
 $updatedDevices = @()
+$nonManagedDevices = @()
 
 # Update device category for each device
 foreach ($member in $members) {
@@ -75,7 +76,15 @@ foreach ($member in $members) {
             }
         }
     } catch {
-        Write-Output "Failed to update device ${deviceName} (ID: ${deviceId}): $_"
+        if ($_.Exception.Response.StatusCode -eq 404) {
+            Write-Output "Device ${deviceName} (ID: ${deviceId}) is not a managed device."
+            $nonManagedDevices += @{
+                Name = $deviceName
+                ID = $deviceId
+            }
+        } else {
+            Write-Output "Failed to update device ${deviceName} (ID: ${deviceId}): $_"
+        }
     }
 }
 
@@ -85,6 +94,12 @@ if ($updatedDevices.Count -gt 0) {
     $updatedDevices | ForEach-Object { Write-Output "Name: $($_.Name), ID: $($_.ID), New Category: $($_.NewCategory)" }
 } else {
     Write-Output "No devices were updated."
+}
+
+# Output the list of non-managed devices
+if ($nonManagedDevices.Count -gt 0) {
+    Write-Output "The following devices are not managed:"
+    $nonManagedDevices | ForEach-Object { Write-Output "Name: $($_.Name), ID: $($_.ID)" }
 }
 
 # Disconnect the session

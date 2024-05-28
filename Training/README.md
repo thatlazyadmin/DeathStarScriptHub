@@ -1,32 +1,36 @@
-###Microsoft Multi-Tenant GitHub README
-This repository provides resources, scripts, and documentation to assist in managing Microsoft Multi-Tenant environments, focusing on the configuration, synchronization, and overall management across multiple organizations. Below is a breakdown of the content and links to further information.
+# Microsoft Multi-Tenant Management
 
-###Overview of Multi-Tenant Organizations
-Microsoft Multi-Tenant environments allow multiple organizations to use shared resources efficiently, ensuring operational continuity and security compliance. Learn more about the concept and benefits of Multi-Tenant organizations:
+Welcome to the GitHub repository for Microsoft Multi-Tenant Management! This repository offers tools, scripts, and documentation designed to support the setup, configuration, and management of multi-tenant environments across various Microsoft services.
 
-Multi-Tenant Organization Overview
-Detailed Overview of Multi-Tenant Organizations
+## Overview
 
-###Configuration
-Setting up and configuring a multi-tenant environment requires careful planning and execution. This section includes PowerShell scripts and guidelines for initial setup and configuration:
+Multi-tenant architecture allows multiple parties to use shared technology resources securely and efficiently. For more information on what multi-tenant organizations entail and their advantages, check out the following resources:
 
-Configuring Multi-Tenant Organizations
-Setting Up a Multi-Tenant Organization for Microsoft 365
+- [Multi-Tenant Organization Overview](https://learn.microsoft.com/en-us/entra/identity/multi-tenant-organizations/multi-tenant-organization-overview)
+- [Detailed Overview of Multi-Tenant Organizations](https://learn.microsoft.com/en-us/entra/identity/multi-tenant-organizations/overview)
 
-###User Synchronization
-User synchronization is crucial for maintaining up-to-date user information across tenants. The following documents and scripts guide the synchronization process:
+## Configuration
 
-Synchronizing Users in Multi-Tenant Organizations
-Configuring Cross-Tenant Synchronization
+Proper configuration of a multi-tenant environment is crucial. Below you will find resources and PowerShell scripts that guide you through configuring your multi-tenant setup:
 
-###Contribution
-Contributions to this repository are welcome! Whether it's improving the scripts, expanding the documentation, or fixing bugs, your input is valuable. Please follow the standard procedures for contributing to this GitHub repository.
+- [Configuring Multi-Tenant Organizations via PowerShell](https://learn.microsoft.com/en-us/entra/identity/multi-tenant-organizations/multi-tenant-organization-configure-graph?tabs=ms-powershell)
+- [Setting Up Multi-Tenant Organization for Microsoft 365](https://learn.microsoft.com/en-us/microsoft-365/enterprise/set-up-multi-tenant-org?view=o365-worldwide)
 
-###Licensing
-The scripts and documentation provided in this repository are released under the MIT License. See the LICENSE file in the repository for more details.
+## User Synchronization
 
-###Support
-If you encounter issues or have questions about setting up or managing your multi-tenant environment, please open an issue in the GitHub repository. Our team or community members will provide support and guidance.
+Maintaining a consistent and synchronized user database is essential in multi-tenant architectures. The following links provide information and tools for user synchronization across tenants:
 
-This README aims to provide a comprehensive guide for managing Microsoft Multi-Tenant environments with the help of well-structured resources and community-driven support.
+- [Synchronizing Users Across Multi-Tenant Orgs](https://learn.microsoft.com/en-us/microsoft-365/enterprise/sync-users-multi-tenant-orgs?view=o365-worldwide)
+- [Configuring Cross-Tenant Synchronization](https://learn.microsoft.com/en-us/entra/identity/multi-tenant-organizations/cross-tenant-synchronization-configure)
 
+## Contributing
+
+We welcome contributions to this project! If you have suggestions or improvements, feel free to fork this repository, make your changes, and submit a pull request. For more details, please read our contributing guidelines.
+
+## License
+
+The materials and scripts in this repository are available under the MIT License. For more details, see the LICENSE file.
+
+## Support
+
+For questions, issues, or support with setting up or managing your multi-tenant environment, please open an issue in this repository. Our community will help you find a solution.

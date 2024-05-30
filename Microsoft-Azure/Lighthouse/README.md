@@ -93,8 +93,8 @@ foreach ($sub in $Subs) {
 }
 
 # End of script
-'''
-## Conclusion
+```
+### Conclusion
 This script is a powerful tool for administrators and managed service providers who need to deploy Azure Lighthouse configurations across multiple subscriptions efficiently. By leveraging automation, this script ensures a consistent and error-free deployment process, enhancing operational efficiency and scalability.
 
 For more information and other useful scripts, visit That Lazy Admin.

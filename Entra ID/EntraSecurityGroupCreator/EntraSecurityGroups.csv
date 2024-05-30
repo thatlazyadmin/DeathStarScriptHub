@@ -1,0 +1,5 @@
+GroupName,Description,RoleMember,IsMember
+"Finance Team","Group for Finance Department","ROLE_FINANCE;ROLE_ACCOUNTING","MEMBER_FINANCE"
+"HR Team","Group for Human Resources","ROLE_HR;ROLE_RECRUITMENT","MEMBER_HR"
+"IT Support","Group for IT Support Staff","ROLE_IT_SUPPORT;ROLE_NETWORK","MEMBER_IT"
+"Marketing Team","Group for Marketing Department","ROLE_MARKETING;ROLE_SALES","MEMBER_MARKETING"

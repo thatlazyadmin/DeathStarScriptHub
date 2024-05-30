@@ -8,11 +8,18 @@ The Microsoft Azure CIS Compliance Checker is a PowerShell script designed to ev
 
 As cloud environments grow more complex, maintaining security compliance becomes increasingly challenging. This script aims to simplify and automate the process of checking Azure subscriptions against critical security controls defined by the CIS benchmarks. By running this script, you can quickly identify compliance gaps and take necessary actions to secure your Azure resources.
 
+## Screenshots
+**Running the Script**
+
+**Export Report**
+
+
+
 ## How to Run the Script
 
 1. **Clone the Repository**:
     ```sh
-    git clone https://github.com/yourusername/AzureCISComplianceChecker.git
+    git clone https://github.com/thatlazyadmin/Microsoft-Azure/CIS-Assessment/AzureCISChecker.git
     cd AzureCISComplianceChecker
     ```
 
@@ -28,6 +35,11 @@ As cloud environments grow more complex, maintaining security compliance becomes
 
 4. **View the Results**:
     The script will output the compliance status for each control directly in the terminal. Additionally, the results will be exported to an Excel file named `AzureCISComplianceReport.xlsx` in the same directory.
+
+## Understanding Compliance Status
+
+- **Green**: Indicates that the control is compliant.
+- **Red**: Indicates that the control is not compliant and requires attention.
 
 ## Controls Being Checked
 
@@ -69,6 +81,10 @@ The script checks the following CIS controls:
 ### App Service
 - **9.1** Ensure App Service Authentication is set up for apps in Azure App Service
 - **9.2** Ensure Web App redirects all HTTP traffic to HTTPS in Azure App Service
+
+## Future Updates
+
+More checks and controls will be added in the next version of the script to enhance its coverage and utility.
 
 ## Notes
 Created by: Shaun Hardneck  

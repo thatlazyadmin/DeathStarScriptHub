@@ -7,7 +7,7 @@ This PowerShell script, `Deploy-AzureLighthouseToAllSubscriptions.ps1`, is desig
 ## Purpose
 
 Created by: Shaun Hardneck  
-Blog: [That Lazy Admin](https://www.thatlazyadmin.com)
+Blog: [ThatLazyAdmin](https://www.thatlazyadmin.com)
 
 The primary purpose of this script is to streamline the process of deploying Azure Lighthouse across multiple subscriptions. Azure Lighthouse enables cross-tenant management, allowing service providers to manage resources in their customers' environments at scale. By automating this deployment, we ensure consistency, reduce manual errors, and save time.
 
@@ -97,6 +97,6 @@ foreach ($sub in $Subs) {
 ### Conclusion
 This script is a powerful tool for administrators and managed service providers who need to deploy Azure Lighthouse configurations across multiple subscriptions efficiently. By leveraging automation, this script ensures a consistent and error-free deployment process, enhancing operational efficiency and scalability.
 
-For more information and other useful scripts, visit That Lazy Admin.
+For more information and other useful scripts, visit [ThatLazyAdmin](https://www.thatlazyadmin.com).
 
 This `README.md` file provides a comprehensive overview of the script, its purpose, benefits, usage instructions, and the actual script details. It is designed to help users understand the importance and functionality of the script quickly.

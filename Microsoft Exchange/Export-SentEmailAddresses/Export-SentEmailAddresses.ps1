@@ -1,13 +1,7 @@
 # Permanent Banner
-Write-Host "================================================================"
-Write-Host " URBANNERD CONSULTING - Export Sent Email Addresses Script"
-Write-Host "================================================================"
-
-# Function to select subscription
-Function Select-Subscription {
-    Write-Host "Returning to subscription selection..."
-    # Your subscription selection logic here
-}
+Write-Host "================================================================" -ForegroundColor Green
+Write-Host " THATLAZYADMIN - Export Sent Email Addresses Script"              -ForegroundColor Green
+Write-Host "================================================================" -ForegroundColor Green
 
 # Function to export sent email addresses
 Function Export-SentEmailAddresses {
@@ -17,15 +11,21 @@ Function Export-SentEmailAddresses {
         [datetime]$EndDate
     )
 
+    # Check if StartDate is within the allowed range (not older than 10 days)
+    if (($StartDate -lt (Get-Date).AddDays(-10))) {
+        Write-Host "Invalid StartDate value. The StartDate can't be older than 10 days from today." -ForegroundColor Red
+        return
+    }
+
     # Connect to Exchange Online
-    Write-Host "Connecting to Exchange Online..."
-    $UserCredential = Get-Credential
+    Write-Host "Connecting to Exchange Online..." -ForegroundColor Cyan
 
     Try {
-        Connect-ExchangeOnline -ShowBanner
+        Import-Module ExchangeOnlineManagement -ErrorAction SilentlyContinue
+        Connect-ExchangeOnline -ShowProgress $false -ErrorAction SilentlyContinue
     }
     Catch {
-        Write-Host "Error connecting to Exchange Online: $_"
+        Write-Host "Error connecting to Exchange Online: $_" -ForegroundColor Red
         Return
     }
 
@@ -33,6 +33,7 @@ Function Export-SentEmailAddresses {
     $Recipients = @()
 
     Try {
+        Write-Host "Searching sent items..." -ForegroundColor Cyan
         $Messages = Get-MessageTrace -SenderAddress $UserEmailAddress -StartDate $StartDate -EndDate $EndDate
         foreach ($Message in $Messages) {
             $RecipientAddresses = $Message.Recipients
@@ -45,17 +46,22 @@ Function Export-SentEmailAddresses {
         }
     }
     Catch {
-        Write-Host "Error retrieving message trace: $_"
+        Write-Host "Error retrieving message trace: $_" -ForegroundColor Red
         Disconnect-ExchangeOnline -Confirm:$false
         Return
     }
 
     # Export to CSV
-    Write-Host "Exporting results to CSV..."
-    $ExportFilePath = "$env:USERPROFILE\Desktop\SentEmailAddresses_$($UserEmailAddress.Replace('@','_'))_$($StartDate.ToString('yyyyMMdd'))_$($EndDate.ToString('yyyyMMdd')).csv"
-    $Recipients | Export-Csv -Path $ExportFilePath -NoTypeInformation
-
-    Write-Host "Export completed: $ExportFilePath"
+    Write-Host "Exporting results to CSV..." -ForegroundColor Cyan
+    Try {
+        $ExportFilePath = "$PSScriptRoot\SentEmailAddresses_$($UserEmailAddress.Replace('@','_'))_$($StartDate.ToString('yyyyMMdd'))_$($EndDate.ToString('yyyyMMdd')).csv"
+        $Recipients | Export-Csv -Path $ExportFilePath -NoTypeInformation
+        Write-Host "Export completed: $ExportFilePath" -ForegroundColor Green
+    }
+    Catch {
+        Write-Host "An error occurred: $_" -ForegroundColor Red
+        Return
+    }
 
     # Disconnect from Exchange Online
     Disconnect-ExchangeOnline -Confirm:$false
@@ -75,6 +81,5 @@ Try {
     Export-SentEmailAddresses -UserEmailAddress $UserEmailAddress -StartDate $StartDateTime -EndDate $EndDateTime
 }
 Catch {
-    Write-Host "An error occurred: $_"
-    Select-Subscription
+    Write-Host "An error occurred: $_" -ForegroundColor Red
 }

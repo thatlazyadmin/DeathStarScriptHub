@@ -110,18 +110,6 @@ function Get-GroupDevices {
     }
 }
 
-# Function to get all managed devices in Intune
-function Get-ManagedDevices {
-    Try {
-        $managedDevices = Get-MgDeviceManagementManagedDevice -All
-        return $managedDevices
-    } Catch {
-        Write-Host "Failed to retrieve managed devices:" -ForegroundColor Red
-        Write-Host $_.Exception.Message -ForegroundColor Red
-        return @()
-    }
-}
-
 # Main script logic
 do {
     # Prompt for Group Object ID
@@ -132,14 +120,6 @@ do {
         $GroupDevices = Get-GroupDevices -GroupObjectId $groupObjectId
 
         if ($GroupDevices.Count -gt 0) {
-            # Get all managed devices
-            $ManagedDevices = Get-ManagedDevices
-
-            if ($ManagedDevices.Count -eq 0) {
-                Write-Host "No managed devices found in Intune." -ForegroundColor Red
-                continue
-            }
-
             # Get available categories
             $Categories = Get-MgDeviceManagementDeviceCategory | Select-Object DisplayName, Id
             $CategoryList = @()
@@ -169,45 +149,32 @@ do {
                 $DeviceID = $Device.id
                 $DeviceName = $Device.displayName
 
-                # Find the device in managed devices
-                $managedDevice = $ManagedDevices | Where-Object { $_.Id -eq $DeviceID }
-                if ($managedDevice) {
-                    $DeviceCategoryCurrent = $managedDevice.DeviceCategoryDisplayName
+                Write-Host "Changing category for device: $DeviceName ($DeviceID)" -ForegroundColor Yellow
+                Change-DeviceCategory -DeviceID $DeviceID -NewCategoryID $NewCategoryID
 
-                    if ($NewCategory -eq "$DeviceCategoryCurrent") {
-                        Write-Host "Category $NewCategory is already assigned to device: $DeviceName." -ForegroundColor Red
+                # Check if the assignment of the new category is completed
+                $Success = $false
+                $Attempts = 0
+                do {
+                    Start-Sleep -Seconds 10
+                    Try {
+                        $DeviceCategoryCurrent = (Get-MgDeviceManagementManagedDevice -ManagedDeviceId $DeviceID).DeviceCategoryDisplayName
+                    } Catch {
+                        Write-Host "Failed to retrieve updated category for device: $DeviceID" -ForegroundColor Red
+                        Write-Host $_.Exception.Message -ForegroundColor Red
                         continue
                     }
-
-                    Write-Host "Changing category for managed device: $DeviceName ($DeviceID)" -ForegroundColor Yellow
-                    Change-DeviceCategory -DeviceID $DeviceID -NewCategoryID $NewCategoryID
-
-                    # Check if the assignment of the new category is completed
-                    $Success = $false
-                    $Attempts = 0
-                    do {
-                        Start-Sleep -Seconds 10
-                        Try {
-                            $DeviceCategoryCurrent = (Get-MgDeviceManagementManagedDevice -ManagedDeviceId $DeviceID).DeviceCategoryDisplayName
-                        } Catch {
-                            Write-Host "Failed to retrieve updated category for device: $DeviceID" -ForegroundColor Red
-                            Write-Host $_.Exception.Message -ForegroundColor Red
-                            continue
-                        }
-                        if ($DeviceCategoryCurrent -eq $NewCategory) {
-                            $Success = $true
-                            Write-Host "Category of $DeviceName is changed to $NewCategory" -ForegroundColor Green
-                        } else {
-                            Write-Host "Please wait, assigning category to $DeviceName... (Attempt $($Attempts + 1))" -ForegroundColor Yellow
-                            $Attempts++
-                        }
-                    } until ($Success -or $Attempts -ge 6)  # Retry up to 6 times
-
-                    if (-not $Success) {
-                        Write-Host "Failed to change category for device: $DeviceName after multiple attempts." -ForegroundColor Red
+                    if ($DeviceCategoryCurrent -eq $NewCategory) {
+                        $Success = $true
+                        Write-Host "Category of $DeviceName is changed to $NewCategory" -ForegroundColor Green
+                    } else {
+                        Write-Host "Please wait, assigning category to $DeviceName... (Attempt $($Attempts + 1))" -ForegroundColor Yellow
+                        $Attempts++
                     }
-                } else {
-                    Write-Host "Device $DeviceName with ID $DeviceID is not found in managed devices." -ForegroundColor Red
+                } until ($Success -or $Attempts -ge 6)  # Retry up to 6 times
+
+                if (-not $Success) {
+                    Write-Host "Failed to change category for device: $DeviceName after multiple attempts." -ForegroundColor Red
                 }
             }
 

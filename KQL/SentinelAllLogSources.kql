@@ -1,0 +1,13 @@
+union withsource=SourceTable *
+| summarize by SourceTable, SourceSystem
+| distinct SourceTable, SourceSystem
+| order by SourceTable
+
+
+union withsource=SourceTableLabel *  // Use a different alias for the source table name
+| where TimeGenerated > ago(30d)  // Focusing on the last 30 days of data
+| summarize LastReceived = max(TimeGenerated) by SourceTableLabel  // Summarize to find the latest data by table
+| project SourceTableLabel, LastReceived  // Project the results with the new alias
+| order by LastReceived desc  // Order by the most recent data received
+
+

@@ -10,9 +10,10 @@ As cloud environments grow more complex, maintaining security compliance becomes
 
 ## Screenshots
 **Running the Script**
+![alt text](azcis-01-2.png)
 
 **Export Report**
-
+![alt text](azcis-02-1.png)
 
 
 ## How to Run the Script

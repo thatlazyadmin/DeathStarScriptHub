@@ -27,17 +27,29 @@ Ideal for organizations that handle frequent external communications, mitigating
 Shaun Hardneck - www.thatlazyadmin.com
 #>
 
-# Connect to Exchange Online PowerShell
-Connect-ExchangeOnline
+# Connect to Exchange Online PowerShell without warnings
+Connect-ExchangeOnline -showb
 
-# Define the disclaimer text with HTML styling
-$DisclaimerText = "<p style='font-size:14px; font-family:Calibri, sans-serif; color: #FF0000;'><strong>Caution:</strong> This email originated from outside of the organization. Do not click links or open attachments unless you recognize the sender and know the content is safe.</p>"
+try {
+     # Define the disclaimer text with HTML styling for spacing
+     $DisclaimerText = "<p style='font-size:14px; font-family:Calibri, sans-serif; color: #FF0000; margin-bottom:20px;'>"
+     $DisclaimerText += "<strong>Caution:</strong> This email originated from outside of the organization. "
+     $DisclaimerText += "Do not click links or open attachments unless you recognize the sender and know the content is safe.</p>"
+ 
+     # Create the mail flow rule with the updated disclaimer
+     New-TransportRule -Name "ExternalSenderAlert" `
+                       -FromScope NotInOrganization `
+                       -ApplyHtmlDisclaimerText $DisclaimerText `
+                       -ApplyHtmlDisclaimerLocation Prepend `
+                       -Priority 0
 
-# Create the mail flow rule
-New-TransportRule -Name "ExternalSenderAlert" -FromScope NotInOrganization -PrependDisclaimerText $DisclaimerText -PrependDisclaimerFallbackAction Wrap -Priority 0
-
-# Confirm the rule is created and enabled
-Get-TransportRule -Identity "ExternalSenderAlert"
-
-# Output success message
-Write-Host "The mail flow rule 'ExternalSenderAlert' has been successfully created and is now active."
+    # Check and confirm the rule is created and enabled
+    $rule = Get-TransportRule -Identity "ExternalSenderAlert"
+    if ($rule) {
+        Write-Host "The mail flow rule 'ExternalSenderAlert' has been successfully created and is now active." -ForegroundColor Green
+    } else {
+        Write-Host "Failed to verify the rule. Please check the rule configuration." -ForegroundColor Red
+    }
+} catch {
+    Write-Host "Failed to create the rule. Error: $($_.Exception.Message)" -ForegroundColor Red
+}

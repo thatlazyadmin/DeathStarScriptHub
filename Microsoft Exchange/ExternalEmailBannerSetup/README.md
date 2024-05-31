@@ -26,9 +26,19 @@ In today’s digital age, email communications are a common vector for phishing 
     Download and execute the SecureMailBannerInjector.ps1 script in PowerShell:
     ```powershell
 .\SecureMailBannerInjector.ps1
-`
+    ```
+
 ## Usage
 After running the script, it will automatically create a new mail flow rule in your Exchange Online environment. This rule appends a security warning banner to all emails received from external sources, highlighting their origin and reminding users to be cautious.
+
+## Screenshots
+
+**Email with Banner**
+![alt text](SecureBanner-01-2.png)
+
+**Executing the Script**
+
+![alt text](SecureBanner-02-1.png)
 
 ## Contributing
 Contributions to the SecureMailBannerInjector script are welcome. Please feel free to fork the repository, make changes, and submit pull requests. You can also open issues if you find bugs or have feature suggestions

@@ -92,3 +92,11 @@ Created by: Shaun Hardneck
 Blog: [That Lazy Admin](https://www.thatlazyadmin.com)
 
 This script is intended for educational and informational purposes only. Please review and test thoroughly before using it in a production environment.
+
+## Contact
+For any issues or contributions, please reach out to Shaun Hardneck at Shaun@thatlazyadmin.com
+
+## Collaboration
+If you're interested in collaborating on this project or have suggestions for improvements, please contact Shaun Hardneck. We welcome contributions from the community to make this script even more robust and comprehensive. You can reach out via email at Shaun@thatlazyadmin.com or connect through [ThatLazyAdmin](https://www.thatlazyadmin.com).
+
+Let's work together to enhance Azure security compliance and streamline the review process!

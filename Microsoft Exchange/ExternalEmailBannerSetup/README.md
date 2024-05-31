@@ -25,7 +25,7 @@ In today’s digital age, email communications are a common vector for phishing 
 2. **Run the Script**
     Download and execute the SecureMailBannerInjector.ps1 script in PowerShell:
     ```powershell
-.\SecureMailBannerInjector.ps1
+    .\SecureMailBannerInjector.ps1
     ```
 
 ## Usage
@@ -34,6 +34,7 @@ After running the script, it will automatically create a new mail flow rule in y
 ## Screenshots
 
 **Email with Banner**
+
 ![alt text](SecureBanner-01-2.png)
 
 **Executing the Script**

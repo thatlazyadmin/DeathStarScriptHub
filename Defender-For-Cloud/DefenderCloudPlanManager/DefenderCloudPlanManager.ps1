@@ -9,18 +9,34 @@ Shaun Hardneck
 www.thatlazyadmin.com
 #>
 
+function Show-Banner {
+    $banner = @"
+    __   __  _______  _______  _______   ______   _______  __    _  ______   _______  ______   
+    |  |_|  ||       ||       ||       | |      | |       ||  |  | ||      | |       ||    _ |  
+    |       ||  _____||    ___||_     _| |  _    ||    ___||   |_| ||  _    ||    ___||   | ||  
+    |       || |_____ |   |___   |   |   | | |   ||   |___ |       || | |   ||   |___ |   |_||_ 
+    |       ||_____  ||    ___|  |   |   | |_|   ||    ___||  _    || |_|   ||    ___||    __  |
+    | ||_|| | _____| ||   |      |   |   |       ||   |___ | | |   ||       ||   |___ |   |  | |
+    |_|   |_||_______||___|      |___|   |______| |_______||_|  |__||______| |_______||___|  |_|
+    
+"@
+    Write-Host $banner -ForegroundColor Cyan
+}
+
 function Connect-DefenderForCloud {
     Install-Module -Name Az -Scope CurrentUser -Force -AllowClobber
     Install-Module -Name Az.Security -Scope CurrentUser -Force -AllowClobber
+    Install-Module -Name ImportExcel -Scope CurrentUser -Force -AllowClobber
     Import-Module Az.Security
+    Import-Module ImportExcel
 
-    Connect-AzAccount -UseDeviceAuthentication
-    $subscriptions = Get-AzSubscription
+    Connect-AzAccount -UseDeviceAuthentication -ErrorAction SilentlyContinue
+    $subscriptions = Get-AzSubscription -ErrorAction SilentlyContinue
 
     $report = @()
     foreach ($sub in $subscriptions) {
-        Select-AzSubscription -SubscriptionId $sub.Id
-        $defenderStatus = Get-AzSecurityPricing
+        Select-AzSubscription -SubscriptionId $sub.Id -ErrorAction SilentlyContinue
+        $defenderStatus = Get-AzSecurityPricing -ErrorAction SilentlyContinue
         $report += [PSCustomObject]@{
             SubscriptionId = $sub.Id
             SubscriptionName = $sub.Name
@@ -32,84 +48,87 @@ function Connect-DefenderForCloud {
 }
 
 function Enable-DefenderPlans {
-    $subscriptions = Get-AzSubscription
+    $subscriptions = Get-AzSubscription -ErrorAction SilentlyContinue
 
     foreach ($sub in $subscriptions) {
-        Select-AzSubscription -SubscriptionId $sub.Id
+        Select-AzSubscription -SubscriptionId $sub.Id -ErrorAction SilentlyContinue
         $plans = @('Defender for Servers', 'Defender for Storage', 'Defender for SQL', 'Defender for Containers', 'Defender for App Service', 'Defender for Key Vault', 'Defender for Resource Manager', 'Defender for DNS')
         
         foreach ($plan in $plans) {
-            Enable-AzSecurityPricing -PricingTier 'Standard' -Name $plan
+            Enable-AzSecurityPricing -PricingTier 'Standard' -Name $plan -ErrorAction SilentlyContinue
         }
 
-        Write-Output "Enabled all Defender plans for subscription: $($sub.Name)"
+        Write-Host "Enabled all Defender plans for subscription: $($sub.Name)" -ForegroundColor Green
     }
 }
 
 function Selective-EnableDefenderPlans {
     $subscription = Select-Subscription
-    Select-AzSubscription -SubscriptionId $subscription.Id
+    Select-AzSubscription -SubscriptionId $subscription.Id -ErrorAction SilentlyContinue
 
     $plans = @('Defender for Servers', 'Defender for Storage', 'Defender for SQL', 'Defender for Containers', 'Defender for App Service', 'Defender for Key Vault', 'Defender for Resource Manager', 'Defender for DNS')
-    Write-Output "Available Plans: "
-    $plans | ForEach-Object { Write-Output $_ }
+    Write-Host "Available Plans: " -ForegroundColor Yellow
+    $plans | ForEach-Object { Write-Host $_ -ForegroundColor Yellow }
     $selectedPlans = Read-Host "Enter the plans to enable (comma-separated)"
 
     foreach ($plan in $selectedPlans.Split(',')) {
-        Enable-AzSecurityPricing -PricingTier 'Standard' -Name $plan.Trim()
-        Write-Output "Enabled $plan for Subscription: $($subscription.Name)"
+        Enable-AzSecurityPricing -PricingTier 'Standard' -Name $plan.Trim() -ErrorAction SilentlyContinue
+        Write-Host "Enabled $plan for Subscription: $($subscription.Name)" -ForegroundColor Green
     }
 }
 
 function Onboard-DefenderForCloud {
     $subscription = Select-Subscription
-    Select-AzSubscription -SubscriptionId $subscription.Id
+    Select-AzSubscription -SubscriptionId $subscription.Id -ErrorAction SilentlyContinue
 
-    $workspaces = Get-AzOperationalInsightsWorkspace
-    Write-Output "Available Log Analytics Workspaces:"
-    $workspaces | ForEach-Object { Write-Output "$($_.Name) - $($_.ResourceId)" }
+    $workspaces = Get-AzOperationalInsightsWorkspace -ErrorAction SilentlyContinue
+    Write-Host "Available Log Analytics Workspaces:" -ForegroundColor Yellow
+    $workspaces | ForEach-Object { Write-Host "$($_.Name) - $($_.ResourceId)" -ForegroundColor Yellow }
     $workspaceId = Read-Host "Enter the Resource ID of the workspace"
 
     $securityContactEmail = Read-Host "Enter Security Contact Email"
 
-    Set-AzContext -Subscription $subscription.Id
-    Register-AzResourceProvider -ProviderNamespace 'Microsoft.Security'
-    Set-AzSecurityPricing -Name "VirtualMachines" -PricingTier "Standard"
-    Set-AzSecurityWorkspaceSetting -Name "default" -Scope "/subscriptions/$($subscription.Id)" -WorkspaceId $workspaceId
-    Set-AzSecurityAutoProvisioningSetting -Name "default" -EnableAutoProvision
-    Set-AzSecurityContact -Name "default1" -Email $securityContactEmail -AlertAdmin -NotifyOnAlert
-    Register-AzResourceProvider -ProviderNamespace 'Microsoft.PolicyInsights'
+    Set-AzContext -Subscription $subscription.Id -ErrorAction SilentlyContinue
+    Register-AzResourceProvider -ProviderNamespace 'Microsoft.Security' -ErrorAction SilentlyContinue
+    Set-AzSecurityPricing -Name "VirtualMachines" -PricingTier "Standard" -ErrorAction SilentlyContinue
+    Set-AzSecurityWorkspaceSetting -Name "default" -Scope "/subscriptions/$($subscription.Id)" -WorkspaceId $workspaceId -ErrorAction SilentlyContinue
+    Set-AzSecurityAutoProvisioningSetting -Name "default" -EnableAutoProvision -ErrorAction SilentlyContinue
+    Set-AzSecurityContact -Name "default1" -Email $securityContactEmail -AlertAdmin -NotifyOnAlert -ErrorAction SilentlyContinue
+    Register-AzResourceProvider -ProviderNamespace 'Microsoft.PolicyInsights' -ErrorAction SilentlyContinue
     $Policy = Get-AzPolicySetDefinition | Where-Object {$_.Properties.displayName -eq 'Microsoft cloud security benchmark'}
-    New-AzPolicyAssignment -Name 'Microsoft cloud security benchmark' -PolicySetDefinition $Policy -Scope "/subscriptions/$($subscription.Id)"
+    New-AzPolicyAssignment -Name 'Microsoft cloud security benchmark' -PolicySetDefinition $Policy -Scope "/subscriptions/$($subscription.Id)" -ErrorAction SilentlyContinue
 
-    Write-Output "Successfully onboarded Microsoft Defender for Cloud for subscription: $($subscription.Name)"
+    Write-Host "Successfully onboarded Microsoft Defender for Cloud for subscription: $($subscription.Name)" -ForegroundColor Green
 }
 
 function Select-Subscription {
-    $subscriptions = Get-AzSubscription
-    Write-Output "Available Subscriptions:"
-    $subscriptions | ForEach-Object { Write-Output "$($_.SubscriptionName) - $($_.Id)" }
+    $subscriptions = Get-AzSubscription -ErrorAction SilentlyContinue
+    Write-Host "Available Subscriptions:" -ForegroundColor Yellow
+    $subscriptions | ForEach-Object { Write-Host "$($_.SubscriptionName) - $($_.Id)" -ForegroundColor Yellow }
     $subscriptionId = Read-Host "Enter the Subscription ID"
     return $subscriptions | Where-Object { $_.Id -eq $subscriptionId }
 }
 
 function Deploy-DefenderForCloudAcrossAll {
-    $subscriptions = Get-AzSubscription
+    $subscriptions = Get-AzSubscription -ErrorAction SilentlyContinue
 
     foreach ($sub in $subscriptions) {
-        Select-AzSubscription -SubscriptionId $sub.Id
+        Select-AzSubscription -SubscriptionId $sub.Id -ErrorAction SilentlyContinue
         Onboard-DefenderForCloud
     }
 }
 
 function Show-Menu {
+    Clear-Host
+    Show-Banner
+
     do {
-        Write-Output "1: Generate Defender for Cloud Status Report"
-        Write-Output "2: Enable Defender Plans Across All Subscriptions"
-        Write-Output "3: Selectively Enable Defender Plans"
-        Write-Output "4: Onboard Defender for Cloud"
-        Write-Output "5: Deploy Defender for Cloud Across All Subscriptions"
-        Write-Output "Q: Quit"
+        Write-Host "1: Generate Defender for Cloud Status Report" -ForegroundColor Cyan
+        Write-Host "2: Enable Defender Plans Across All Subscriptions" -ForegroundColor Cyan
+        Write-Host "3: Selectively Enable Defender Plans" -ForegroundColor Cyan
+        Write-Host "4: Onboard Defender for Cloud" -ForegroundColor Cyan
+        Write-Host "5: Deploy Defender for Cloud Across All Subscriptions" -ForegroundColor Cyan
+        Write-Host "Q: Quit" -ForegroundColor Cyan
         $option = Read-Host "Please select an option"
 
         switch ($option) {
@@ -119,7 +138,7 @@ function Show-Menu {
             '4' { Onboard-DefenderForCloud }
             '5' { Deploy-DefenderForCloudAcrossAll }
             'Q' { return }
-            default { Write-Output "Invalid option, please try again." }
+            default { Write-Host "Invalid option, please try again." -ForegroundColor Red }
         }
     } while ($option -ne 'Q')
 }

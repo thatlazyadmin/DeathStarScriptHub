@@ -11,25 +11,41 @@ www.thatlazyadmin.com
 
 function Show-Banner {
     $banner = @"
-    __   __  _______  _______  _______   ______   _______  __    _  ______   _______  ______   
-    |  |_|  ||       ||       ||       | |      | |       ||  |  | ||      | |       ||    _ |  
-    |       ||  _____||    ___||_     _| |  _    ||    ___||   |_| ||  _    ||    ___||   | ||  
-    |       || |_____ |   |___   |   |   | | |   ||   |___ |       || | |   ||   |___ |   |_||_ 
-    |       ||_____  ||    ___|  |   |   | |_|   ||    ___||  _    || |_|   ||    ___||    __  |
-    | ||_|| | _____| ||   |      |   |   |       ||   |___ | | |   ||       ||   |___ |   |  | |
-    |_|   |_||_______||___|      |___|   |______| |_______||_|  |__||______| |_______||___|  |_|
-    
+  ______   _______  _______  _______  __    _  ______   _______  ______      _______  _______  ______      _______  ___      _______  __   __  ______  
+ |      | |       ||       ||       ||  |  | ||      | |       ||    _ |    |       ||       ||    _ |    |       ||   |    |       ||  | |  ||      | 
+ |  _    ||    ___||    ___||    ___||   |_| ||  _    ||    ___||   | ||    |    ___||   _   ||   | ||    |       ||   |    |   _   ||  | |  ||  _    |
+ | | |   ||   |___ |   |___ |   |___ |       || | |   ||   |___ |   |_||_   |   |___ |  | |  ||   |_||_   |       ||   |    |  | |  ||  |_|  || | |   |
+ | |_|   ||    ___||    ___||    ___||  _    || |_|   ||    ___||    __  |  |    ___||  |_|  ||    __  |  |      _||   |___ |  |_|  ||       || |_|   |
+ |       ||   |___ |   |    |   |___ | | |   ||       ||   |___ |   |  | |  |   |    |       ||   |  | |  |     |_ |       ||       ||       ||       |
+ |______| |_______||___|    |_______||_|  |__||______| |_______||___|  |_|  |___|    |_______||___|  |_|  |_______||_______||_______||_______||______| 
 "@
     Write-Host $banner -ForegroundColor Cyan
 }
 
-function Connect-DefenderForCloud {
-    Install-Module -Name Az -Scope CurrentUser -Force -AllowClobber
-    Install-Module -Name Az.Security -Scope CurrentUser -Force -AllowClobber
-    Install-Module -Name ImportExcel -Scope CurrentUser -Force -AllowClobber
+function Check-Module {
+    param (
+        [string]$ModuleName
+    )
+
+    if (-not (Get-Module -ListAvailable -Name $ModuleName)) {
+        Write-Host "Module $ModuleName is not installed. Installing..." -ForegroundColor Yellow
+        Install-Module -Name $ModuleName -Scope CurrentUser -Force -AllowClobber
+    }
+    else {
+        Write-Host "Module $ModuleName is already installed." -ForegroundColor Green
+    }
+}
+
+function Initialize-Script {
+    Check-Module -ModuleName 'Az'
+    Check-Module -ModuleName 'Az.Security'
+    Check-Module -ModuleName 'ImportExcel'
+
     Import-Module Az.Security
     Import-Module ImportExcel
+}
 
+function Connect-DefenderForCloud {
     Connect-AzAccount -UseDeviceAuthentication -ErrorAction SilentlyContinue
     $subscriptions = Get-AzSubscription -ErrorAction SilentlyContinue
 
@@ -143,5 +159,6 @@ function Show-Menu {
     } while ($option -ne 'Q')
 }
 
-# Execute the menu
+# Initialize and Execute the Menu
+Initialize-Script
 Show-Menu

@@ -2,8 +2,13 @@
 $bannerText = "=================== Microsoft Teams Channel Privacy Update Script ==================="
 Write-Host $bannerText -ForegroundColor Cyan
 
-# Import the Microsoft Graph module
-# Import-Module Microsoft.Graph
+# Attempt to import the necessary modules
+try {
+    Import-Module Microsoft.Graph.Teams -ErrorAction Stop
+} catch {
+    Write-Error "Failed to load Microsoft.Graph.Teams module. Please ensure it is installed."
+    exit
+}
 
 # Function to get available teams
 function Get-Teams {
@@ -44,7 +49,7 @@ function Update-ChannelPrivacy {
     } | ConvertTo-Json
 
     try {
-        Invoke-MgGraphRequest -Uri $uri -Method PATCH -Body $body
+        Invoke-MgGraphRequest -Uri $uri -Method PATCH -Body $body -ContentType "application/json"
         Write-Host "Channel privacy updated successfully." -ForegroundColor Green
     } catch {
         Write-Error "Failed to update channel privacy: $_" -ForegroundColor Red
@@ -53,7 +58,7 @@ function Update-ChannelPrivacy {
 
 # Main script logic
 Write-Host "Connecting to Microsoft Graph..." -ForegroundColor Yellow
-Connect-MgGraph -Scopes "ChannelMember.ReadWrite.All"
+Connect-MgGraph -Scopes "Group.ReadWrite.All", "ChannelMember.ReadWrite.All" -NoWelcome
 
 # Get available teams
 $teams = Get-Teams
@@ -69,12 +74,13 @@ for ($i = 0; $i -lt $teams.Count; $i++) {
 }
 
 # Prompt user to select a team
-$teamIndex = Read-Host "Select a team by number" 
-if ($teamIndex -lt 1 -or $teamIndex -gt $teams.Count) {
-    Write-Error "Invalid selection."
+$teamIndex = Read-Host "Select a team by number"
+[int]$teamIndexInt = 0
+if (-not [int]::TryParse($teamIndex, [ref]$teamIndexInt) -or $teamIndexInt -lt 1 -or $teamIndexInt -gt $teams.Count) {
+    Write-Error "Invalid selection. Please enter a valid number for the team."
     exit
 }
-$selectedTeam = $teams[$teamIndex - 1]
+$selectedTeam = $teams[$teamIndexInt - 1]
 
 # Get channels for the selected team
 $channels = Get-Channels -TeamId $selectedTeam.Id
@@ -91,16 +97,18 @@ for ($j = 0; $j -lt $channels.Count; $j++) {
 
 # Prompt user to select a channel
 $channelIndex = Read-Host "Select a channel by number"
-if ($channelIndex -lt 1 -or $channelIndex -gt $channels.Count) {
-    Write-Error "Invalid selection."
+[int]$channelIndexInt = 0
+if (-not [int]::TryParse($channelIndex, [ref]$channelIndexInt) -or $channelIndexInt -lt 1 -or $channelIndexInt -gt $channels.Count) {
+    Write-Error "Invalid selection. Please enter a valid number for the channel."
     exit
 }
-$selectedChannel = $channels[$channelIndex - 1]
+$selectedChannel = $channels[$channelIndexInt - 1]
 
 # Update channel privacy
 Update-ChannelPrivacy -TeamId $selectedTeam.Id -ChannelId $selectedChannel.Id
 
-Write-Host "=================== Script Completed ===================" -ForegroundColor Cyan
+Write-Host $bannerText -ForegroundColor Cyan # Re-display banner at the end for consistency
+Write-Host "Script execution completed." -ForegroundColor Cyan
 
 # Return to subscription selection prompt
 Invoke-Command -ScriptBlock {

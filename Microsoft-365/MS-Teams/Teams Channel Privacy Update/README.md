@@ -34,9 +34,9 @@ This option retrieves and displays all Teams that are currently set to public vi
 This option lists all Teams, allowing you to select a Team by its number. If the selected Team is public, you can confirm to change its visibility to private. If the Team is already private, no changes will be made.
 
 ## Running the Script
-- 1.	Open PowerShell.
-- 2.	Run the script.
-- 3.	Follow the on-screen prompts to select the environment and desired actions.
+1.	Open PowerShell.
+2.	Run the script.
+3.	Follow the on-screen prompts to select the environment and desired actions.
 
 ## Script Insights
 -	Environment Selection: The script supports connecting to different Microsoft Teams environments by using the -TeamsEnvironmentName parameter.
@@ -44,23 +44,23 @@ This option lists all Teams, allowing you to select a Team by its number. If the
 -	Visibility Management: The script focuses on changing the visibility of Teams, which in turn affects the visibility of all channels within those Teams.
 
 ### Example Usage
-- 1.	Select Environment:
+1.	Select Environment:
 
 # Select the environment to connect to:
-- 1. Commercial
-- 2. GCC
-- 3. GCCH
+1. Commercial
+2. GCC
+3. GCCH
 
 # Enter your choice:
-- 2.	Main Menu:
+2.	Main Menu:
 
 # Main Menu:
-- 1. List all Public Teams
-- 2. Change Team to Private
-- 0. Exit
+1. List all Public Teams
+2. Change Team to Private
+0. Exit
 
 # Enter your choice:
-- 3.	List Public Teams:
+3.	List Public Teams:
 
 Listing all public teams:
 Team1 - Visibility: Public

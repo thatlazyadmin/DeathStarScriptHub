@@ -16,8 +16,26 @@ Blog: www.thatlazyadmin.com
 #>
 
 function Connect-Teams {
-    Write-Host "Connecting to Microsoft Teams..." -ForegroundColor Yellow
-    Connect-MicrosoftTeams
+    param (
+        [string]$Environment
+    )
+
+    Write-Host "Connecting to Microsoft Teams ($Environment environment)..." -ForegroundColor Yellow
+    switch ($Environment) {
+        "Commercial" {
+            Connect-MicrosoftTeams
+        }
+        "GCC" {
+            Connect-MicrosoftTeams -TeamsEnvironmentName "UsGovDoD"
+        }
+        "GCCH" {
+            Connect-MicrosoftTeams -TeamsEnvironmentName "UsGovGCCHigh"
+        }
+        default {
+            Write-Host "Invalid environment specified." -ForegroundColor Red
+            exit
+        }
+    }
 }
 
 function List-PublicTeams {
@@ -92,5 +110,29 @@ function Show-Menu {
     }
 }
 
-Connect-Teams
+# Select environment and connect
+Write-Host "Select the environment to connect to:" -ForegroundColor Cyan
+Write-Host "1. Commercial" -ForegroundColor Cyan
+Write-Host "2. GCC" -ForegroundColor Cyan
+Write-Host "3. GCCH" -ForegroundColor Cyan
+$envChoice = Read-Host "Enter your choice"
+$environment = ""
+
+switch ($envChoice) {
+    "1" {
+        $environment = "Commercial"
+    }
+    "2" {
+        $environment = "GCC"
+    }
+    "3" {
+        $environment = "GCCH"
+    }
+    default {
+        Write-Host "Invalid choice, exiting script." -ForegroundColor Red
+        exit
+    }
+}
+
+Connect-Teams -Environment $environment
 Show-Menu

@@ -21,9 +21,9 @@ When you run the script, you will be prompted to select the environment you want
 ### 2. Main Menu
 
 After selecting the environment, you will see the main menu with the following options:
--	1. List all Public Teams: This option lists all Teams in the selected environment that are currently set to public visibility.
--	2. Change Team to Private: This option allows you to select a Team and change its visibility from public to private.
--	0. Exit: Exit the script.
+1. List all Public Teams: This option lists all Teams in the selected environment that are currently set to public visibility.
+2. Change Team to Private: This option allows you to select a Team and change its visibility from public to private.
+0. Exit: Exit the script.
 
 ## 3. List Public Teams
 
@@ -62,20 +62,20 @@ This option lists all Teams, allowing you to select a Team by its number. If the
 # Enter your choice:
 3.	List Public Teams:
 
-Listing all public teams:
+# Listing all public teams:
 Team1 - Visibility: Public
 Team2 - Visibility: Public
 
 4.	Change Team Visibility:
 
-Listing all Teams:
+# Listing all Teams:
 1. Team1 - Visibility: Public
 2. Team2 - Visibility: Private
 
-Select a Team to change visibility by number (Enter '0' to skip):
-You selected Team: Team1 with current visibility: Public
-This Team is Public. Do you want to change it to Private? (Y/N):
-Setting Team 'Team1' to Private... Done!
+# Select a Team to change visibility by number (Enter '0' to skip):
+# You selected Team: Team1 with current visibility: Public
+# This Team is Public. Do you want to change it to Private? (Y/N):
+# Setting Team 'Team1' to Private... Done!
 
 
 

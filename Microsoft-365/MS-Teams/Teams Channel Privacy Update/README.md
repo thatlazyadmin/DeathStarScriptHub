@@ -63,8 +63,8 @@ This option lists all Teams, allowing you to select a Team by its number. If the
 3.	List Public Teams:
 
 # Listing all public teams:
-Team1 - Visibility: Public
-Team2 - Visibility: Public
+1. Team1 - Visibility: Public
+2. Team2 - Visibility: Public
 
 4.	Change Team Visibility:
 
@@ -72,10 +72,10 @@ Team2 - Visibility: Public
 1. Team1 - Visibility: Public
 2. Team2 - Visibility: Private
 
-# Select a Team to change visibility by number (Enter '0' to skip):
-# You selected Team: Team1 with current visibility: Public
-# This Team is Public. Do you want to change it to Private? (Y/N):
-# Setting Team 'Team1' to Private... Done!
+- Select a Team to change visibility by number (Enter '0' to skip):
+- You selected Team: Team1 with current visibility: Public
+- This Team is Public. Do you want to change it to Private? (Y/N):
+- Setting Team 'Team1' to Private... Done!
 
 
 

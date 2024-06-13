@@ -14,16 +14,16 @@ This PowerShell script allows administrators to update the privacy settings of M
 # 1. Connect to the Desired Environment
 
 When you run the script, you will be prompted to select the environment you want to connect to:
-# •	Commercial: The standard Microsoft Teams environment.
-# •	GCC: Government Community Cloud.
-# •	GCCH: GCC High.
+•	Commercial: The standard Microsoft Teams environment.
+•	GCC: Government Community Cloud.
+•	GCCH: GCC High.
 
 ### 2. Main Menu
 
 After selecting the environment, you will see the main menu with the following options:
-##### •	1. List all Public Teams: This option lists all Teams in the selected environment that are currently set to public visibility.
-##### •	2. Change Team to Private: This option allows you to select a Team and change its visibility from public to private.
-##### •	0. Exit: Exit the script.
+•	1. List all Public Teams: This option lists all Teams in the selected environment that are currently set to public visibility.
+•	2. Change Team to Private: This option allows you to select a Team and change its visibility from public to private.
+•	0. Exit: Exit the script.
 
 ## 3. List Public Teams
 

@@ -1,11 +1,35 @@
-# Required Modules
-Install-Module -Name Az -AllowClobber -Scope CurrentUser
+# Suppress Azure subscription warnings
+$ErrorActionPreference = "SilentlyContinue"
+
+# Function to check if a module is installed
+function Install-ModuleIfNeeded {
+    param (
+        [string]$ModuleName
+    )
+    if (-not (Get-Module -ListAvailable -Name $ModuleName)) {
+        Install-Module -Name $ModuleName -AllowClobber -Scope CurrentUser
+    }
+}
+
+# Check and import required modules
+Install-ModuleIfNeeded -ModuleName "Az"
+Install-ModuleIfNeeded -ModuleName "Az.Accounts"
+Install-ModuleIfNeeded -ModuleName "Az.Security"
+Install-ModuleIfNeeded -ModuleName "Az.Network"
+Install-ModuleIfNeeded -ModuleName "Az.OperationalInsights"
+Install-ModuleIfNeeded -ModuleName "Az.ResourceGraph"
+Install-ModuleIfNeeded -ModuleName "ImportExcel"
+
+Import-Module Az
 Import-Module Az.Accounts
 Import-Module Az.Security
 Import-Module Az.Network
 Import-Module Az.OperationalInsights
 Import-Module Az.ResourceGraph
-Import-Module ImportExcel -Force
+Import-Module ImportExcel
+
+# Suppress Azure subscription warnings
+$PSDefaultParameterValues['*:WarningAction'] = 'SilentlyContinue'
 
 # Connect to Azure
 Connect-AzAccount
@@ -47,6 +71,7 @@ $results = @()
 
 foreach ($subscription in $subscriptions) {
     Select-AzSubscription -SubscriptionId $subscription.Id
+    Write-Host "Checking subscription: $($subscription.Name)" -ForegroundColor Yellow
     foreach ($check in $checks) {
         try {
             $result = & $check.Check $subscription.Id
@@ -61,7 +86,7 @@ foreach ($subscription in $subscriptions) {
                 Color = $color
             }
             
-            Write-Host "$($subscription.Name) - $($check.Id) - $($check.Name): $status" -ForegroundColor $color
+            Write-Host "$($check.Id) - $($check.Name): $status" -ForegroundColor $color
         } catch {
             Write-Host "Error checking $($check.Id) - $($check.Name): $_" -ForegroundColor Red
             $results += [PSCustomObject]@{
@@ -75,7 +100,10 @@ foreach ($subscription in $subscriptions) {
     }
 }
 
-# Export results to Excel
-$results | Export-Excel -Path "./AzureDefenderForCloudFullReport.xlsx" -AutoSize -AutoFilter -BoldTopRow -ConditionalText @{ Condition = 'Implemented'; Color = 'Green' }, @{ Condition = 'Not Implemented'; Color = 'Red' }
+# Get the script directory
+$scriptDirectory = Split-Path -Parent $MyInvocation.MyCommand.Definition
 
-Write-Host "Report generated: AzureDefenderForCloudFullReport.xlsx"
+# Export results to Excel
+$results | Export-Excel -Path "$scriptDirectory\DefenderForCloudComplianceAudit.xlsx" -AutoSize -AutoFilter -BoldTopRow -ConditionalText @{ Condition = 'Implemented'; Color = 'Green' }, @{ Condition = 'Not Implemented'; Color = 'Red' }
+
+Write-Host "Report generated: $scriptDirectory\DefenderForCloudComplianceAudit.xlsx"

@@ -45,3 +45,6 @@ This script was created to streamline the process of managing table retention se
 ![alt text](Sentinel-03-1.png)
 ![alt text](Sentinel-01.png)
 ![alt text](Sentinel-02.png)
+
+## Video & Blog post 
+[Marcus Burnap MB Cloud Teck](https://mbcloudteck.substack.com/p/configuring-microsoft-sentinel-archive)

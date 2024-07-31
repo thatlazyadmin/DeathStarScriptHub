@@ -48,7 +48,7 @@ This PowerShell script audits the installation status of Microsoft Defender for 
   - `DefenderStatus`: The status of Microsoft Defender for Endpoint on the server.
 
 ## Screenshot Output
-Defender for Endpoint\Audit-DefenderforEndpoint_Deploy-To-(Win2016-2012R2)\DefenderEndpoint_Install_status.png
+![Script Output Screenshot](Defender for Endpoint/Audit-DefenderforEndpoint_Deploy-To-(Win2016-2012R2)/DefenderEndpoint_Install_status.png)
 
 ## License
 

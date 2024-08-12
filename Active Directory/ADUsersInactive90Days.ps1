@@ -5,7 +5,7 @@ Import-Module ActiveDirectory
 $Date90DaysAgo = (Get-Date).AddDays(-90)
 
 # Get AD users who haven't signed in the last 90 days
-$Users = Get-ADUser -Filter {LastLogonDate -lt $Date90DaysAgo -or LastLogonDate -eq $null} -Properties DisplayName, LastLogonDate, DistinguishedName | Where-Object { $_.Enabled -eq $true }
+$Users = Get-ADUser -Filter {LastLogonDate -lt $Date90DaysAgo} -Properties DisplayName, LastLogonDate, DistinguishedName | Where-Object { $_.Enabled -eq $true -and ($_.LastLogonDate -eq $null -or $_.LastLogonDate -lt $Date90DaysAgo) }
 
 # Select Username, DisplayName, Organizational Unit (OU), and LastLogonDate for each user
 $UserList = $Users | Select-Object @{Name="Username";Expression={$_.SamAccountName}}, 

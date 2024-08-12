@@ -1,0 +1,80 @@
+# Load required modules
+if (-not (Get-Module -ListAvailable -Name AzureAD.Standard.Preview)) {
+    Install-Module -Name AzureAD.Standard.Preview -Force -AllowClobber
+}
+
+Import-Module -Name AzureAD.Standard.Preview
+
+# Connect to Azure AD
+Connect-AzureAD
+
+# Define the policy name
+$policyName = "Lockdown Admin Portals"
+
+# Define the users to include and exclude
+$includeUsers = @("*") # Include all users
+$excludeRoles = @(
+    "62e90394-69f5-4237-9190-012177145e10", # Global Administrator
+    "fdd7a751-b60b-444a-984c-c97c17f7cfb0", # Application Administrator
+    "b0f54661-2d74-4c50-afa3-1ec803f12efe", # Authentication Administrator
+    "741f803b-c850-494e-b5df-cde7c675a1ca", # Billing Administrator
+    "0e81909d-77e8-4449-9537-f715b0125de8", # Cloud Application Administrator
+    "9d4b4ead-47e1-4bbd-82b7-01e82fa43f4a", # Conditional Access Administrator
+    "29232cdf-9323-42fd-ade2-1d097af3e4de", # Exchange Administrator
+    "62e90394-69f5-4237-9190-012177145e10", # Global Administrator
+    "e8611ab8-c189-46e8-94e1-60213ab1f814", # Global Reader
+    "729827e3-9c14-49f7-bb1b-9608f156bbb8", # Helpdesk Administrator
+    "7be44c8a-adaf-4e2a-84d6-ab2649e08a13", # Password Administrator
+    "0cea39ae-b95e-4d97-b9f4-08d0e55c48f0", # Privileged Authentication Administrator
+    "7e9ce7b9-4a03-4e9a-96bb-a5195d4c2a1d", # Privileged Role Administrator
+    "fb1c8493-542b-402a-8787-47f20d4f85c9", # Security Administrator
+    "5d6b6bb7-de71-4623-b4af-96380a352509", # SharePoint Administrator
+    "fe930be7-5e62-47db-91af-98c3a49a38b1"  # User Administrator
+)
+
+# Define the target applications
+$adminPortals = @(
+    "797f4846-ba00-4fd7-ba43-dac1f8f63013", # Azure portal
+    "00000002-0000-0ff1-ce00-000000000000", # Exchange admin center
+    "00000006-0000-0ff1-ce00-000000000000", # Microsoft 365 admin center
+    "cf6d9b1d-1f21-46b2-a17b-ae080bf28c0d", # Microsoft 365 Defender portal
+    "0000000c-0000-0000-c000-000000000000", # Microsoft Entra admin center
+    "0000000a-0000-0000-c000-000000000000", # Microsoft Intune admin center
+    "00000005-0000-0ff1-ce00-000000000000", # Microsoft Purview compliance portal
+    "00000007-0000-0000-c000-000000000000", # Power Platform admin center
+    "00000003-0000-0ff1-ce00-000000000000", # SharePoint admin center
+    "00000004-0000-0ff1-ce00-000000000000"  # Microsoft Teams admin center
+)
+
+# Create the Conditional Access policy
+$policy = @{
+    "displayName" = $policyName
+    "state" = "enabled"
+    "conditions" = @{
+        "users" = @{
+            "includeUsers" = $includeUsers
+            "excludeRoles" = $excludeRoles
+        }
+        "applications" = @{
+            "includeApplications" = $adminPortals
+        }
+    }
+    "grantControls" = @{
+        "operator" = "OR"
+        "builtInControls" = @("block")
+    }
+}
+
+# Convert policy to JSON format
+$policyJson = $policy | ConvertTo-Json -Depth 10
+
+# Obtain an authentication token for Microsoft Graph API
+$token = Get-AzureADToken
+
+# Set the policy to Report-only mode
+$policy["state"] = "reportOnly"
+
+# Create the Conditional Access policy in Report-only mode
+Invoke-RestMethod -Method Post -Uri "https://graph.microsoft.com/beta/identity/conditionalAccess/policies" -Headers @{ "Content-Type" = "application/json"; "Authorization" = "Bearer $($token.AccessToken)" } -Body $policyJson
+
+Write-Output "Conditional Access policy '$policyName' created in Report-only mode successfully."

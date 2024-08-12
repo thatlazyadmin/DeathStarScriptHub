@@ -1,0 +1,7 @@
+Domain,Status,Selector1CNAME,Selector2CNAME,Enabled
+sbc.larcai.com,Failed,selector1-sbc-larcai-com._domainkey.larchold.onmicrosoft.com,selector2-sbc-larcai-com._domainkey.larchold.onmicrosoft.com,FALSE
+larchold.com,Failed,selector1-larchold-com._domainkey.larchold.onmicrosoft.com,selector2-larchold-com._domainkey.larchold.onmicrosoft.com,FALSE
+larchold.onmicrosoft.com,Passed,selector1-larchold-onmicrosoft-com._domainkey.larchold.onmicrosoft.com,selector2-larchold-onmicrosoft-com._domainkey.larchold.onmicrosoft.com,TRUE
+aiforged.com,Passed,selector1-aiforged-com._domainkey.larchold.onmicrosoft.com,selector2-aiforged-com._domainkey.larchold.onmicrosoft.com,TRUE
+larcai.com,Passed,selector1-larcai-com._domainkey.larchold.onmicrosoft.com,selector2-larcai-com._domainkey.larchold.onmicrosoft.com,TRUE
+larcai.co.za,Failed,selector1-larcai-co-za._domainkey.larchold.onmicrosoft.com,selector2-larcai-co-za._domainkey.larchold.onmicrosoft.com,FALSE

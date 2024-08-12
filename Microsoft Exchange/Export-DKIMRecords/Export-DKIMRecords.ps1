@@ -12,25 +12,30 @@ if (-not (Get-Module -ListAvailable -Name ExchangeOnlineManagement)) {
 Import-Module ExchangeOnlineManagement
 
 # Connect to Exchange Online
-Write-Host "Connecting to Exchange Online..."
-$UserCredential = Get-Credential
-Connect-ExchangeOnline -UserPrincipalName $UserCredential.UserName -ShowProgress $true
+Write-Host "Connecting to Exchange Online..." -ForegroundColor Yellow
+Connect-ExchangeOnline -ShowProgress $true
 
 # Retrieve all DKIM records
-Write-Host "Retrieving DKIM records..."
-$dkimRecords = Get-DkimSigningConfig
+Write-Host "Retrieving DKIM records..." -ForegroundColor Yellow
+$dkimRecords = Get-DkimSigningConfig | Select-Object Domain, Status, Selector1CNAME, Selector2CNAME, Enabled
 
-# Create a custom object to hold the DKIM status
+# Check if any DKIM records were retrieved
+if ($dkimRecords -eq $null -or $dkimRecords.Count -eq 0) {
+    Write-Host "No DKIM records found." -ForegroundColor Yellow
+    Disconnect-ExchangeOnline -Confirm:$false
+    exit
+}
+
+# Process DKIM records
 $dkimStatusResults = foreach ($record in $dkimRecords) {
     $dkimStatus = if ($record.Enabled) { "Passed" } else { "Failed" }
+
     [PSCustomObject]@{
-        Domain          = $record.Domain
-        Enabled         = $record.Enabled
-        CnameHostName1  = $record.CnameHostName
-        CnameTextValue1 = $record.CnameTextValue
-        CnameHostName2  = $record.CnameHostName.Replace("selector1", "selector2")
-        CnameTextValue2 = $record.CnameTextValue.Replace("selector1", "selector2")
-        Status          = $dkimStatus
+        Domain        = $record.Domain
+        Status        = $dkimStatus
+        Selector1CNAME = $record.Selector1CNAME
+        Selector2CNAME = $record.Selector2CNAME
+        Enabled       = $record.Enabled
     }
 }
 
@@ -39,7 +44,7 @@ $outputPath = "$PSScriptRoot\DKIM_Status_$(Get-Date -Format 'yyyyMMdd_HHmmss').c
 $dkimStatusResults | Export-Csv -Path $outputPath -NoTypeInformation
 
 # Disconnect from Exchange Online
-Write-Host "Disconnecting from Exchange Online..."
+Write-Host "Disconnecting from Exchange Online..." -ForegroundColor Red
 Disconnect-ExchangeOnline -Confirm:$false
 
-Write-Host "DKIM records have been exported to $outputPath"
+Write-Host "DKIM records have been exported to $outputPath" -ForegroundColor Green

@@ -35,23 +35,23 @@ This PowerShell script is designed to automate the backup of all Network Securit
 
 ## Example Folder Structure
 
-AzureNSG_Backup_20240815_123456/
-│
-├── Subscription-1/
-│ ├── NSG-1/
-│ │ ├── NSG-1_NSGRules.json
-│ │ └── NSG-1_NSGRules.csv
-│ └── NSG-2/
-│ ├── NSG-2_NSGRules.json
-│ └── NSG-2_NSGRules.csv
-│
-└── Subscription-2/
-├── NSG-1/
-│ ├── NSG-1_NSGRules.json
-│ └── NSG-1_NSGRules.csv
-└── NSG-3/
-├── NSG-3_NSGRules.json
-└── NSG-3_NSGRules.csv
+# AzureNSG_Backup_20240815_123456/
+# │
+# ├── Subscription-1/
+# │ ├── NSG-1/
+# │ │ ├── NSG-1_NSGRules.json
+# │ │ └── NSG-1_NSGRules.csv
+# │ └── NSG-2/
+# │ ├── NSG-2_NSGRules.json
+# │ └── NSG-2_NSGRules.csv
+# │
+# └── Subscription-2/
+# ├── NSG-1/
+# │ ├── NSG-1_NSGRules.json
+# │ └── NSG-1_NSGRules.csv
+# └── NSG-3/
+# ├── NSG-3_NSGRules.json
+# └── NSG-3_NSGRules.csv
 
 ## Notes
 

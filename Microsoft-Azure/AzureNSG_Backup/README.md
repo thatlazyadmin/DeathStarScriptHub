@@ -35,7 +35,7 @@ This PowerShell script is designed to automate the backup of all Network Securit
 
 ## Example Folder Structure
 
-# AzureNSG_Backup_20240815_123456/
+#### AzureNSG_Backup_20240815_123456/
 # │
 # ├── Subscription-1/
 # │ ├── NSG-1/

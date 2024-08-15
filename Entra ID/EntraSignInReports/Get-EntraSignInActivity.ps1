@@ -27,8 +27,15 @@ $WarningPreference = "SilentlyContinue"
 
 # Function to connect to Microsoft Graph
 function Connect-MicrosoftGraph {
-    Write-Host "Connecting to Microsoft Graph in US Government Cloud..."
-    Connect-MgGraph -Environment USGov -Scopes "AuditLog.Read.All"
+    Write-Host "Connecting to Microsoft Graph in US Government Cloud..." -ForegroundColor Cyan
+    try {
+        Connect-MgGraph -Environment USGov -Scopes "AuditLog.Read.All" -ErrorAction Stop
+        Write-Host "Successfully connected to Microsoft Graph." -ForegroundColor Green
+    } catch {
+        Write-Host "Error: Failed to connect to Microsoft Graph." -ForegroundColor Red
+        Write-Host $_.Exception.Message -ForegroundColor Red
+        Exit
+    }
 }
 
 # Prompt for UPN
@@ -38,28 +45,43 @@ $UPN = Read-Host "Enter the UPN of the user"
 Connect-MicrosoftGraph
 
 # Fetch sign-in activity for the specified UPN
-Write-Host "Fetching sign-in activity for $UPN..."
+Write-Host "Fetching sign-in activity for $UPN..." -ForegroundColor Cyan
 
-$SignInLogs = Get-MgAuditLogSignIn -Filter "userPrincipalName eq '$UPN'" -All
+try {
+    $SignInLogs = Get-MgAuditLogSignIn -Filter "userPrincipalName eq '$UPN'" -All -ErrorAction Stop
 
-if ($SignInLogs.Count -eq 0) {
-    Write-Host "No sign-in activity found for $UPN."
-} else {
-    # Display the sign-in logs
-    $SignInLogs | ForEach-Object {
-        $SignIn = $_
-        Write-Host "Sign-in Date: $($SignIn.createdDateTime)"
-        Write-Host "Status: $($SignIn.status.errorCode) - $($SignIn.status.failureReason)"
-        Write-Host "IP Address: $($SignIn.ipAddress)"
-        Write-Host "Device ID: $($SignIn.deviceDetail.deviceId)"
-        Write-Host "Operating System: $($SignIn.deviceDetail.operatingSystem)"
-        Write-Host "Browser: $($SignIn.deviceDetail.browser)"
-        Write-Host "Location: $($SignIn.location.city), $($SignIn.location.state), $($SignIn.location.countryOrRegion)"
-        Write-Host "-----------------------------"
+    if ($SignInLogs.Count -eq 0) {
+        Write-Host "No sign-in activity found for $UPN." -ForegroundColor Yellow
+    } else {
+        # Display and export the sign-in logs
+        $SignInLogs | ForEach-Object {
+            $SignIn = $_
+            Write-Host "Sign-in Date: $($SignIn.createdDateTime)"
+            Write-Host "Status: $($SignIn.status.errorCode) - $($SignIn.status.failureReason)"
+            Write-Host "IP Address: $($SignIn.ipAddress)"
+            Write-Host "Device ID: $($SignIn.deviceDetail.deviceId)"
+            Write-Host "Operating System: $($SignIn.deviceDetail.operatingSystem)"
+            Write-Host "Browser: $($SignIn.deviceDetail.browser)"
+            Write-Host "Location: $($SignIn.location.city), $($SignIn.location.state), $($SignIn.location.countryOrRegion)"
+            Write-Host "-----------------------------" -ForegroundColor DarkGray
+        }
+
+        # Export results to CSV
+        $csvPath = "$PSScriptRoot\SignInActivity_$($UPN.Replace('@', '_')).csv"
+        $SignInLogs | Export-Csv -Path $csvPath -NoTypeInformation
+        Write-Host "Sign-in activity exported to $csvPath" -ForegroundColor Green
     }
+} catch {
+    Write-Host "Error: Failed to fetch sign-in activity." -ForegroundColor Red
+    Write-Host $_.Exception.Message -ForegroundColor Red
 }
 
 # Disconnect from Microsoft Graph
-Disconnect-MgGraph
+try {
+    Disconnect-MgGraph
+    Write-Host "Disconnected from Microsoft Graph." -ForegroundColor Green
+} catch {
+    Write-Host "Error: Failed to disconnect from Microsoft Graph." -ForegroundColor Yellow
+}
 
-Write-Host "Script completed."
+Write-Host "Script completed." -ForegroundColor Cyan

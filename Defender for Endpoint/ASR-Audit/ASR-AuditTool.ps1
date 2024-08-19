@@ -60,19 +60,27 @@ $output = @()
 # Loop through each server and audit ASR rules
 foreach ($server in $servers) {
     Write-Host "Checking server: $server" -ForegroundColor Cyan
-    foreach ($rule in $asrRules) {
-        try {
-            # Check if the ASR rule is enabled on the server
-            $asrStatus = Invoke-Command -ComputerName $server -ScriptBlock {
-                param($guid)
-                Get-MpPreference | Select-Object -ExpandProperty AttackSurfaceReductionRules_Actions | Where-Object { $_.Guid -eq $guid } 
-            } -ArgumentList $rule.GUID -ErrorAction Stop
+    try {
+        # Get the ASR rules configured on the server
+        $mpPreference = Invoke-Command -ComputerName $server -ScriptBlock { Get-MpPreference } -ErrorAction Stop
+        $configuredRules = $mpPreference.AttackSurfaceReductionRules_Ids
+        $configuredActions = $mpPreference.AttackSurfaceReductionRules_Actions
 
-            # Determine the status of the ASR rule
-            if ($asrStatus) {
-                $enabled = ($asrStatus -eq 1) | where-object "Enabled" : "Not Enabled"
+        foreach ($rule in $asrRules) {
+            # Check if the ASR rule is configured
+            $index = $configuredRules.IndexOf($rule.GUID)
+
+            if ($index -ge 0) {
+                $status = $configuredActions[$index]
+                switch ($status) {
+                    1 { $status = "Enabled" }
+                    2 { $status = "AuditMode" }
+                    6 { $status = "Warn" }
+                    0 { $status = "Disabled" }
+                    default { $status = "Unknown" }
+                }
             } else {
-                $enabled = "Not Configured"
+                $status = "Not Configured"
             }
 
             # Add the result to the output list
@@ -80,11 +88,11 @@ foreach ($server in $servers) {
                 ServerName = $server
                 ASRRuleGUID = $rule.GUID
                 ASRRuleName = $rule.Name
-                Status = $enabled
+                Status = $status
             }
-        } catch {
-            Write-Host "Failed to connect to $server $_" -ForegroundColor Red
         }
+    } catch {
+        Write-Host "Failed to connect to $server $_" -ForegroundColor Red
     }
 }
 

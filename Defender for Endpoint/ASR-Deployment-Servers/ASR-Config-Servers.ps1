@@ -3,7 +3,7 @@
     ASR Rules Configuration Script
 
 .DESCRIPTION
-    This script prompts the user to enter a server name and then configures all specified Attack Surface Reduction (ASR) rules on that server. This allows for a staged approach to implementing ASR rules across servers.
+    This script prompts the user to enter a server name and whether to enable the ASR rules in 'Audit' mode or 'Enabled' mode. The script then configures all specified Attack Surface Reduction (ASR) rules on that server based on the selected mode.
 
 .NOTES
     Created by: Shaun Hardneck
@@ -39,8 +39,20 @@ $asrRules = @(
 # Prompt for server name
 $serverName = Read-Host "Enter the server name where you want to configure ASR rules"
 
+# Prompt for ASR mode (Audit or Enabled)
+$mode = Read-Host "Do you want to enable ASR rules in 'Audit' mode or 'Enabled' mode? (Enter 'Audit' or 'Enabled')"
+
+# Validate mode selection
+if ($mode -notin @('Audit', 'Enabled')) {
+    Write-Host "Invalid selection. Please run the script again and select either 'Audit' or 'Enabled'." -ForegroundColor Red
+    exit
+}
+
+# Determine the action based on the mode
+$action = if ($mode -eq 'Audit') { 'AuditMode' } else { 'Enabled' }
+
 # Confirm with the user
-$confirmation = Read-Host "You are about to configure ASR rules on $serverName. Do you want to continue? (Yes/No)"
+$confirmation = Read-Host "You are about to configure ASR rules on $serverName with the mode set to $mode. Do you want to continue? (Yes/No)"
 if ($confirmation -ne "Yes") {
     Write-Host "Operation cancelled." -ForegroundColor Yellow
     exit
@@ -49,11 +61,11 @@ if ($confirmation -ne "Yes") {
 # Loop through each ASR rule and configure it on the specified server
 foreach ($rule in $asrRules) {
     try {
-        Write-Host "Configuring ASR rule '$($rule.Name)' on server '$serverName'..." -ForegroundColor Cyan
+        Write-Host "Configuring ASR rule '$($rule.Name)' on server '$serverName' with action '$action'..." -ForegroundColor Cyan
         Invoke-Command -ComputerName $serverName -ScriptBlock {
-            param($guid)
-            Add-MpPreference -AttackSurfaceReductionRules_Ids $guid -AttackSurfaceReductionRules_Actions Enabled
-        } -ArgumentList $rule.GUID -ErrorAction Stop
+            param($guid, $action)
+            Add-MpPreference -AttackSurfaceReductionRules_Ids $guid -AttackSurfaceReductionRules_Actions $action
+        } -ArgumentList $rule.GUID, $action -ErrorAction Stop
         Write-Host "ASR rule '$($rule.Name)' configured successfully on server '$serverName'." -ForegroundColor Green
     } catch {
         Write-Host "Failed to configure ASR rule '$($rule.Name)' on server '$serverName'. Error: $_" -ForegroundColor Red

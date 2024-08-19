@@ -52,7 +52,7 @@ foreach ($rule in $asrRules) {
         Write-Host "Configuring ASR rule '$($rule.Name)' on server '$serverName'..." -ForegroundColor Cyan
         Invoke-Command -ComputerName $serverName -ScriptBlock {
             param($guid)
-            Add-MpPreference -AttackSurfaceReductionRules_Ids $guid -AttackSurfaceReductionRules_Actions Block
+            Add-MpPreference -AttackSurfaceReductionRules_Ids $guid -AttackSurfaceReductionRules_Actions Enabled
         } -ArgumentList $rule.GUID -ErrorAction Stop
         Write-Host "ASR rule '$($rule.Name)' configured successfully on server '$serverName'." -ForegroundColor Green
     } catch {

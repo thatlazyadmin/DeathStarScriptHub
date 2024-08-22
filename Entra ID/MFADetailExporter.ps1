@@ -1,5 +1,5 @@
 # Connect to Microsoft Graph with the required permissions
-Connect-MgGraph -Scopes "UserAuthenticationMethod.Read.All"
+Connect-MgGraph -Scopes "UserAuthenticationMethod.Read.All" -NoWelcome
 
 # Function to fetch users and their registered MFA phone methods
 function Get-UsersWithMfaPhone {

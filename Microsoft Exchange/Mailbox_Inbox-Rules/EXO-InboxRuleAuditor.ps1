@@ -19,7 +19,7 @@ $removeRules = Read-Host -Prompt "Do you want to remove all inbox rules? (Y/N)"
 
 if ($removeRules -eq 'Y') {
     foreach ($rule in $InboxRules) {
-        Remove-InboxRule -Mailbox $Mailbox -Identity $rule.Identity
+        Remove-InboxRule -Mailbox $Mailbox -Identity $rule.Identity -Confirm:$false
         Write-Host "Removed rule: $($rule.Name)"
     }
     Write-Host "All inbox rules have been removed for $Mailbox." -ForegroundColor Green

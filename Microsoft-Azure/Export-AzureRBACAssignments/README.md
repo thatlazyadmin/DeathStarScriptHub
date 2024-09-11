@@ -29,7 +29,7 @@ To export role assignments for all subscriptions in your tenant, run the script 
 
  ```powershell
 .\Export-RoleAssignments.ps1
-
+ ```
 This will export the role assignments to a CSV file in the same directory where the script is executed.
 
 ## Export Role Assignments for All Subscriptions to a Specific Directory
@@ -37,19 +37,19 @@ If you want to specify a directory for the export, use the -OutPutPath parameter
 
  ```powershell
 .\Export-RoleAssignments.ps1 -OutPutPath C:\temp
-
+ ```
 ## Export Role Assignments for the Current Subscription Only
 To export role assignments for the currently selected subscription:
 
  ```powershell
 .\Export-RoleAssignments.ps1 -SelectCurrentSubscription
-
+ ```
 ## Export Role Assignments for the Current Subscription to a Specific Directory
 To export the role assignments for the current subscription and specify the export directory:
 
  ```powershell
 .\Export-RoleAssignments.ps1 -SelectCurrentSubscription -OutPutPath C:\temp
-
+ ```
 ## Error Handling
  - Errors encountered during execution (e.g., empty RoleDefinitionNames or API issues) will be logged to a .txt file in the same directory where the script is executed.
  - The log file is named with the format RoleAssignmentErrors_yyyyMMdd_HHmmss.txt based on the time of execution.

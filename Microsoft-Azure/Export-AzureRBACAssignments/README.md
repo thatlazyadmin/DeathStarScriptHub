@@ -73,11 +73,10 @@ The output of the script is a CSV file with the following columns:
 ## Contact & Support
 For any issues, updates, or requests for additional features, please feel free to contact Shaun Hardneck via:
 
-Blog: [That Lazy Admin Blog](https://www.thatlazyadmin.com)
-Author: Shaun Hardneck
-Version: 1.3
-Date: 2024-09-10
+**Blog:** [ThatLazyAdmin Blog](https://www.thatlazyadmin.com)
+**Author:** Shaun Hardneck
 
 
+##
 This `README.md` provides clear instructions on using the script, highlights its features, and offers guidance on how to run it with different options. It also covers error handling and outputs, making it easy for users to get started.
 

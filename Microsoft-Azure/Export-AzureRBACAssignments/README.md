@@ -74,6 +74,7 @@ The output of the script is a CSV file with the following columns:
 For any issues, updates, or requests for additional features, please feel free to contact Shaun Hardneck via:
 
 **Blog:** [ThatLazyAdmin Blog](https://www.thatlazyadmin.com)
+
 **Author:** Shaun Hardneck
 
 

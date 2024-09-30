@@ -23,7 +23,7 @@
 #>
 
 # Define the list of domains to check
-$domains = @("barrange.co.za", "drillcorp.co.za", "drillcorpafrica.com","drilltechservices.co.za","geoserve.co.za","geoservesa.co.za","masterdrill.co.za","masterdrilling.co.za","masterdrilling.com","thekalaharisands.com","masterdrilling.mail.onmicrosoft.com","masterdrilling.onmicrosoft.com")
+$domains = @("derivaenergy.com")
 
 # Function to check DMARC records
 function Check-DmarcRecords {

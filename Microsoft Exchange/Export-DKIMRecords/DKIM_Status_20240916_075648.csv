@@ -1,0 +1,13 @@
+Domain,Status,Selector1CNAME,Selector2CNAME,Enabled
+masterdrilling.onmicrosoft.com,Passed,selector1-masterdrilling-onmicrosoft-com._domainkey.masterdrilling.onmicrosoft.com,selector2-masterdrilling-onmicrosoft-com._domainkey.masterdrilling.onmicrosoft.com,TRUE
+thekalaharisands.com,Failed,selector1-thekalaharisands-com._domainkey.masterdrilling.onmicrosoft.com,selector2-thekalaharisands-com._domainkey.masterdrilling.onmicrosoft.com,FALSE
+drilltechservices.co.za,Failed,selector1-drilltechservices-co-za._domainkey.masterdrilling.onmicrosoft.com,selector2-drilltechservices-co-za._domainkey.masterdrilling.onmicrosoft.com,FALSE
+masterdrilling.mail.onmicrosoft.com,Failed,selector1-masterdrilling-mail-onmicrosoft-com._domainkey.masterdrilling.onmicrosoft.com,selector2-masterdrilling-mail-onmicrosoft-com._domainkey.masterdrilling.onmicrosoft.com,FALSE
+drillcorpafrica.com,Failed,selector1-drillcorpafrica-com._domainkey.masterdrilling.onmicrosoft.com,selector2-drillcorpafrica-com._domainkey.masterdrilling.onmicrosoft.com,FALSE
+drillcorp.co.za,Failed,selector1-drillcorp-co-za._domainkey.masterdrilling.onmicrosoft.com,selector2-drillcorp-co-za._domainkey.masterdrilling.onmicrosoft.com,FALSE
+masterdrilling.co.za,Failed,selector1-masterdrilling-co-za._domainkey.masterdrilling.onmicrosoft.com,selector2-masterdrilling-co-za._domainkey.masterdrilling.onmicrosoft.com,FALSE
+barrange.co.za,Failed,selector1-barrange-co-za._domainkey.masterdrilling.onmicrosoft.com,selector2-barrange-co-za._domainkey.masterdrilling.onmicrosoft.com,FALSE
+masterdrilling.com,Passed,selector1-masterdrilling-com._domainkey.masterdrilling.onmicrosoft.com,selector2-masterdrilling-com._domainkey.masterdrilling.onmicrosoft.com,TRUE
+masterdrill.co.za,Failed,selector1-masterdrill-co-za._domainkey.masterdrilling.onmicrosoft.com,selector2-masterdrill-co-za._domainkey.masterdrilling.onmicrosoft.com,FALSE
+geoserve.co.za,Failed,selector1-geoserve-co-za._domainkey.masterdrilling.onmicrosoft.com,selector2-geoserve-co-za._domainkey.masterdrilling.onmicrosoft.com,FALSE
+geoservesa.co.za,Failed,selector1-geoservesa-co-za._domainkey.masterdrilling.onmicrosoft.com,selector2-geoservesa-co-za._domainkey.masterdrilling.onmicrosoft.com,FALSE

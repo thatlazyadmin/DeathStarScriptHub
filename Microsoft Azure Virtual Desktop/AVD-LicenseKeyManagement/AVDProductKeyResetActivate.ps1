@@ -47,7 +47,7 @@ if ($?) {
 
 # Step 4: Run slmgr /ipk with new key
 Log-Output "Step 4: Installing product key with slmgr /ipk..."
-Start-Process -FilePath "slmgr.vbs" -ArgumentList "/ipk NPPR9-FWDCX-D2C8J-H872K-2YT43" -Wait
+Start-Process -FilePath "slmgr.vbs" -ArgumentList "/ipk VMKVQ-3MN6B-BVM9F-YWV97-R9FCX" -Wait
 if ($?) {
     Log-Output "Step 4: slmgr /ipk successful."
 } else {

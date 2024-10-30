@@ -32,7 +32,7 @@
 
 ---
 
-![SpecSpy Sample Output](screenshot.png)
+![SpecSpy Sample Output](serverspec-01.png)
 
 ---
 

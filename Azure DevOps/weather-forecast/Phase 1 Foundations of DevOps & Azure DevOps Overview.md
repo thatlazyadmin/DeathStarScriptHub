@@ -1,7 +1,7 @@
 ## Phase 1: Foundations of DevOps & Azure DevOps Overview
 ### 1. DevOps Concepts
-    -   *Definition*: DevOps is a combination of development (Dev) and operations (Ops) focused on continuous delivery, collaboration, and automation. The goal is to    shorten development cycles, increase deployment frequency, and provide dependable releases.
-    -   **Practical Use**: Reduces time-to-market for applications by allowing continuous feedback and improvement.
+    -   __Definition__: DevOps is a combination of development (Dev) and operations (Ops) focused on continuous delivery, collaboration, and automation. The goal is to    shorten development cycles, increase deployment frequency, and provide dependable releases.
+    -   Practical Use: Reduces time-to-market for applications by allowing continuous feedback and improvement.
 How to Start:
 Lab Task: Install tools like Visual Studio Code, Git, and Docker to set up a local DevOps environment.
 Step-by-Step:

@@ -21,7 +21,7 @@ This is a simple weather forecast application that uses the OpenWeatherMap API t
 This project uses Azure DevOps for CI/CD, with a build pipeline for testing and containerizing the app, and a release pipeline for deploying to Azure App Service.
 
 ## License
-# MIT License
+### MIT License
 
 ---
 

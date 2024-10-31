@@ -50,7 +50,7 @@ if __name__ == '__main__':
 1. **Create** template/index.html:
     - Basic HTML form for entering the city name:
 
-    ```html
+```html
     <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -65,12 +65,12 @@ if __name__ == '__main__':
     </form>
 </body>
 </html>
-    ```
+```
 
 2. **Create** templates/forecast.html
     - Display the weather data:
 
-    ```html
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -84,7 +84,7 @@ if __name__ == '__main__':
     <a href="/">Back to Home</a>
 </body>
 </html>
-    ```
+```
 
 ## Push the Code to Github
 1. **Initialize Git:**

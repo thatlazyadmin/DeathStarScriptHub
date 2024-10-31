@@ -40,7 +40,7 @@
      - script: dotnet test
        displayName: 'Run Tests'
     ```
-4. **Save and Run the Pipeline:
+4. **Save and Run the Pipeline:**
 - Save the YAML file and queue the pipeline. Azure DevOps will automatically start the build and run tests whenever changes are pushed to the main branch.
 
 This pipeline example sets up a simple CI process that includes:

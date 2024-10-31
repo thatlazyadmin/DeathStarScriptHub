@@ -22,7 +22,7 @@
 2. **Create** app.py:
     - Basic strcture for app.py to fetch and display weather data:
     
-    ```python
+```python
 from flask import Flask, render_template, request
 import requests
 
@@ -44,7 +44,7 @@ def forecast():
 
 if __name__ == '__main__':
     app.run(debug=True)
-    ```
+```
 
 ### HTML Templates 
 1. **Create** template/index.html:

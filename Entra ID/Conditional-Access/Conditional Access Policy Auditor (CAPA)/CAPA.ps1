@@ -1,141 +1,165 @@
-# Load necessary assemblies for WPF
-Add-Type -AssemblyName PresentationFramework
+<#
+.SYNOPSIS
+    This script deploys an Azure Virtual Desktop (AVD) environment, including creating a host pool, session hosts, and configuring network settings.
+.DESCRIPTION
+    This starter script helps users quickly set up an Azure Virtual Desktop environment by creating necessary resources like a host pool,
+    virtual network, subnet, and session host. It prompts for customization options such as Active Directory joining and Intune enrollment.
 
-# Define reusable error handling function
-function Show-Message {
+    Author: Shaun Hardneck
+    GitHub: https://github.com/yourgithubprofile
+.PARAMETER SubscriptionId
+    Specify the subscription ID where the resources will be created.
+.NOTES
+    This script is intended for learning purposes. Review and adapt for production use as necessary.
+#>
+
+# Suppress Progress and Information Messages
+$ProgressPreference = 'SilentlyContinue'
+$InformationPreference = 'SilentlyContinue'
+
+# Function to Check if Required Modules are Installed
+function Check-Module {
     param (
-        [string]$Message,
-        [string]$Title = "Information",
-        [System.Windows.MessageBoxImage]$Icon = [System.Windows.MessageBoxImage]::Information
+        [string]$ModuleName
     )
-    [System.Windows.MessageBox]::Show($Message, $Title, [System.Windows.MessageBoxButton]::OK, $Icon)
-}
 
-# Define the XAML for the GUI
-[xml]$xaml = @"
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        Title="Conditional Access Policy Auditor (CAPA)" Height="450" Width="600">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
-            <Image Name="LogoImage" Height="100" Width="100" Margin="0,10,0,10"/>
-            <TextBlock Text="Conditional Access Policy Auditor" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="1" Margin="10">
-            <Button Name="ConnectButton" Content="Connect to Entra ID" Width="150" Margin="5"/>
-            <Button Name="ExportButton" Content="Export to Excel" Width="150" Margin="5" IsEnabled="False"/>
-        </StackPanel>
-        <DataGrid Name="PolicyDataGrid" Grid.Row="2" AutoGenerateColumns="True" Margin="10" IsReadOnly="True"/>
-        <TextBlock Text="Created by Shaun Hardneck" Grid.Row="3" HorizontalAlignment="Right" Margin="10"/>
-    </Grid>
-</Window>
-"@
-
-# Parse the XAML
-$reader = (New-Object System.Xml.XmlNodeReader $xaml)
-$window = [Windows.Markup.XamlReader]::Load($reader)
-
-# Define controls
-$LogoImage = $window.FindName("LogoImage")
-$ConnectButton = $window.FindName("ConnectButton")
-$ExportButton = $window.FindName("ExportButton")
-$PolicyDataGrid = $window.FindName("PolicyDataGrid")
-
-# Function to Connect to Entra ID
-function Connect-ToEntraID {
-    $maxRetries = 3
-    for ($i = 1; $i -le $maxRetries; $i++) {
+    if (Get-Module -ListAvailable -Name $ModuleName) {
+        Write-Host "$ModuleName module is already available and loaded." -ForegroundColor Green
+    } else {
+        Write-Host "$ModuleName module is not available. Attempting installation..." -ForegroundColor Yellow
         try {
-            Import-Module Microsoft.Graph -ErrorAction Stop
-            Connect-MgGraph -Scopes "Policy.Read.All" -ErrorAction Stop
-            Show-Message -Message "Successfully connected to Entra ID." -Title "Connection Status"
-            return $true
+            Install-Module -Name $ModuleName -Force -Scope CurrentUser -ErrorAction Stop
+            Write-Host "$ModuleName module installed successfully." -ForegroundColor Green
         }
         catch {
-            if ($_ -match "function capacity 4096 has been exceeded") {
-                if ($i -eq $maxRetries) {
-                    Show-Message -Message "Connection failed due to capacity limitations. Please try again later." -Title "Connection Error" -Icon [System.Windows.MessageBoxImage]::Error
-                } else {
-                    Show-Message -Message "Retrying connection attempt $i of $maxRetries due to capacity limitation." -Title "Retrying"
-                    Start-Sleep -Seconds 5
-                }
-            } else {
-                Show-Message -Message "Failed to connect to Entra ID: $_" -Title "Connection Error" -Icon [System.Windows.MessageBoxImage]::Error
-                return $false
-            }
+            Write-Host "Failed to install $ModuleName module. Please close all other PowerShell sessions and retry." -ForegroundColor Red
+            exit
         }
     }
 }
 
-# Retrieve Conditional Access Policies
-function Get-CAPolicies {
-    try {
-        $CAPolicies = Get-MgConditionalAccessPolicy -All
-        $PolicyData = $CAPolicies | Select-Object @{
-            Name="PolicyName"; Expression={$_.DisplayName}
-        }, @{
-            Name="State"; Expression={$_.State}
-        }, @{
-            Name="IncludeUsers"; Expression={$_.Conditions.Users.IncludeUsers -join ", "}
-        }, @{
-            Name="ExcludeUsers"; Expression={$_.Conditions.Users.ExcludeUsers -join ", "}
-        }, @{
-            Name="IncludeGroups"; Expression={$_.Conditions.Users.IncludeGroups -join ", "}
-        }, @{
-            Name="ExcludeGroups"; Expression={$_.Conditions.Users.ExcludeGroups -join ", "}
-        }, @{
-            Name="IncludeRoles"; Expression={$_.Conditions.Users.IncludeRoles -join ", "}
-        }, @{
-            Name="ExcludeRoles"; Expression={$_.Conditions.Users.ExcludeRoles -join ", "}
-        }, @{
-            Name="IncludeApplications"; Expression={$_.Conditions.Applications.IncludeApplications -join ", "}
-        }, @{
-            Name="ExcludeApplications"; Expression={$_.Conditions.Applications.ExcludeApplications -join ", "}
-        }, @{
-            Name="GrantControls"; Expression={$_.GrantControls.BuiltInControls -join ", "}
-        }, @{
-            Name="SessionControls"; Expression={$_.SessionControls -join ", "}
-        }
-        return $PolicyData
-    }
-    catch {
-        Show-Message -Message "An error occurred while retrieving policies: $_" -Title "Error" -Icon [System.Windows.MessageBoxImage]::Error
-        return $null
+# Check if Az Module is Installed
+Check-Module -ModuleName "Az"
+Import-Module Az -ErrorAction Stop
+
+# Begin User Prompt Section
+Write-Host "Welcome to the Azure Virtual Desktop Setup Script" -ForegroundColor Cyan
+Write-Host "Please follow the prompts to configure your Azure Virtual Desktop environment." -ForegroundColor Cyan
+
+# Prompt for required parameters with validation
+$subscriptionId = Read-Host -Prompt "Enter your Subscription ID"
+$resourceGroupName = Read-Host -Prompt "Enter a name for the Resource Group"
+$location = Read-Host -Prompt "Enter the Azure Region (e.g., eastus)"
+$hostPoolName = Read-Host -Prompt "Enter the Host Pool Name"
+
+# Provide options for Join Type and validate the input
+$joinType = ""
+while ($joinType -notin @("AD", "Entra")) {
+    $joinType = Read-Host -Prompt "Select Join Type (AD for Active Directory / Entra for Entra ID)"
+    if ($joinType -notin @("AD", "Entra")) {
+        Write-Host "Invalid input. Please enter 'AD' or 'Entra'." -ForegroundColor Red
     }
 }
 
-# Export to Excel
-function Export-CAPoliciesToExcel {
-    try {
-        $PolicyData = $PolicyDataGrid.ItemsSource
-        if ($PolicyData -eq $null) {
-            Show-Message -Message "No data available to export." -Title "Warning" -Icon [System.Windows.MessageBoxImage]::Warning
-            return
-        }
-        $ExportPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath('Desktop'), "CAPolicies.xlsx")
-        $PolicyData | Export-Excel -Path $ExportPath -AutoSize -Title "Conditional Access Policies"
-        Show-Message -Message "Export completed successfully. File saved to: $ExportPath" -Title "Success"
-    }
-    catch {
-        Show-Message -Message "An error occurred during export: $_" -Title "Export Error" -Icon [System.Windows.MessageBoxImage]::Error
+# Provide options for Intune Enrollment and validate the input
+$intuneEnroll = ""
+while ($intuneEnroll -notin @("Yes", "No")) {
+    $intuneEnroll = Read-Host -Prompt "Do you want the session host to enroll in Intune? (Yes/No)"
+    if ($intuneEnroll -notin @("Yes", "No")) {
+        Write-Host "Invalid input. Please enter 'Yes' or 'No'." -ForegroundColor Red
     }
 }
 
-# Button actions
-$ConnectButton.Add_Click({
-    if (Connect-ToEntraID) {
-        $PolicyData = Get-CAPolicies
-        if ($PolicyData -ne $null) {
-            $PolicyDataGrid.ItemsSource = $PolicyData
-            $ExportButton.IsEnabled = $true
-        }
-    }
-})
-$ExportButton.Add_Click({ Export-CAPoliciesToExcel })
+# Connect to Azure and set the subscription context
+Write-Host "Connecting to Azure..." -ForegroundColor Cyan
+Connect-AzAccount -ErrorAction Stop
+Set-AzContext -SubscriptionId $subscriptionId
 
-# Show window
-$window.ShowDialog()
+# Create or Validate Resource Group
+Write-Host "Ensuring Resource Group exists..." -ForegroundColor Green
+$resourceGroup = Get-AzResourceGroup -Name $resourceGroupName -ErrorAction SilentlyContinue
+if (-not $resourceGroup) {
+    New-AzResourceGroup -Name $resourceGroupName -Location $location -ErrorAction Stop | Out-Null
+    Write-Host "Resource Group '$resourceGroupName' created in $location." -ForegroundColor Green
+} else {
+    Write-Host "Resource Group '$resourceGroupName' already exists." -ForegroundColor Yellow
+}
+
+# Create Host Pool with specified parameters
+Write-Host "Creating Host Pool..." -ForegroundColor Green
+New-AzWvdHostPool -ResourceGroupName $resourceGroupName `
+                  -HostPoolName $hostPoolName `
+                  -Location $location `
+                  -HostPoolType "Pooled" `
+                  -PreferredAppGroupType "Desktop" `
+                  -LoadBalancerType "BreadthFirst" `
+                  -MaxSessionLimit 2 `
+                  -ValidationEnvironment $false
+
+# Generate registration token for the host pool
+Write-Host "Generating registration token for the host pool..." -ForegroundColor Green
+try {
+    $regToken = New-AzWvdRegistrationInfo -ResourceGroupName $resourceGroupName -HostPoolName $hostPoolName -ExpirationTime ((Get-Date).AddHours(4))
+    $registrationToken = $regToken.Token
+    Write-Host "Registration Token: $registrationToken" -ForegroundColor Yellow
+} catch {
+    Write-Host "Failed to generate the registration token. Please check if the Host Pool was created successfully." -ForegroundColor Red
+    exit
+}
+
+# Create Virtual Network and Subnet
+Write-Host "Creating Virtual Network and Subnet..." -ForegroundColor Green
+$subnetConfig = New-AzVirtualNetworkSubnetConfig -Name "hostSubnet" -AddressPrefix "10.0.0.0/24"
+$virtualNetwork = New-AzVirtualNetwork -ResourceGroupName $resourceGroupName `
+                                        -Location $location `
+                                        -Name "hostVNet" `
+                                        -AddressPrefix "10.0.0.0/16" `
+                                        -Subnet $subnetConfig
+
+# Prompt for VM credentials
+Write-Host "Enter administrator credentials for the session host VM." -ForegroundColor Cyan
+$cred = Get-Credential
+
+# Create Public IP for VM
+Write-Host "Creating Public IP for the session host..." -ForegroundColor Green
+$publicIp = New-AzPublicIpAddress -Name "sessionHostPublicIP" `
+                                  -ResourceGroupName $resourceGroupName `
+                                  -Location $location `
+                                  -AllocationMethod "Static" `
+                                  -Sku "Standard"
+
+# Create Session Host VM
+Write-Host "Creating Session Host VM..." -ForegroundColor Green
+New-AzVm -ResourceGroupName $resourceGroupName `
+         -Location $location `
+         -Name "session-host-vm" `
+         -VirtualNetworkName "hostVNet" `
+         -SubnetName "hostSubnet" `
+         -Credential $cred `
+         -Size "Standard_DS1_v2" `
+         -PublicIpAddress $publicIp `
+         -Image "MicrosoftWindowsDesktop:windows-11:win11-22h2-pro:latest"
+
+Write-Host "Session Host VM created successfully." -ForegroundColor Green
+
+# Conditional handling for Active Directory or Entra Join
+if ($joinType -eq "AD") {
+    Write-Host "Ensure that the VM joins the Active Directory domain."
+} elseif ($joinType -eq "Entra") {
+    Write-Host "Entra ID join selected. VM will be joined to Entra ID." -ForegroundColor Green
+}
+
+# Conditional handling for Intune Enrollment
+if ($intuneEnroll -eq "Yes") {
+    Write-Host "Enabling Intune enrollment for the session host." -ForegroundColor Green
+} else {
+    Write-Host "Intune enrollment not selected." -ForegroundColor Yellow
+}
+
+Write-Host "Azure Virtual Desktop setup complete. Proceed to register the VM with the host pool using the registration token." -ForegroundColor Green
+
+# Reset Preferences
+$ProgressPreference = 'Continue'
+$InformationPreference = 'Continue'
+
+# End of script

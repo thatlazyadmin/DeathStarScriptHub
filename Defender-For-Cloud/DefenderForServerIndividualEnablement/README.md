@@ -38,7 +38,7 @@ If the Az module isn’t installed, run:
 
     ```powershell
     Install-Module -Name Az -AllowClobber -Scope CurrentUser -Force
-    ```
+```
 
 ## 📌 How to Use the Script
 ### 1️⃣ Run the Script

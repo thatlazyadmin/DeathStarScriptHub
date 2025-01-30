@@ -65,12 +65,15 @@ It will prompt you for:
 ![alt text](https://github.com/thatlazyadmin/DeathStarScriptHub/blob/main/Defender-For-Cloud/DefenderForServerIndividualEnablement/Enable-DefenderServerP1-01.png)
 
 **Following screenshot we can see Defender enabled on the server**
+
 ![alt text](https://github.com/thatlazyadmin/DeathStarScriptHub/blob/main/Defender-For-Cloud/DefenderForServerIndividualEnablement/Enable-DefenderServerP1-02.png)
 
 **Disable Defender on a Server**
+
 ![alt text](https://github.com/thatlazyadmin/DeathStarScriptHub/blob/main/Defender-For-Cloud/DefenderForServerIndividualEnablement/disable-DefenderforServerPerServer-01.png)
 
 **Defender showing as "Off"**
+
 ![alt text](https://github.com/thatlazyadmin/DeathStarScriptHub/blob/main/Defender-For-Cloud/DefenderForServerIndividualEnablement/DefenderServer-Disabled-02.png)
 
 ## 📌 Example Usage

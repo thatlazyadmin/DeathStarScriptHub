@@ -62,9 +62,8 @@ It will prompt you for:
 ## 📸 Screenshots
 
 **Defender For Server Enabled**
-[Enable-DefenderServerP1-01.png](Defender-For-Cloud/DefenderForServerIndividualEnablement/Enable-DefenderServerP1-01.png)
-[Enable-DefenderServerP1-02.png]
-
+![alt text](https://github.com/thatlazyadmin/DeathStarScriptHub/blob/main/Defender-For-Cloud/DefenderForServerIndividualEnablement/Enable-DefenderServerP1-01.png)
+![alt text](https://github.com/thatlazyadmin/DeathStarScriptHub/blob/main/Defender-For-Cloud/DefenderForServerIndividualEnablement/Enable-DefenderServerP1-02.png)
 
 ## 📌 Example Usage
 ### Enable Defender for a VM

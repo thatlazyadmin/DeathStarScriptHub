@@ -80,7 +80,7 @@ It will prompt you for:
 ### Enable Defender for a VM
 
 ```powershell
-    Enter your Azure Subscription ID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+Enter your Azure Subscription ID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 Enter the Resource Group Name: RG-Security
 Enter the Virtual Machine Name: VM-Prod-01
 Enter 'Enable-P1' to enable Defender for Servers P1, 'Disable' to remove Defender protection, or 'Exclude' to exclude this VM if Defender is set at the subscription level: Enable-P1

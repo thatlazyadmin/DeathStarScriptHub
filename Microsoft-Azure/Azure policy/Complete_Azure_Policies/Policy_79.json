@@ -1,0 +1,1 @@
+{"properties": {"displayName": "Policy 79 Display Name", "policyType": "Custom", "mode": "All", "description": "Description for Policy 79", "metadata": {"category": "Category", "version": "1.0.0"}, "policyRule": {"if": {"field": "type", "equals": "Microsoft.Resources/subscriptions/resourceGroups"}, "then": {"effect": "audit"}}}}

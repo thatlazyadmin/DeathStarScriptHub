@@ -1,0 +1,20 @@
+{
+    "if": {
+      "allOf": [
+        {
+          "field": "type",
+          "equals": "Microsoft.Network/applicationGateways"
+        },
+        {
+          "not": {
+            "field": "Microsoft.Network/applicationGateways/enableWaf",
+            "equals": "true"
+          }
+        }
+      ]
+    },
+    "then": {
+      "effect": "deny"
+    }
+  }
+  

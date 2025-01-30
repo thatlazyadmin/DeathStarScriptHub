@@ -1,0 +1,135 @@
+Policy,Latest Version,Type,Definition Type,Category,Recommendation,Security Best Practice
+Deny storage accounts without secure transfer enabled,1.0.0,Custom Policy,Deny,Storage,Enforces secure transfer to avoid insecure data access over HTTP.,Audit use of HTTPS instead of HTTP for storage accounts
+Deny storage accounts without encryption enabled,1.0.0,Custom Policy,Deny,Storage,Ensures all storage accounts are encrypted to protect data at rest.,Require encryption of data in Azure Storage Accounts
+Deny public blob access,1.0.0,Custom Policy,Deny,Storage,Prevents public access to blobs, reducing data exposure.,Prevent public access to blob storage
+Deny VMs without Network Security Group (NSG),1.0.0,Custom Policy,Deny,Network,Ensures all VMs are associated with NSGs to control traffic.,Audit NSGs on subnets
+Deny subnets without NSG,1.0.0,Custom Policy,Deny,Network,Prevents subnets without NSG, ensuring network-layer security.,Subnets should have a Network Security Group
+Deny unencrypted communication between virtual networks,1.0.0,Custom Policy,Deny,Network,Disallows unencrypted traffic between VNETs to maintain security.,Custom policy needed
+Deny non-compliant virtual machine sizes,1.0.0,Custom Policy,Deny,Compute,Restricts VMs to compliant sizes to enforce security standards.,Custom policy needed
+Deny non-managed disks,1.0.0,Custom Policy,Deny,Compute,Prevents the use of non-managed disks for better control and security.,Audit the use of managed disks
+Deny critical resources without resource locks,1.0.0,Custom Policy,Deny,Management,Locks critical resources to prevent accidental or malicious deletion.,Custom policy needed
+Deny key vaults without soft-delete enabled,1.0.0,Custom Policy,Deny,Key Vault,Protects key vault secrets with soft-delete in case of accidental deletion.,Key vaults should have soft delete enabled
+Deny key vaults without private endpoints,1.0.0,Custom Policy,Deny,Key Vault,Enforces access to key vaults through private endpoints, reducing attack surface.,Custom policy needed
+Deny accounts without MFA enabled,1.0.0,Custom Policy,Deny,Identity,Ensures that all accounts use MFA, mitigating unauthorized access.,Conditional Access policy needed
+Deny service principals without certificate or managed identity,1.0.0,Custom Policy,Deny,Identity,Enforces the use of certificates or managed identities for service principals.,Custom policy needed
+Deny resources without Azure Defender enabled,1.0.0,Custom Policy,Deny,Security Center,Ensures all resources are protected by Azure Defender for security monitoring.,Custom policy needed
+Deny public IPs for VMs,1.0.0,Custom Policy,Deny,Network,Prevents VMs from being exposed to the public internet via public IPs.,Virtual machines should not have public IP addresses
+Deny public endpoints for databases,1.0.0,Custom Policy,Deny,Database,Prevents databases from being exposed publicly, enforcing private access.,Custom policy needed
+Deny SQL databases without advanced threat protection enabled,1.0.0,Custom Policy,Deny,Database,Ensures all SQL databases have advanced threat protection enabled.,Advanced Threat Protection should be enabled on SQL Servers
+Deny databases without encryption at rest,1.0.0,Custom Policy,Deny,Database,Enforces encryption at rest for databases to protect sensitive data.,Require Transparent Data Encryption on SQL databases
+Deny AKS clusters without RBAC enabled,1.0.0,Custom Policy,Deny,Containers,Ensures Role-Based Access Control (RBAC) is enabled for AKS clusters.,Ensure that Kubernetes clusters have RBAC enabled
+Deny AKS clusters without network policies,1.0.0,Custom Policy,Deny,Containers,Ensures AKS clusters have network policies for pod communication security.,Kubernetes cluster pods should only use approved network policies
+Deny Virtual Desktops without NSG (Network Security Group),1.0.0,Custom Policy,Deny,Network,Ensures that all AVD resources are protected by NSGs for secure traffic control.,Custom policy needed
+Deny Virtual Desktops with Public IP Addresses,1.0.0,Custom Policy,Deny,Network,Prevents exposing Virtual Desktops to public internet, reducing the attack surface.,Custom policy needed
+Deny Virtual Desktops without Disk Encryption,1.0.0,Custom Policy,Deny,Security,Requires disk encryption to protect data at rest on Virtual Desktop VMs.,Custom policy needed
+Deny Virtual Desktops without Boot Diagnostics Enabled,1.0.0,Custom Policy,Deny,Monitoring,Enables boot diagnostics for improved troubleshooting and security monitoring.,Custom policy needed
+Deny Virtual Desktops without Monitoring Enabled (Log Analytics),1.0.0,Custom Policy,Deny,Monitoring,Enforces logging and monitoring to detect security issues in AVD environments.,Custom policy needed
+Deny Virtual Desktops without MFA for Remote Access,1.0.0,Custom Policy,Deny,Identity,Ensures MFA is used to secure remote access to Azure Virtual Desktops.,Conditional Access policy needed
+Deny Virtual Desktops Without Just-In-Time (JIT) Access for RDP/SSH,1.0.0,Custom Policy,Deny,Security,Limits the exposure of RDP/SSH ports by enforcing just-in-time access policies.,Configure Just-In-Time VM access
+Deny Virtual Desktops without Secure Boot Enabled,1.0.0,Custom Policy,Deny,Security,Protects the boot process by ensuring only trusted software runs on AVD VMs.,Virtual machines should enable Secure Boot
+Deny Virtual Desktops without Private Endpoints for Key Vault,1.0.0,Custom Policy,Deny,Key Vault,Secures access to Azure Key Vault by requiring private endpoints for AVD resources.,Custom policy needed
+Deny Virtual Desktops with Untrusted or Unsupported OS Versions,1.0.0,Custom Policy,Deny,OS,Prevents the use of untrusted or unsupported OS versions on AVD session hosts.,Custom policy needed
+Deny Virtual Desktops Without Endpoint Protection (MDATP/MDI),1.0.0,Custom Policy,Deny,Security,Requires endpoint protection (e.g., Microsoft Defender) on AVD session hosts.,Custom policy needed
+Deny Virtual Desktops Without NSG Flow Logs Enabled,1.0.0,Custom Policy,Deny,Monitoring,Enforces NSG flow logging for traffic visibility and threat detection on AVD resources.,Custom policy needed
+Deny Virtual Desktops without Active Threat Detection (Azure Security Center),1.0.0,Custom Policy,Deny,Security,Enables continuous threat detection via Azure Security Center on AVD VMs.,Custom policy needed
+Deny Virtual Desktops with Unrestricted Outbound Traffic,1.0.0,Custom Policy,Deny,Network,Prevents unrestricted outbound traffic from AVD VMs, reducing data exfiltration risks.,Custom policy needed
+Deny Virtual Desktops without Vulnerability Assessment,1.0.0,Custom Policy,Deny,Security,Requires regular vulnerability assessments to identify and remediate issues.,Enable vulnerability assessment on SQL servers
+Deny Virtual Desktops without System-Assigned Managed Identity,1.0.0,Custom Policy,Deny,Identity,Ensures managed identities are used to access Azure resources securely.,Custom policy needed
+Deny Virtual Desktops Not Configured for Patch Management,1.0.0,Custom Policy,Deny,Security,Enforces patch management policies to keep AVD session hosts secure.,Custom policy needed
+Deny Virtual Desktops Without Trusted Launch (vTPM and Secure Boot),1.0.0,Custom Policy,Deny,Security,Requires Trusted Launch features like Secure Boot and vTPM for enhanced security.,Require trusted launch for virtual machines
+Deny public IPs for Virtual Desktops,1.0.0,Custom Policy,Deny,Network,Prevents assignment of public IP addresses to any AVD resources to reduce exposure.,Virtual machines should not have public IP addresses
+Deny public IP addresses for virtual networks in production environments,1.0.0,Custom Policy,Deny,Network,Ensures no public IP addresses are assigned to VNETs in production, securing traffic.,Custom policy needed
+Deny public IPs for Azure Bastion Subnets,1.0.0,Custom Policy,Deny,Network,Ensures Azure Bastion does not expose public IPs, securing remote desktop access.,Custom policy needed
+Deny Virtual Desktops without NSGs (Network Security Groups) on all subnets,1.0.0,Custom Policy,Deny,Network,Requires NSGs on all subnets with AVD resources to enforce traffic control.,Subnets should have a Network Security Group
+Deny VNETs without private endpoints for AVD services,1.0.0,Custom Policy,Deny,Network,Ensures private endpoints are used for AVD services to prevent public exposure.,Custom policy needed
+Deny VNET peering without secure encryption,1.0.0,Custom Policy,Deny,Network,Enforces secure encryption for communication across peered virtual networks.,Custom policy needed
+Deny unencrypted communication between virtual networks,1.0.0,Custom Policy,Deny,Network,Prevents unencrypted traffic between virtual networks to ensure secure communication.,
+Deny storage accounts without secure transfer enabled,1.0.0,Custom Policy,Deny,Storage,Enforces secure transfer to avoid insecure data access over HTTP.,Audit use of HTTPS instead of HTTP for storage accounts
+Deny storage accounts without encryption enabled,1.0.0,Custom Policy,Deny,Storage,Ensures all storage accounts are encrypted to protect data at rest.,Require encryption of data in Azure Storage Accounts
+Deny public blob access,1.0.0,Custom Policy,Deny,Storage,Prevents public access to blobs, reducing data exposure.,Prevent public access to blob storage
+Deny VMs without Network Security Group (NSG),1.0.0,Custom Policy,Deny,Network,Ensures all VMs are associated with NSGs to control traffic.,Audit NSGs on subnets
+Deny subnets without NSG,1.0.0,Custom Policy,Deny,Network,Prevents subnets without NSG, ensuring network-layer security.,Subnets should have a Network Security Group
+Deny unencrypted communication between virtual networks,1.0.0,Custom Policy,Deny,Network,Disallows unencrypted traffic between VNETs to maintain security.,Custom policy needed
+Deny non-compliant virtual machine sizes,1.0.0,Custom Policy,Deny,Compute,Restricts VMs to compliant sizes to enforce security standards.,Custom policy needed
+Deny non-managed disks,1.0.0,Custom Policy,Deny,Compute,Prevents the use of non-managed disks for better control and security.,Audit the use of managed disks
+Deny critical resources without resource locks,1.0.0,Custom Policy,Deny,Management,Locks critical resources to prevent accidental or malicious deletion.,Custom policy needed
+Deny key vaults without soft-delete enabled,1.0.0,Custom Policy,Deny,Key Vault,Protects key vault secrets with soft-delete in case of accidental deletion.,Key vaults should have soft delete enabled
+Deny key vaults without private endpoints,1.0.0,Custom Policy,Deny,Key Vault,Enforces access to key vaults through private endpoints, reducing attack surface.,Custom policy needed
+Deny accounts without MFA enabled,1.0.0,Custom Policy,Deny,Identity,Ensures that all accounts use MFA, mitigating unauthorized access.,Conditional Access policy needed
+Deny service principals without certificate or managed identity,1.0.0,Custom Policy,Deny,Identity,Enforces the use of certificates or managed identities for service principals.,Custom policy needed
+Deny resources without Azure Defender enabled,1.0.0,Custom Policy,Deny,Security Center,Ensures all resources are protected by Azure Defender for security monitoring.,Custom policy needed
+Deny public IPs for VMs,1.0.0,Custom Policy,Deny,Network,Prevents VMs from being exposed to the public internet via public IPs.,Virtual machines should not have public IP addresses
+Deny public endpoints for databases,1.0.0,Custom Policy,Deny,Database,Prevents databases from being exposed publicly, enforcing private access.,Custom policy needed
+Deny SQL databases without advanced threat protection enabled,1.0.0,Custom Policy,Deny,Database,Ensures all SQL databases have advanced threat protection enabled.,Advanced Threat Protection should be enabled on SQL Servers
+Deny databases without encryption at rest,1.0.0,Custom Policy,Deny,Database,Enforces encryption at rest for databases to protect sensitive data.,Require Transparent Data Encryption on SQL databases
+Deny AKS clusters without RBAC enabled,1.0.0,Custom Policy,Deny,Containers,Ensures Role-Based Access Control (RBAC) is enabled for AKS clusters.,Ensure that Kubernetes clusters have RBAC enabled
+Deny AKS clusters without network policies,1.0.0,Custom Policy,Deny,Containers,Ensures AKS clusters have network policies for pod communication security.,Kubernetes cluster pods should only use approved network policies
+Deny Virtual Desktops without NSG (Network Security Group),1.0.0,Custom Policy,Deny,Network,Ensures that all AVD resources are protected by NSGs for secure traffic control.,Custom policy needed
+Deny Virtual Desktops with Public IP Addresses,1.0.0,Custom Policy,Deny,Network,Prevents exposing Virtual Desktops to public internet, reducing the attack surface.,Custom policy needed
+Deny Virtual Desktops without Disk Encryption,1.0.0,Custom Policy,Deny,Security,Requires disk encryption to protect data at rest on Virtual Desktop VMs.,Custom policy needed
+Deny Virtual Desktops without Boot Diagnostics Enabled,1.0.0,Custom Policy,Deny,Monitoring,Enables boot diagnostics for improved troubleshooting and security monitoring.,Custom policy needed
+Deny Virtual Desktops without Monitoring Enabled (Log Analytics),1.0.0,Custom Policy,Deny,Monitoring,Enforces logging and monitoring to detect security issues in AVD environments.,Custom policy needed
+Deny Virtual Desktops without MFA for Remote Access,1.0.0,Custom Policy,Deny,Identity,Ensures MFA is used to secure remote access to Azure Virtual Desktops.,Conditional Access policy needed
+Deny Virtual Desktops Without Just-In-Time (JIT) Access for RDP/SSH,1.0.0,Custom Policy,Deny,Security,Limits the exposure of RDP/SSH ports by enforcing just-in-time access policies.,Configure Just-In-Time VM access
+Deny Virtual Desktops without Secure Boot Enabled,1.0.0,Custom Policy,Deny,Security,Protects the boot process by ensuring only trusted software runs on AVD VMs.,Virtual machines should enable Secure Boot
+Deny Virtual Desktops without Private Endpoints for Key Vault,1.0.0,Custom Policy,Deny,Key Vault,Secures access to Azure Key Vault by requiring private endpoints for AVD resources.,Custom policy needed
+Deny Virtual Desktops with Untrusted or Unsupported OS Versions,1.0.0,Custom Policy,Deny,OS,Prevents the use of untrusted or unsupported OS versions on AVD session hosts.,Custom policy needed
+Deny Virtual Desktops Without Endpoint Protection (MDATP/MDI),1.0.0,Custom Policy,Deny,Security,Requires endpoint protection (e.g., Microsoft Defender) on AVD session hosts.,Custom policy needed
+Deny Virtual Desktops Without NSG Flow Logs Enabled,1.0.0,Custom Policy,Deny,Monitoring,Enforces NSG flow logging for traffic visibility and threat detection on AVD resources.,Custom policy needed
+Deny Virtual Desktops without Active Threat Detection (Azure Security Center),1.0.0,Custom Policy,Deny,Security,Enables continuous threat detection via Azure Security Center on AVD VMs.,Custom policy needed
+Deny Virtual Desktops with Unrestricted Outbound Traffic,1.0.0,Custom Policy,Deny,Network,Prevents unrestricted outbound traffic from AVD VMs, reducing data exfiltration risks.,Custom policy needed
+Deny Virtual Desktops without Vulnerability Assessment,1.0.0,Custom Policy,Deny,Security,Requires regular vulnerability assessments to identify and remediate issues.,Enable vulnerability assessment on SQL servers
+Deny Virtual Desktops without System-Assigned Managed Identity,1.0.0,Custom Policy,Deny,Identity,Ensures managed identities are used to access Azure resources securely.,Custom policy needed
+Deny Virtual Desktops Not Configured for Patch Management,1.0.0,Custom Policy,Deny,Security,Enforces patch management policies to keep AVD session hosts secure.,Custom policy needed
+Deny Virtual Desktops Without Trusted Launch (vTPM and Secure Boot),1.0.0,Custom Policy,Deny,Security,Requires Trusted Launch features like Secure Boot and vTPM for enhanced security.,Require trusted launch for virtual machines
+Deny public IPs for Virtual Desktops,1.0.0,Custom Policy,Deny,Network,Prevents assignment of public IP addresses to any AVD resources to reduce exposure.,Virtual machines should not have public IP addresses
+Deny public IP addresses for virtual networks in production environments,1.0.0,Custom Policy,Deny,Network,Ensures no public IP addresses are assigned to VNETs in production, securing traffic.,Custom policy needed
+Deny public IPs for Azure Bastion Subnets,1.0.0,Custom Policy,Deny,Network,Ensures Azure Bastion does not expose public IPs, securing remote desktop access.,Custom policy needed
+Deny Virtual Desktops without NSGs (Network Security Groups) on all subnets,1.0.0,Custom Policy,Deny,Network,Requires NSGs on all subnets with AVD resources to enforce traffic control.,Subnets should have a Network Security Group
+Deny VNETs without private endpoints for AVD services,1.0.0,Custom Policy,Deny,Network,Ensures private endpoints are used for AVD services to prevent public exposure.,Custom policy needed
+Deny VNET peering without secure encryption,1.0.0,Custom Policy,Deny,Network,Enforces secure encryption for communication across peered virtual networks.,Custom policy needed
+Deny unencrypted communication between virtual networks,1.0.0,Custom Policy,Deny,Network,Prevents unencrypted traffic between virtual networks to ensure secure communication.,
+Deny virtual networks without DDoS protection enabled,1.0.0,Custom Policy,Deny,Network,Enforces DDoS protection on all virtual networks, reducing risks of disruption.,DDoS protection should be enabled on all virtual networks
+Deny outbound traffic from Virtual Desktops to the public internet,1.0.0,Custom Policy,Deny,Network,Blocks outbound traffic to public internet from AVD resources to prevent data leaks.,Custom policy needed
+Deny inbound traffic to Virtual Desktops from the public internet,1.0.0,Custom Policy,Deny,Network,Blocks inbound traffic from the public internet to protect AVD session hosts.,Custom policy needed
+Deny VNETs without Network Security Groups (NSGs) applied,1.0.0,Custom Policy,Deny,Network,Ensures NSGs are applied to all VNETs and subnets for traffic control.,Subnets should have a Network Security Group
+Deny public IP addresses on VMs and subnets,1.0.0,Custom Policy,Deny,Network,Prevents public IP addresses on any VNET resources to reduce exposure.,Virtual machines should not have public IP addresses
+Deny VNETs without DDoS Protection enabled,1.0.0,Custom Policy,Deny,Network,Enforces DDoS protection on VNETs to safeguard against denial-of-service attacks.,DDoS protection should be enabled on virtual networks
+Deny VNETs without Private Endpoints for Azure Services,1.0.0,Custom Policy,Deny,Network,Requires private endpoints for accessing Azure services from VNETs.,Private endpoints should be used for Azure services
+Deny VNET peering without encryption enabled,1.0.0,Custom Policy,Deny,Network,Enforces encryption for traffic between peered VNETs.,Ensure that encryption is enabled for VNET peering
+Deny VNETs without NSG Flow Logs enabled,1.0.0,Custom Policy,Deny,Network,Requires flow logs to monitor traffic for security analysis and threat detection.,Enable NSG flow logs for security monitoring
+Deny unencrypted communication between VNETs,1.0.0,Custom Policy,Deny,Network,Enforces encryption on all communication between virtual networks.,Ensure all VNET-to-VNET communication is encrypted
+Deny VNETs without service endpoints for Azure services,1.0.0,Custom Policy,Deny,Network,Restricts access to Azure services to specific VNETs using service endpoints.,Service endpoints should be enabled for Azure services
+Deny Virtual Networks without DDoS Protection Standard,1.0.0,Custom Policy,Deny,Network,Protects VNETs from potential DDoS attacks with DDoS Protection Standard.,Enable DDoS Protection Standard for virtual networks
+Deny Virtual Networks without DNS Security Configured,1.0.0,Custom Policy,Deny,Network,Enforces secure DNS configurations within VNETs for proper name resolution.,Ensure that DNS security is configured for VNETs
+Deny VNETs with unrestricted outbound traffic,1.0.0,Custom Policy,Deny,Network,Ensures outbound traffic from VNETs is controlled to prevent data exfiltration.,Custom policy needed
+Deny Virtual Networks without Traffic Analytics Enabled,1.0.0,Custom Policy,Deny,Network,Requires traffic analytics for monitoring and analyzing traffic patterns for threats.,Enable Traffic Analytics for VNETs
+Deny Key Vaults without Soft Delete enabled,1.0.0,Custom Policy,Deny,Key Vault,Ensures that deleted Key Vaults can be recovered to prevent data loss.,Soft delete should be enabled on all Key Vaults
+Deny Key Vaults without Purge Protection enabled,1.0.0,Custom Policy,Deny,Key Vault,Prevents permanent deletion of Key Vaults, ensuring data recovery during retention periods.,Purge protection should be enabled for all Key Vaults
+Deny Key Vaults without Private Endpoints,1.0.0,Custom Policy,Deny,Key Vault,Enforces private endpoints for Key Vaults to avoid public exposure.,Private endpoints should be enabled for Key Vaults
+Deny Key Vaults without logging enabled (Diagnostic Settings),1.0.0,Custom Policy,Deny,Key Vault,Ensures logging is enabled for auditing and monitoring access to Key Vaults.,Logging should be enabled for Key Vaults
+Deny Key Vaults without network access restrictions,1.0.0,Custom Policy,Deny,Key Vault,Restricts access to Key Vaults by specific networks for added security.,Restrict network access to Key Vaults
+Deny deletion of critical resources without Resource Locks,1.0.0,Custom Policy,Deny,Management,Prevents the accidental deletion of critical resources by enforcing resource locks.,Enable resource locks for critical resources
+Deny deletion of Storage Accounts without Soft Delete for blobs enabled,1.0.0,Custom Policy,Deny,Storage,Ensures soft delete is enabled for blob storage to recover accidentally deleted objects.,Soft delete should be enabled for blob storage
+Deny deletion of Virtual Machines without backup configured,1.0.0,Custom Policy,Deny,Compute,Prevents VM deletion unless proper backup is configured to avoid data loss.,Backups should be configured for all virtual machines
+Deny deletion of Azure SQL Databases without Long-Term Retention (LTR) backups enabled,1.0.0,Custom Policy,Deny,Database,Enforces long-term retention for SQL databases before allowing deletion.,Ensure long-term retention is enabled for SQL databases
+Deny deletion of App Services without Backup Enabled,1.0.0,Custom Policy,Deny,App Services,Ensures App Services are backed up before deletion to allow recovery in case of accidents.,Backups should be configured for App Services
+Deny users without MFA enabled,1.0.0,Custom Policy,Deny,Identity,Enforces MFA for all users to protect against unauthorized access.,Enforce MFA for all users
+Deny Guest users without conditional access policies applied,1.0.0,Custom Policy,Deny,Identity,Applies conditional access policies to guest users for added security.,Conditional Access policies should apply to guest users
+Deny Azure SQL Databases without Advanced Threat Protection enabled,1.0.0,Custom Policy,Deny,Database,Enables advanced threat detection to protect SQL databases from vulnerabilities.,Advanced Threat Protection should be enabled on SQL Servers
+Deny SQL Databases without Transparent Data Encryption (TDE),1.0.0,Custom Policy,Deny,Database,Ensures data at rest in SQL databases is encrypted for security.,Enable Transparent Data Encryption on SQL databases
+Deny public access to Azure SQL Databases,1.0.0,Custom Policy,Deny,Database,Prevents public access to Azure SQL databases to avoid exposure.,Restrict public access to SQL databases
+Deny deletion of databases without geo-redundant backup enabled,1.0.0,Custom Policy,Deny,Database,Ensures databases are backed up before deletion to prevent data loss.,Ensure geo-redundant backups are enabled for SQL databases
+Deny storage accounts without encryption enabled,1.0.0,Custom Policy,Deny,Storage,Enforces encryption on storage accounts to protect data at rest.,Encryption should be enabled for storage accounts
+Deny public blob access on storage accounts,1.0.0,Custom Policy,Deny,Storage,Prevents public access to blob data to avoid exposure.,Prevent public access to blob storage
+Deny storage accounts without secure transfer required,1.0.0,Custom Policy,Deny,Storage,Requires secure transfer (HTTPS) for data in transit.,Ensure secure transfer is required for storage accounts
+Deny AKS clusters without RBAC enabled,1.0.0,Custom Policy,Deny,Containers,Ensures RBAC is enabled to control access in AKS.,Ensure RBAC is enabled for Kubernetes clusters
+Deny AKS clusters without network policies enabled,1.0.0,Custom Policy,Deny,Containers,Enforces network policies to control pod traffic in AKS.,Enforce network policies for Kubernetes cluster pods
+Deny AKS clusters without monitoring enabled,1.0.0,Custom Policy,Deny,Monitoring,Ensures monitoring is enabled for AKS clusters to detect issues.,Ensure monitoring is enabled for Kubernetes clusters
+Deny VMs without disk encryption enabled,1.0.0,Custom Policy,Deny,Compute,Requires encryption for VM disks to protect data at rest.,Ensure disk encryption is enabled for virtual machines
+Deny VMs without Backup configured,1.0.0,Custom Policy,Deny,Compute,Ensures VMs have backup policies in place before deletion.,Ensure backups are configured for virtual machines
+Deny public IP addresses for VMs,1.0.0,Custom Policy,Deny,Compute,Prevents public IP addresses from being assigned to VMs.,Virtual machines should not have public IP addresses
+Deny Application Gateway without Web Application Firewall (WAF) enabled,1.0.0,Custom Policy,Deny,Network,Ensures Application Gateway has WAF enabled for threat protection.,Enable Web Application Firewall for Application Gateway
+Deny Logic Apps without Managed Identity enabled,1.0.0,Custom Policy,Deny,Automation,Requires Logic Apps to use Managed Identities for secure access.,Ensure Managed Identity is enabled for Logic Apps
+Deny public access to Logic Apps,1.0.0,Custom Policy,Deny,Automation,Prevents Logic Apps from being exposed to the public internet.,Prevent public access to Logic Apps
+Deny Azure Functions without private endpoints,1.0.0,Custom Policy,Deny,Compute,Ensures Azure Functions

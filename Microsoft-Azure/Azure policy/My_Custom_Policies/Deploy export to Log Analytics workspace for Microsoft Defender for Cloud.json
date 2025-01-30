@@ -1,0 +1,14 @@
+{
+    "if": {
+      "field": "type",
+      "equals": "Microsoft.Security/securityContacts"
+    },
+    "then": {
+      "effect": "deployIfNotExists",
+      "details": {
+        "type": "Microsoft.OperationalInsights/workspaces",
+        "name": "DefenderLogs"
+      }
+    }
+  }
+  

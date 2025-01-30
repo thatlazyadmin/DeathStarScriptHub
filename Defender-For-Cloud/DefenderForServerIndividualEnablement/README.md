@@ -61,7 +61,10 @@ It will prompt you for:
 
 ## 📸 Screenshots
 
-[SCREENSHOT]
+**Defender For Server Enableb**
+[Enable-DefenderServerP1-01.png]
+[Enable-DefenderServerP1-02.png]
+
 
 ## 📌 Example Usage
 ### Enable Defender for a VM

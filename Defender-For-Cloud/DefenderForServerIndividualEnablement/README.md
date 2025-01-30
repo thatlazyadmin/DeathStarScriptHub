@@ -36,16 +36,16 @@ Before running the script, ensure that:
     ```
 If the Az module isn’t installed, run:
 
-    ```powershell
+```powershell
     Install-Module -Name Az -AllowClobber -Scope CurrentUser -Force
 ```
 
 ## 📌 How to Use the Script
 ### 1️⃣ Run the Script
 
-    ```powershell
+```powershell
     ./DefenderForServers.ps1
-    ```
+```
 
 It will prompt you for:
  **- Subscription ID**
@@ -76,27 +76,27 @@ It will prompt you for:
 ## 📌 Example Usage
 ### Enable Defender for a VM
 
-    ```powershell
+```powershell
     Enter your Azure Subscription ID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 Enter the Resource Group Name: RG-Security
 Enter the Virtual Machine Name: VM-Prod-01
 Enter 'Enable-P1' to enable Defender for Servers P1, 'Disable' to remove Defender protection, or 'Exclude' to exclude this VM if Defender is set at the subscription level: Enable-P1
 ✅ Successfully updated Defender for Servers configuration for VM 'VM-Prod-01'
-    ```
+```
 
 ### Disable Defender for a VM
 
-    ```powershell
+```powershell
     Enter 'Enable-P1' to enable Defender for Servers P1, 'Disable' to remove Defender protection, or 'Exclude' to exclude this VM if Defender is set at the subscription level: Disable
 ✅ Successfully removed Defender for Servers from VM 'VM-Prod-01'
-    ```
+```
 
 ### Exclude a VM from Defender
 
-    ```powershell
+```powershell
     Enter 'Enable-P1' to enable Defender for Servers P1, 'Disable' to remove Defender protection, or 'Exclude' to exclude this VM if Defender is set at the subscription level: Exclude
 ✅ Successfully excluded VM 'VM-Prod-01' from Defender for Servers.
-    ```
+```
 
 ## 📜 License
 

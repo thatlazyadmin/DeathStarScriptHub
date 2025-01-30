@@ -33,24 +33,58 @@ $resourceGroup = Read-Host "Enter the Resource Group Name"
 $vmName = Read-Host "Enter the Virtual Machine Name"
 Write-Host "`n"
 
-# Validate if VM exists
+# ================================[ CHECK IF VM EXISTS (Azure VM or Arc)]=================================
+Write-Host "Checking if the VM exists in Azure..." -ForegroundColor Cyan
 $vm = Get-AzVM -ResourceGroupName $resourceGroup -Name $vmName -ErrorAction SilentlyContinue
 
+# If VM is not found under Compute, check for Arc-enabled machines
 if (-not $vm) {
-    Write-Host "ERROR: VM '$vmName' not found in Resource Group '$resourceGroup'. Please check the name and try again." -ForegroundColor Red
-    exit 1
+    Write-Host "VM not found under Azure Compute, checking for Arc-enabled machines..." -ForegroundColor Yellow
+
+    # Query Arc Machines at Subscription Level
+    $arcUrl = "https://management.azure.com/subscriptions/$subscriptionId/providers/Microsoft.HybridCompute/machines?api-version=2022-12-27"
+    $headers = @{
+        "Authorization" = "Bearer $accessToken"
+        "Content-Type"  = "application/json"
+    }
+
+    try {
+        $arcMachines = (Invoke-RestMethod -Uri $arcUrl -Headers $headers -Method Get).value
+        $arcMachine = $arcMachines | Where-Object { $_.name -eq $vmName }
+        
+        if ($arcMachine) {
+            Write-Host "STATUS: Found Arc-enabled VM: " -NoNewline
+            Write-Host "$vmName" -ForegroundColor Green
+            Write-Host " | LOCATION: " -NoNewline
+            Write-Host "$($arcMachine.location)" -ForegroundColor Cyan
+            $isArcMachine = $true
+        } else {
+            Write-Host "ERROR: VM '$vmName' not found in Resource Group '$resourceGroup' or as an Arc-enabled machine." -ForegroundColor Red
+            exit 1
+        }
+    } catch {
+        Write-Host "ERROR: Failed to retrieve Arc-enabled machines." -ForegroundColor Red
+        Write-Host "DETAILS: $_.Exception.Message"
+        exit 1
+    }
+} else {
+    Write-Host "STATUS: Found Azure VM: " -NoNewline
+    Write-Host "$vmName" -ForegroundColor Green
+    Write-Host " | LOCATION: " -NoNewline
+    Write-Host "$($vm.Location)" -ForegroundColor Cyan
+    $isArcMachine = $false
 }
 
-Write-Host "STATUS: Found VM: " -NoNewline
-Write-Host "$vmName" -ForegroundColor Green -NoNewline
-Write-Host " in Resource Group: " -NoNewline
-Write-Host "$resourceGroup" -ForegroundColor Green
-Write-Host " | LOCATION: " -NoNewline
-Write-Host "$($vm.Location)" -ForegroundColor Cyan
 Write-Host "`n"
 
 # ================================[ DEFINE API URL & HEADERS ]=================================
-$pricingUrl = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Compute/virtualMachines/$vmName/providers/Microsoft.Security/pricings/virtualMachines?api-version=2024-01-01"
+if ($isArcMachine) {
+    # API for Arc Machines
+    $pricingUrl = "https://management.azure.com$($arcMachine.id)/providers/Microsoft.Security/pricings/virtualMachines?api-version=2024-01-01"
+} else {
+    # API for Azure Virtual Machines
+    $pricingUrl = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Compute/virtualMachines/$vmName/providers/Microsoft.Security/pricings/virtualMachines?api-version=2024-01-01"
+}
 
 $headers = @{
     "Authorization" = "Bearer $accessToken"

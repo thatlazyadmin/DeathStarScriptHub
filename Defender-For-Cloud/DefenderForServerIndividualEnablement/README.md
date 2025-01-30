@@ -107,7 +107,7 @@ This project is licensed under the MIT License.
 
 ## 📜 Learn More
 
-From the following Microsoft Doc you can learn more about the differnet options available to enable Microsoft Defender for Server.
+From the following Microsoft document you can learn more about the differnet options available to enable Microsoft Defender for Server.
 [Read More](https://learn.microsoft.com/en-us/azure/defender-for-cloud/plan-defender-for-servers-select-plan)
 
 ## 📌 Contributors

@@ -61,8 +61,8 @@ It will prompt you for:
 
 ## 📸 Screenshots
 
-**Defender For Server Enableb**
-[Enable-DefenderServerP1-01.png]
+**Defender For Server Enabled**
+[Enable-DefenderServerP1-01.png](Defender-For-Cloud/DefenderForServerIndividualEnablement/Enable-DefenderServerP1-01.png)
 [Enable-DefenderServerP1-02.png]
 
 

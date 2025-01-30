@@ -63,7 +63,15 @@ It will prompt you for:
 
 **Defender For Server Enabled**
 ![alt text](https://github.com/thatlazyadmin/DeathStarScriptHub/blob/main/Defender-For-Cloud/DefenderForServerIndividualEnablement/Enable-DefenderServerP1-01.png)
+
+**Following screenshot we can see Defender enabled on the server**
 ![alt text](https://github.com/thatlazyadmin/DeathStarScriptHub/blob/main/Defender-For-Cloud/DefenderForServerIndividualEnablement/Enable-DefenderServerP1-02.png)
+
+**Disable Defender on a Server**
+![alt text](https://github.com/thatlazyadmin/DeathStarScriptHub/blob/main/Defender-For-Cloud/DefenderForServerIndividualEnablement/disable-DefenderforServerPerServer-01.png)
+
+**Defender showing as "Off"**
+![alt text](https://github.com/thatlazyadmin/DeathStarScriptHub/blob/main/Defender-For-Cloud/DefenderForServerIndividualEnablement/DefenderServer-Disabled-02.png)
 
 ## 📌 Example Usage
 ### Enable Defender for a VM
@@ -93,6 +101,11 @@ Enter 'Enable-P1' to enable Defender for Servers P1, 'Disable' to remove Defende
 ## 📜 License
 
 This project is licensed under the MIT License.
+
+## 📜 Learn More
+
+From the following Microsoft Doc you can learn more about the differnet options available to enable Microsoft Defender for Server.
+[Read More](https://learn.microsoft.com/en-us/azure/defender-for-cloud/plan-defender-for-servers-select-plan)
 
 ## 📌 Contributors
 

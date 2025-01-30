@@ -32,33 +32,37 @@ Write-Host "Starting to loop through all subscriptions..." -ForegroundColor Gree
 
 # Loop through all subscriptions
 $subscriptions = az account list --query "[].id" -o tsv
+$jobs = @()
 foreach ($subscription in $subscriptions) {
-    Write-Host "Switching to subscription: $subscription" -ForegroundColor Yellow
-    az account set --subscription $subscription
+    $jobs += Start-Job -ScriptBlock {
+        param ($subscription)
+        az account set --subscription $subscription
+        $vms = az vm list -d --query "[].{Name:name, OSType:storageProfile.osDisk.osType, IPAddress:privateIps}" -o json | ConvertFrom-Json
+        return $vms
+    } -ArgumentList $subscription
+}
 
-    # Get VM details
-    $vms = az vm list -d --query "[].{Name:name, OSType:storageProfile.osDisk.osType, IPAddress:privateIps}" -o json | ConvertFrom-Json
-
-    if (-not $vms) {
-        Write-Host "No virtual machines found in subscription: $subscription" -ForegroundColor Red
-        continue
+$results = $jobs | ForEach-Object {
+    try {
+        Receive-Job -Job $_ -Wait
+    } catch {
+        Write-Host "An error occurred while receiving job results: $_" -ForegroundColor Red
     }
+}
 
-    foreach ($vm in $vms) {
-        $subscriptionName = az account show --query "name" -o tsv
+$jobs | ForEach-Object { Remove-Job -Job $_ }
+
+$csvData = @()
+foreach ($result in $results) {
+    foreach ($vm in $result) {
         $csvData += [PSCustomObject]@{
-            SubscriptionName = $subscriptionName
-            VMName           = $vm.Name
-            OSType           = $vm.OSType
-            IPAddress        = $vm.IPAddress
+            Name      = $vm.Name
+            OSType    = $vm.OSType
+            IPAddress = $vm.IPAddress
         }
     }
 }
 
 # Export to CSV
-if ($csvData.Count -gt 0) {
-    $csvData | Export-Csv -Path $outputFile -NoTypeInformation -Encoding UTF8
-    Write-Host "Export completed. Details saved to $outputFile" -ForegroundColor Green
-} else {
-    Write-Host "No data to export. Ensure there are virtual machines in your subscriptions." -ForegroundColor Red
-}
+$csvData | Export-Csv -Path $outputFile -NoTypeInformation
+Write-Host "VM details exported to $outputFile" -ForegroundColor Green

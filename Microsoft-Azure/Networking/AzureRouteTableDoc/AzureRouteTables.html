@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        h2 { text-align: center; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; border: 1px solid black; text-align: left; }
+        th { background-color: #0078D4; color: white; }
+    </style>
+</head>
+<body>
+    <h2>Azure Route Table Documentation</h2>
+    <table>
+        <tr>
+            <th>Subscription</th>
+            <th>Route Table</th>
+            <th>Resource Group</th>
+            <th>VNet</th>
+            <th>Routes</th>
+            <th>Subnet</th>
+            <th>NSG</th>
+            <th>VMs in Subnet</th>
+            <th>Description</th>
+        </tr>        <tr>
+            <td>TLZADM-PROD-SUB-01</td>
+            <td>DummyRouteTable-1</td>
+            <td>rg-lab-networking</td>
+            <td></td>
+            <td>172.16.11.0/24 → VirtualAppliance (Firewall Route); 172.16.12.0/24 → VirtualAppliance (Firewall Route); 172.16.13.0/24 → VirtualAppliance (Firewall Route); 172.16.14.0/24 → VirtualAppliance (Firewall Route); 172.16.15.0/24 → VirtualAppliance (Firewall Route); 172.16.16.0/24 → VirtualAppliance (Firewall Route); 172.16.17.0/24 → VirtualAppliance (Firewall Route); 172.16.18.0/24 → VirtualAppliance (Firewall Route); 172.16.19.0/24 → VirtualAppliance (Firewall Route); 172.16.20.0/24 → VirtualAppliance (Firewall Route); 172.16.21.0/24 → VirtualAppliance (Firewall Route); 172.16.22.0/24 → VirtualAppliance (Firewall Route); 172.16.23.0/24 → VirtualAppliance (Firewall Route); 172.16.24.0/24 → VirtualAppliance (Firewall Route); 172.16.25.0/24 → VirtualAppliance (Firewall Route); 172.16.26.0/24 → VirtualAppliance (Firewall Route); 172.16.27.0/24 → VirtualAppliance (Firewall Route); 172.16.28.0/24 → VirtualAppliance (Firewall Route); 172.16.29.0/24 → VirtualAppliance (Firewall Route); 172.16.30.0/24 → VirtualAppliance (Firewall Route)</td>
+            <td>Subnet-D</td>
+            <td>None</td>
+            <td>0</td>
+            <td>No Description</td>
+        </tr>        <tr>
+            <td>TLZADM-PROD-SUB-01</td>
+            <td>DummyRouteTable-1</td>
+            <td>rg-lab-networking</td>
+            <td></td>
+            <td>172.16.11.0/24 → VirtualAppliance (Firewall Route); 172.16.12.0/24 → VirtualAppliance (Firewall Route); 172.16.13.0/24 → VirtualAppliance (Firewall Route); 172.16.14.0/24 → VirtualAppliance (Firewall Route); 172.16.15.0/24 → VirtualAppliance (Firewall Route); 172.16.16.0/24 → VirtualAppliance (Firewall Route); 172.16.17.0/24 → VirtualAppliance (Firewall Route); 172.16.18.0/24 → VirtualAppliance (Firewall Route); 172.16.19.0/24 → VirtualAppliance (Firewall Route); 172.16.20.0/24 → VirtualAppliance (Firewall Route); 172.16.21.0/24 → VirtualAppliance (Firewall Route); 172.16.22.0/24 → VirtualAppliance (Firewall Route); 172.16.23.0/24 → VirtualAppliance (Firewall Route); 172.16.24.0/24 → VirtualAppliance (Firewall Route); 172.16.25.0/24 → VirtualAppliance (Firewall Route); 172.16.26.0/24 → VirtualAppliance (Firewall Route); 172.16.27.0/24 → VirtualAppliance (Firewall Route); 172.16.28.0/24 → VirtualAppliance (Firewall Route); 172.16.29.0/24 → VirtualAppliance (Firewall Route); 172.16.30.0/24 → VirtualAppliance (Firewall Route)</td>
+            <td>Subnet-B</td>
+            <td>lab-ubuntu-nsg</td>
+            <td>0</td>
+            <td>No Description</td>
+        </tr>        <tr>
+            <td>TLZADM-PROD-SUB-01</td>
+            <td>DummyRouteTable-2</td>
+            <td>rg-lab-networking</td>
+            <td></td>
+            <td>172.16.11.0/24 → VirtualAppliance (Firewall Route); 172.16.12.0/24 → VirtualAppliance (Firewall Route); 172.16.13.0/24 → VirtualAppliance (Firewall Route); 172.16.14.0/24 → VirtualAppliance (Firewall Route); 172.16.15.0/24 → VirtualAppliance (Firewall Route); 172.16.16.0/24 → VirtualAppliance (Firewall Route); 172.16.17.0/24 → VirtualAppliance (Firewall Route); 172.16.18.0/24 → VirtualAppliance (Firewall Route); 172.16.19.0/24 → VirtualAppliance (Firewall Route); 172.16.20.0/24 → VirtualAppliance (Firewall Route); 172.16.21.0/24 → VirtualAppliance (Firewall Route); 172.16.22.0/24 → VirtualAppliance (Firewall Route); 172.16.23.0/24 → VirtualAppliance (Firewall Route); 172.16.24.0/24 → VirtualAppliance (Firewall Route); 172.16.25.0/24 → VirtualAppliance (Firewall Route); 172.16.26.0/24 → VirtualAppliance (Firewall Route); 172.16.27.0/24 → VirtualAppliance (Firewall Route); 172.16.28.0/24 → VirtualAppliance (Firewall Route); 172.16.29.0/24 → VirtualAppliance (Firewall Route); 172.16.30.0/24 → VirtualAppliance (Firewall Route)</td>
+            <td>Subnet-C</td>
+            <td>None</td>
+            <td>0</td>
+            <td>No Description</td>
+        </tr>        <tr>
+            <td>TLZADM-PROD-SUB-01</td>
+            <td>DummyRouteTable-2</td>
+            <td>rg-lab-networking</td>
+            <td></td>
+            <td>172.16.11.0/24 → VirtualAppliance (Firewall Route); 172.16.12.0/24 → VirtualAppliance (Firewall Route); 172.16.13.0/24 → VirtualAppliance (Firewall Route); 172.16.14.0/24 → VirtualAppliance (Firewall Route); 172.16.15.0/24 → VirtualAppliance (Firewall Route); 172.16.16.0/24 → VirtualAppliance (Firewall Route); 172.16.17.0/24 → VirtualAppliance (Firewall Route); 172.16.18.0/24 → VirtualAppliance (Firewall Route); 172.16.19.0/24 → VirtualAppliance (Firewall Route); 172.16.20.0/24 → VirtualAppliance (Firewall Route); 172.16.21.0/24 → VirtualAppliance (Firewall Route); 172.16.22.0/24 → VirtualAppliance (Firewall Route); 172.16.23.0/24 → VirtualAppliance (Firewall Route); 172.16.24.0/24 → VirtualAppliance (Firewall Route); 172.16.25.0/24 → VirtualAppliance (Firewall Route); 172.16.26.0/24 → VirtualAppliance (Firewall Route); 172.16.27.0/24 → VirtualAppliance (Firewall Route); 172.16.28.0/24 → VirtualAppliance (Firewall Route); 172.16.29.0/24 → VirtualAppliance (Firewall Route); 172.16.30.0/24 → VirtualAppliance (Firewall Route)</td>
+            <td>Subnet-A</td>
+            <td>lab-ubuntu-nsg</td>
+            <td>1</td>
+            <td>No Description</td>
+        </tr>        <tr>
+            <td>Visual Studio Enterprise</td>
+            <td>DummyRouteTable-1</td>
+            <td>lab-network</td>
+            <td>None</td>
+            <td>0.0.0.0/0 → Internet (Default Route)</td>
+            <td>None</td>
+            <td>None</td>
+            <td>0</td>
+            <td>No Description</td>
+        </tr>        <tr>
+            <td>Visual Studio Enterprise</td>
+            <td>DummyRouteTable-2</td>
+            <td>lab-network</td>
+            <td>None</td>
+            <td>0.0.0.0/0 → Internet (Default Route)</td>
+            <td>None</td>
+            <td>None</td>
+            <td>0</td>
+            <td>No Description</td>
+        </tr>    </table>
+</body>
+</html>

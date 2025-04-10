@@ -1,9 +1,9 @@
 # ==================== CONFIGURATION =========================
 
-$TenantId     = "f8a9f5a5-fbb5-4c50-9f67-84b1899a9f74"
-$ClientId     = "7c17f89e-695b-4b7d-b08b-3d69d49cfbfb"
-$ClientSecret = "qbR8Q~qo6AzWg~WhqH8mEzNq6myUW6rpSd00Zbx3" # Store securely!
-$GroupId      = "5bdc8e0e-6180-406a-8231-d2380cfd3734" # Entra MFA Exclusion Group
+$TenantId     = ""
+$ClientId     = ""
+$ClientSecret = "" # Store securely!
+$GroupId      = "" # Entra MFA Exclusion Group
 $WebhookUrl   = "https://logicapp-mfa-groupcleanup-notify.azurewebsites.net:443/api/HTTP_Request/triggers/When_a_HTTP_request_is_received/invoke?api-version=2022-05-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=la7zXLoUVsrB_YP542E7W3KvvGo_ND-Hh9Z-SOZLHss"  # Optional
 $Now          = Get-Date
 

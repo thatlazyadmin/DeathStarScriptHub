@@ -1,0 +1,10 @@
+{
+    "if": {
+      "field": "type",
+      "equals": "Microsoft.Network/expressRouteCircuits"
+    },
+    "then": {
+      "effect": "audit"
+    }
+  }
+  

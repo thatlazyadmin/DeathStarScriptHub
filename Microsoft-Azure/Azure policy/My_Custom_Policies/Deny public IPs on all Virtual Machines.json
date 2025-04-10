@@ -1,0 +1,10 @@
+{
+    "if": {
+      "field": "Microsoft.Network/networkInterfaces/ipConfigurations/publicIpAddress.id",
+      "exists": "true"
+    },
+    "then": {
+      "effect": "deny"
+    }
+  }
+  

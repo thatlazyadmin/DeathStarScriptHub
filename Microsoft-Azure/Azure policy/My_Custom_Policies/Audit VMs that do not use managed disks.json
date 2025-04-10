@@ -1,0 +1,10 @@
+{
+    "if": {
+      "field": "Microsoft.Compute/virtualMachines/storageProfile.osDisk.managedDisk.id",
+      "exists": "false"
+    },
+    "then": {
+      "effect": "audit"
+    }
+  }
+  

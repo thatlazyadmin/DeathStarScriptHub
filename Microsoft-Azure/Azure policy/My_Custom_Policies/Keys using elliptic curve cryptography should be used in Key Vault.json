@@ -1,0 +1,10 @@
+{
+    "if": {
+      "field": "Microsoft.KeyVault/vaults/accessPolicies/permissions.keys",
+      "equals": "all"
+    },
+    "then": {
+      "effect": "deny"
+    }
+  }
+  

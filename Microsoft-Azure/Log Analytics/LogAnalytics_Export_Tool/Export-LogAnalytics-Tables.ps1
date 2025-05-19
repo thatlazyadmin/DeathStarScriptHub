@@ -1,7 +1,7 @@
 # Define Required Variables
-$tenantId = "f"   # Replace with your Azure Tenant ID
-$clientId = "2"   # Replace with your App Registration Client ID
-$clientSecret = "q"   # Replace with your Client Secret Value
+$tenantId = ""   # Replace with your Azure Tenant ID
+$clientId = ""   # Replace with your App Registration Client ID
+$clientSecret = ""   # Replace with your Client Secret Value
 
 # Retrieve Subscription ID dynamically if not provided
 if (-not $subscriptionId -or $subscriptionId -eq "" -or $subscriptionId -eq "<YourCorrectSubscriptionID>") {

@@ -100,6 +100,53 @@ Enter 'Enable-P1' to enable Defender for Servers P1, 'Disable' to remove Defende
     Enter 'Enable-P1' to enable Defender for Servers P1, 'Disable' to remove Defender protection, or 'Exclude' to exclude this VM if Defender is set at the subscription level: Exclude
 ✅ Successfully excluded VM 'VM-Prod-01' from Defender for Servers.
 ```
+### Common Queries
+Q: Can I use this script for both Azure VMs and Arc-enabled servers?
+A: Yes! The script automatically detects if the VM is native Azure or Arc-enabled and uses the correct API.
+
+Q: What actions can I perform?
+A: You can enable Defender for Servers Plan 1, disable Defender, or exclude a VM from Defender (even if Defender is enabled at the subscription level).
+
+Q: Do I need admin rights?
+A: You need at least Security Admin or Contributor rights on the subscription/resource group.
+
+Q: What if my VM isn’t found?
+A: The script checks both Azure Compute and Arc. If not found, verify the VM name, resource group, and subscription.
+
+Q: Can I run this in Cloud Shell?
+A: Yes, as long as the Az PowerShell module is available and you have the required permissions.
+
+### 🛠️ Troubleshooting & Fixes
+1. Re-authenticate with the correct context
+If you get authentication errors, re-login and specify your tenant if needed:
+
+Connect-AzAccount -Tenant "<your-tenant-id>"
+
+Or, for MFA/Conditional Access scenarios:
+
+Connect-AzAccount -UseDeviceAuthentication
+
+2. Check your current Azure context
+Ensure you’re working in the correct subscription:
+
+Get-AzContext
+Set-AzContext -SubscriptionId "<your-subscription-id>"
+
+4. Use the correct scope for your access token
+If you see token or permission errors, explicitly request a token for ARM:
+
+$accessToken = (Get-AzAccessToken -ResourceUrl "https://management.azure.com/").Token
+$accessToken | Out-String
+
+6. Confirm API permissions
+Your user or service principal must have Reader or above at the subscription level to enumerate Arc resources.
+
+8. Update your Azure PowerShell modules
+Outdated modules can cause token or API issues:
+
+Update-Module -Name Az -Force
+
+If you encounter issues not listed here, please check the error message output by the script or reach out via the contact details in the Contributors section.
 
 ## 📜 License
 

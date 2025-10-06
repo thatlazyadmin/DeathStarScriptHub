@@ -1,0 +1,62 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "nsgName": {
+      "value": "nsg-web-001"
+    },
+    "location": {
+      "value": "eastus"
+    },
+    "securityRules": {
+      "value": [
+        {
+          "name": "Allow-HTTPS-Inbound",
+          "properties": {
+            "priority": 100,
+            "direction": "Inbound",
+            "access": "Allow",
+            "protocol": "Tcp",
+            "sourcePortRange": "*",
+            "destinationPortRange": "443",
+            "sourceAddressPrefix": "*",
+            "destinationAddressPrefix": "*"
+          }
+        },
+        {
+          "name": "Allow-HTTP-Inbound",
+          "properties": {
+            "priority": 110,
+            "direction": "Inbound",
+            "access": "Allow",
+            "protocol": "Tcp",
+            "sourcePortRange": "*",
+            "destinationPortRange": "80",
+            "sourceAddressPrefix": "*",
+            "destinationAddressPrefix": "*"
+          }
+        },
+        {
+          "name": "Deny-All-Inbound",
+          "properties": {
+            "priority": 4096,
+            "direction": "Inbound",
+            "access": "Deny",
+            "protocol": "*",
+            "sourcePortRange": "*",
+            "destinationPortRange": "*",
+            "sourceAddressPrefix": "*",
+            "destinationAddressPrefix": "*"
+          }
+        }
+      ]
+    },
+    "tags": {
+      "value": {
+        "Environment": "Production",
+        "Owner": "Shaun Hardneck",
+        "ManagedBy": "thatlazyadmin.com"
+      }
+    }
+  }
+}

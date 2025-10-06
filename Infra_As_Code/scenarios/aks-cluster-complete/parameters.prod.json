@@ -1,0 +1,23 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentName": {
+      "value": "prod"
+    },
+    "applicationName": {
+      "value": "myapp"
+    },
+    "location": {
+      "value": "eastus"
+    },
+    "tags": {
+      "value": {
+        "CostCenter": "IT",
+        "Owner": "Platform Team",
+        "CreatedBy": "Shaun Hardneck",
+        "Website": "thatlazyadmin.com"
+      }
+    }
+  }
+}

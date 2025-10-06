@@ -1,0 +1,61 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vmName": {
+      "value": "vm-prod-001"
+    },
+    "location": {
+      "value": "eastus"
+    },
+    "vmSize": {
+      "value": "Standard_D2s_v3"
+    },
+    "osType": {
+      "value": "Linux"
+    },
+    "osDiskSizeGB": {
+      "value": 128
+    },
+    "osDiskStorageType": {
+      "value": "Premium_LRS"
+    },
+    "adminUsername": {
+      "value": "azureuser"
+    },
+    "adminPasswordOrKey": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/{subscription-id}/resourceGroups/{rg-name}/providers/Microsoft.KeyVault/vaults/{vault-name}"
+        },
+        "secretName": "vm-ssh-public-key"
+      }
+    },
+    "authenticationType": {
+      "value": "sshPublicKey"
+    },
+    "subnetId": {
+      "value": "/subscriptions/{subscription-id}/resourceGroups/{rg-name}/providers/Microsoft.Network/virtualNetworks/{vnet-name}/subnets/{subnet-name}"
+    },
+    "enableAcceleratedNetworking": {
+      "value": true
+    },
+    "availabilityZone": {
+      "value": "1"
+    },
+    "enableBootDiagnostics": {
+      "value": true
+    },
+    "bootDiagnosticsStorageAccountName": {
+      "value": ""
+    },
+    "tags": {
+      "value": {
+        "Environment": "Production",
+        "Owner": "Shaun Hardneck",
+        "CostCenter": "IT",
+        "ManagedBy": "thatlazyadmin.com"
+      }
+    }
+  }
+}

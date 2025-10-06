@@ -1,0 +1,82 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "clusterName": {
+      "value": "aks-prod-001"
+    },
+    "location": {
+      "value": "eastus"
+    },
+    "kubernetesVersion": {
+      "value": "1.28.3"
+    },
+    "dnsPrefix": {
+      "value": "aks-prod-001"
+    },
+    "enablePrivateCluster": {
+      "value": false
+    },
+    "systemNodePoolVmSize": {
+      "value": "Standard_D2s_v3"
+    },
+    "systemNodePoolNodeCount": {
+      "value": 3
+    },
+    "userNodePoolVmSize": {
+      "value": "Standard_D4s_v3"
+    },
+    "userNodePoolNodeCount": {
+      "value": 3
+    },
+    "enableAutoScaling": {
+      "value": true
+    },
+    "minNodeCount": {
+      "value": 2
+    },
+    "maxNodeCount": {
+      "value": 10
+    },
+    "subnetId": {
+      "value": "/subscriptions/{subscription-id}/resourceGroups/{rg-name}/providers/Microsoft.Network/virtualNetworks/{vnet-name}/subnets/{subnet-name}"
+    },
+    "enableAzurePolicy": {
+      "value": true
+    },
+    "enableAzureMonitor": {
+      "value": true
+    },
+    "logAnalyticsWorkspaceId": {
+      "value": "/subscriptions/{subscription-id}/resourceGroups/{rg-name}/providers/Microsoft.OperationalInsights/workspaces/{workspace-name}"
+    },
+    "networkPlugin": {
+      "value": "azure"
+    },
+    "networkPolicy": {
+      "value": "azure"
+    },
+    "loadBalancerSku": {
+      "value": "standard"
+    },
+    "enableRBAC": {
+      "value": true
+    },
+    "enableAzureAD": {
+      "value": true
+    },
+    "aadAdminGroupObjectIds": {
+      "value": [
+        "00000000-0000-0000-0000-000000000000"
+      ]
+    },
+    "tags": {
+      "value": {
+        "Environment": "Production",
+        "Owner": "Shaun Hardneck",
+        "CostCenter": "IT",
+        "ManagedBy": "thatlazyadmin.com"
+      }
+    }
+  }
+}

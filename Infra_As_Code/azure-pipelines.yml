@@ -1,0 +1,196 @@
+#==================================================================================
+# Azure DevOps Pipeline - Infrastructure Deployment
+# Created by: Shaun Hardneck
+# Website: thatlazyadmin.com
+# Description: Validates and deploys Azure infrastructure using Bicep templates
+#==================================================================================
+
+trigger:
+  branches:
+    include:
+      - main
+      - develop
+  paths:
+    include:
+      - 'Infra_As_Code/**'
+
+pr:
+  branches:
+    include:
+      - main
+      - develop
+  paths:
+    include:
+      - 'Infra_As_Code/**'
+
+variables:
+  - group: infra-variables # Variable group for shared variables
+  - name: azureServiceConnection
+    value: 'Azure-ServiceConnection' # Update with your service connection name
+  - name: workingDirectory
+    value: '$(System.DefaultWorkingDirectory)/Infra_As_Code'
+
+stages:
+  #==================================================================================
+  # Stage 1: Validate Templates
+  #==================================================================================
+  - stage: Validate
+    displayName: 'Validate Bicep Templates'
+    jobs:
+      - job: ValidateTemplates
+        displayName: 'Validate and Build Templates'
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - checkout: self
+            displayName: 'Checkout Repository'
+
+          - task: AzureCLI@2
+            displayName: 'Install Bicep CLI'
+            inputs:
+              azureSubscription: $(azureServiceConnection)
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az bicep install
+                az bicep version
+
+          - task: PowerShell@2
+            displayName: 'Validate All Bicep Templates'
+            inputs:
+              targetType: 'filePath'
+              filePath: '$(workingDirectory)/scripts/validate.ps1'
+              arguments: '-Path "$(workingDirectory)/modules" -Recursive'
+              pwsh: true
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Bicep Templates'
+            inputs:
+              targetPath: '$(workingDirectory)'
+              artifact: 'bicep-templates'
+              publishLocation: 'pipeline'
+
+  #==================================================================================
+  # Stage 2: Deploy to Development
+  #==================================================================================
+  - stage: DeployDev
+    displayName: 'Deploy to Development'
+    dependsOn: Validate
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+    jobs:
+      - deployment: DeployInfra
+        displayName: 'Deploy Infrastructure'
+        environment: 'Development'
+        pool:
+          vmImage: 'ubuntu-latest'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: bicep-templates
+
+                - task: AzureCLI@2
+                  displayName: 'Deploy Storage Account'
+                  inputs:
+                    azureSubscription: $(azureServiceConnection)
+                    scriptType: 'bash'
+                    scriptLocation: 'inlineScript'
+                    inlineScript: |
+                      az deployment group create \
+                        --resource-group $(devResourceGroup) \
+                        --template-file $(Pipeline.Workspace)/bicep-templates/modules/storage/storage-account/main.bicep \
+                        --parameters @$(Pipeline.Workspace)/bicep-templates/modules/storage/storage-account/parameters.json
+
+  #==================================================================================
+  # Stage 3: Deploy to Staging (with What-If)
+  #==================================================================================
+  - stage: DeployStaging
+    displayName: 'Deploy to Staging'
+    dependsOn: Validate
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - job: WhatIf
+        displayName: 'What-If Analysis'
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - download: current
+            artifact: bicep-templates
+
+          - task: AzureCLI@2
+            displayName: 'Run What-If Analysis'
+            inputs:
+              azureSubscription: $(azureServiceConnection)
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az deployment group create \
+                  --resource-group $(stagingResourceGroup) \
+                  --template-file $(Pipeline.Workspace)/bicep-templates/modules/storage/storage-account/main.bicep \
+                  --parameters @$(Pipeline.Workspace)/bicep-templates/modules/storage/storage-account/parameters.json \
+                  --what-if
+
+      - deployment: DeployInfra
+        displayName: 'Deploy Infrastructure'
+        dependsOn: WhatIf
+        environment: 'Staging'
+        pool:
+          vmImage: 'ubuntu-latest'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: bicep-templates
+
+                - task: AzureCLI@2
+                  displayName: 'Deploy Infrastructure'
+                  inputs:
+                    azureSubscription: $(azureServiceConnection)
+                    scriptType: 'bash'
+                    scriptLocation: 'inlineScript'
+                    inlineScript: |
+                      az deployment group create \
+                        --resource-group $(stagingResourceGroup) \
+                        --template-file $(Pipeline.Workspace)/bicep-templates/modules/storage/storage-account/main.bicep \
+                        --parameters @$(Pipeline.Workspace)/bicep-templates/modules/storage/storage-account/parameters.json
+
+  #==================================================================================
+  # Stage 4: Deploy to Production (with Approval Gate)
+  #==================================================================================
+  - stage: DeployProd
+    displayName: 'Deploy to Production'
+    dependsOn: DeployStaging
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - deployment: DeployInfra
+        displayName: 'Deploy Infrastructure'
+        environment: 'Production' # Requires approval in Azure DevOps Environments
+        pool:
+          vmImage: 'ubuntu-latest'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: bicep-templates
+
+                - task: AzureCLI@2
+                  displayName: 'Deploy Infrastructure'
+                  inputs:
+                    azureSubscription: $(azureServiceConnection)
+                    scriptType: 'bash'
+                    scriptLocation: 'inlineScript'
+                    inlineScript: |
+                      az deployment group create \
+                        --resource-group $(prodResourceGroup) \
+                        --template-file $(Pipeline.Workspace)/bicep-templates/modules/storage/storage-account/main.bicep \
+                        --parameters @$(Pipeline.Workspace)/bicep-templates/modules/storage/storage-account/parameters.json
+
+                - task: PublishPipelineArtifact@1
+                  displayName: 'Publish Deployment Logs'
+                  inputs:
+                    targetPath: '$(System.DefaultWorkingDirectory)'
+                    artifact: 'deployment-logs'
+                    publishLocation: 'pipeline'

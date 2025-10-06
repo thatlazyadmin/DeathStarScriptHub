@@ -1,0 +1,38 @@
+{
+  "name": "azure-vm-provisioning-workspace",
+  "version": "1.0.0",
+  "description": "A workspace for provisioning Azure Virtual Machines through a Power Apps Canvas form.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "ts-node src/api/index.ts",
+    "build": "tsc",
+    "test": "jest"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "axios": "^0.21.1",
+    "typescript": "^4.3.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.11",
+    "@types/jest": "^26.0.24",
+    "ts-jest": "^26.5.6",
+    "jest": "^26.6.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/azure-vm-provisioning-workspace.git"
+  },
+  "keywords": [
+    "azure",
+    "vm",
+    "provisioning",
+    "powerapps"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yourusername/azure-vm-provisioning-workspace/issues"
+  },
+  "homepage": "https://github.com/yourusername/azure-vm-provisioning-workspace#readme"
+}

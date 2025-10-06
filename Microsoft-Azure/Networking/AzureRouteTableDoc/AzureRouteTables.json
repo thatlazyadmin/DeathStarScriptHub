@@ -1,0 +1,68 @@
+[
+  {
+    "Subscription": "TLZADM-PROD-SUB-01",
+    "RouteTable": "DummyRouteTable-1",
+    "ResourceGroup": "rg-lab-networking",
+    "VNet": null,
+    "Routes": "172.16.11.0/24 → VirtualAppliance (Firewall Route); 172.16.12.0/24 → VirtualAppliance (Firewall Route); 172.16.13.0/24 → VirtualAppliance (Firewall Route); 172.16.14.0/24 → VirtualAppliance (Firewall Route); 172.16.15.0/24 → VirtualAppliance (Firewall Route); 172.16.16.0/24 → VirtualAppliance (Firewall Route); 172.16.17.0/24 → VirtualAppliance (Firewall Route); 172.16.18.0/24 → VirtualAppliance (Firewall Route); 172.16.19.0/24 → VirtualAppliance (Firewall Route); 172.16.20.0/24 → VirtualAppliance (Firewall Route); 172.16.21.0/24 → VirtualAppliance (Firewall Route); 172.16.22.0/24 → VirtualAppliance (Firewall Route); 172.16.23.0/24 → VirtualAppliance (Firewall Route); 172.16.24.0/24 → VirtualAppliance (Firewall Route); 172.16.25.0/24 → VirtualAppliance (Firewall Route); 172.16.26.0/24 → VirtualAppliance (Firewall Route); 172.16.27.0/24 → VirtualAppliance (Firewall Route); 172.16.28.0/24 → VirtualAppliance (Firewall Route); 172.16.29.0/24 → VirtualAppliance (Firewall Route); 172.16.30.0/24 → VirtualAppliance (Firewall Route)",
+    "Subnet": "Subnet-D",
+    "NSG": "None",
+    "VMCount": 0,
+    "Description": "No Description"
+  },
+  {
+    "Subscription": "TLZADM-PROD-SUB-01",
+    "RouteTable": "DummyRouteTable-1",
+    "ResourceGroup": "rg-lab-networking",
+    "VNet": null,
+    "Routes": "172.16.11.0/24 → VirtualAppliance (Firewall Route); 172.16.12.0/24 → VirtualAppliance (Firewall Route); 172.16.13.0/24 → VirtualAppliance (Firewall Route); 172.16.14.0/24 → VirtualAppliance (Firewall Route); 172.16.15.0/24 → VirtualAppliance (Firewall Route); 172.16.16.0/24 → VirtualAppliance (Firewall Route); 172.16.17.0/24 → VirtualAppliance (Firewall Route); 172.16.18.0/24 → VirtualAppliance (Firewall Route); 172.16.19.0/24 → VirtualAppliance (Firewall Route); 172.16.20.0/24 → VirtualAppliance (Firewall Route); 172.16.21.0/24 → VirtualAppliance (Firewall Route); 172.16.22.0/24 → VirtualAppliance (Firewall Route); 172.16.23.0/24 → VirtualAppliance (Firewall Route); 172.16.24.0/24 → VirtualAppliance (Firewall Route); 172.16.25.0/24 → VirtualAppliance (Firewall Route); 172.16.26.0/24 → VirtualAppliance (Firewall Route); 172.16.27.0/24 → VirtualAppliance (Firewall Route); 172.16.28.0/24 → VirtualAppliance (Firewall Route); 172.16.29.0/24 → VirtualAppliance (Firewall Route); 172.16.30.0/24 → VirtualAppliance (Firewall Route)",
+    "Subnet": "Subnet-B",
+    "NSG": "lab-ubuntu-nsg",
+    "VMCount": 0,
+    "Description": "No Description"
+  },
+  {
+    "Subscription": "TLZADM-PROD-SUB-01",
+    "RouteTable": "DummyRouteTable-2",
+    "ResourceGroup": "rg-lab-networking",
+    "VNet": null,
+    "Routes": "172.16.11.0/24 → VirtualAppliance (Firewall Route); 172.16.12.0/24 → VirtualAppliance (Firewall Route); 172.16.13.0/24 → VirtualAppliance (Firewall Route); 172.16.14.0/24 → VirtualAppliance (Firewall Route); 172.16.15.0/24 → VirtualAppliance (Firewall Route); 172.16.16.0/24 → VirtualAppliance (Firewall Route); 172.16.17.0/24 → VirtualAppliance (Firewall Route); 172.16.18.0/24 → VirtualAppliance (Firewall Route); 172.16.19.0/24 → VirtualAppliance (Firewall Route); 172.16.20.0/24 → VirtualAppliance (Firewall Route); 172.16.21.0/24 → VirtualAppliance (Firewall Route); 172.16.22.0/24 → VirtualAppliance (Firewall Route); 172.16.23.0/24 → VirtualAppliance (Firewall Route); 172.16.24.0/24 → VirtualAppliance (Firewall Route); 172.16.25.0/24 → VirtualAppliance (Firewall Route); 172.16.26.0/24 → VirtualAppliance (Firewall Route); 172.16.27.0/24 → VirtualAppliance (Firewall Route); 172.16.28.0/24 → VirtualAppliance (Firewall Route); 172.16.29.0/24 → VirtualAppliance (Firewall Route); 172.16.30.0/24 → VirtualAppliance (Firewall Route)",
+    "Subnet": "Subnet-C",
+    "NSG": "None",
+    "VMCount": 0,
+    "Description": "No Description"
+  },
+  {
+    "Subscription": "TLZADM-PROD-SUB-01",
+    "RouteTable": "DummyRouteTable-2",
+    "ResourceGroup": "rg-lab-networking",
+    "VNet": null,
+    "Routes": "172.16.11.0/24 → VirtualAppliance (Firewall Route); 172.16.12.0/24 → VirtualAppliance (Firewall Route); 172.16.13.0/24 → VirtualAppliance (Firewall Route); 172.16.14.0/24 → VirtualAppliance (Firewall Route); 172.16.15.0/24 → VirtualAppliance (Firewall Route); 172.16.16.0/24 → VirtualAppliance (Firewall Route); 172.16.17.0/24 → VirtualAppliance (Firewall Route); 172.16.18.0/24 → VirtualAppliance (Firewall Route); 172.16.19.0/24 → VirtualAppliance (Firewall Route); 172.16.20.0/24 → VirtualAppliance (Firewall Route); 172.16.21.0/24 → VirtualAppliance (Firewall Route); 172.16.22.0/24 → VirtualAppliance (Firewall Route); 172.16.23.0/24 → VirtualAppliance (Firewall Route); 172.16.24.0/24 → VirtualAppliance (Firewall Route); 172.16.25.0/24 → VirtualAppliance (Firewall Route); 172.16.26.0/24 → VirtualAppliance (Firewall Route); 172.16.27.0/24 → VirtualAppliance (Firewall Route); 172.16.28.0/24 → VirtualAppliance (Firewall Route); 172.16.29.0/24 → VirtualAppliance (Firewall Route); 172.16.30.0/24 → VirtualAppliance (Firewall Route)",
+    "Subnet": "Subnet-A",
+    "NSG": "lab-ubuntu-nsg",
+    "VMCount": 1,
+    "Description": "No Description"
+  },
+  {
+    "Subscription": "Visual Studio Enterprise",
+    "RouteTable": "DummyRouteTable-1",
+    "ResourceGroup": "lab-network",
+    "VNet": "None",
+    "Routes": "0.0.0.0/0 → Internet (Default Route)",
+    "Subnet": "None",
+    "NSG": "None",
+    "VMCount": 0,
+    "Description": "No Description"
+  },
+  {
+    "Subscription": "Visual Studio Enterprise",
+    "RouteTable": "DummyRouteTable-2",
+    "ResourceGroup": "lab-network",
+    "VNet": "None",
+    "Routes": "0.0.0.0/0 → Internet (Default Route)",
+    "Subnet": "None",
+    "NSG": "None",
+    "VMCount": 0,
+    "Description": "No Description"
+  }
+]

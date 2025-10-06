@@ -1,0 +1,43 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentName": {
+      "value": "dev"
+    },
+    "workloadName": {
+      "value": "webapp"
+    },
+    "location": {
+      "value": "eastus"
+    },
+    "osType": {
+      "value": "Linux"
+    },
+    "vmSize": {
+      "value": "Standard_B2s"
+    },
+    "adminUsername": {
+      "value": "azureuser"
+    },
+    "adminPasswordOrKey": {
+      "value": "REPLACE_WITH_YOUR_SSH_PUBLIC_KEY_OR_PASSWORD"
+    },
+    "authenticationType": {
+      "value": "sshPublicKey"
+    },
+    "availabilityZone": {
+      "value": ""
+    },
+    "enablePublicIP": {
+      "value": true
+    },
+    "tags": {
+      "value": {
+        "CostCenter": "IT",
+        "Owner": "Platform Team",
+        "Project": "Dev Environment"
+      }
+    }
+  }
+}

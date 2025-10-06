@@ -1,0 +1,30 @@
+# Azure CLI
+.azure/
+
+# Bicep
+*.bicepparam
+
+# PowerShell
+*.ps1xml
+
+# Logs
+*.log
+
+# Parameters with secrets
+*secret*.json
+*password*.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Terraform (if mixed)
+.terraform/
+*.tfstate
+*.tfstate.*

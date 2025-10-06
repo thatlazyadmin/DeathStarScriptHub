@@ -1,0 +1,48 @@
+#Create it in the same region as your AKS cluster:
+az network private-dns zone create \
+  --resource-group rg-aks-prd-eastus \
+  --name privatelink.eastus.azmk8s.io
+
+  #Save the resource ID for use later:
+    az network private-dns zone show \
+    --resource-group rg-aks-prd-eastus \
+    --name privatelink.eastus.azmk8s.io \
+    --query id -o tsv
+  
+#Link the VNet to the DNS Zone:
+az network private-dns link vnet create \
+  --resource-group rg-aks-prd-eastus \
+  --zone-name privatelink.eastus.azmk8s.io \
+  --name aks-vnet-dns-link \
+  --virtual-network vnet-prd-eastus \
+  --registration-enabled false
+
+  #User-Assigned Managed Identity
+  az identity create \
+  --name aks-uami \
+  --resource-group rg-aks-prd-eastus \
+  --location eastus
+
+  #Save the UAMI Resource ID and Client ID:
+    az identity show \
+    --name aks-uami \
+    --resource-group rg-aks-prd-eastus \
+    --query "{id:id, clientId:clientId}" -o json
+
+    #Assign Roles to UAMI
+    #Give the UAMI access to:
+    #
+    #  The Private DNS Zone: Private DNS Zone Contributor
+    #  The AKS Subnet: Network Contributor
+    #  🔧 Assign Private DNS Zone Contributor:
+      az role assignment create \
+      --assignee <UAMI-Client-ID> \
+      --role "Private DNS Zone Contributor" \
+      --scope <Private-DNS-Zone-ID>
+
+   #🔧 Assign Network Contributor to the subnet:
+    az role assignment create \
+  --assignee <UAMI-Client-ID> \
+  --role "Network Contributor" \
+  --scope $(az network vnet subnet show --resource-group rg-aks-prd-eastus --vnet-name vnet-prd-eastus --name snet-prd-aks-eastus --query id -o tsv)
+

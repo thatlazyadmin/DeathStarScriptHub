@@ -1,0 +1,40 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "hostpoolName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Hostpool"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for all resources."
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.DesktopVirtualization/hostPools",
+      "apiVersion": "2021-07-12",
+      "name": "[parameters('hostpoolName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "friendlyName": "[parameters('hostpoolName')]",
+        "description": "Terraform deployed AVD Hostpool",
+        "hostPoolType": "Pooled",
+        "maxSessionLimit": 10,
+        "loadBalancerType": "BreadthFirst",
+        "customRdpProperty": "audiocapturemode:i:1;audiomode:i:0;",
+        "registrationInfo": {
+          "expirationTime": "9999-12-31T23:59:59Z"
+        },
+        "validationEnvironment": false
+      }
+    }
+  ],
+  "outputs": {}
+}

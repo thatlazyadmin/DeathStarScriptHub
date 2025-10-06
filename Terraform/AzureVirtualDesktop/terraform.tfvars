@@ -1,0 +1,5 @@
+admin_password        = "YourStrongP@ssword123!"
+domain_name           = "yourdomain.com"
+ou_path               = "OU=computers,DC=yourdomain,DC=com"
+domain_join_user      = "yourdomain\\joinuser"
+domain_join_password  = "YourDomainJoinPassword!"

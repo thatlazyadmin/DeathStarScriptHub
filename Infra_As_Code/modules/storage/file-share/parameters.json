@@ -1,0 +1,28 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "storageAccountName": {
+      "value": "stthatlazyadmin001"
+    },
+    "fileShareName": {
+      "value": "fs-shared-data"
+    },
+    "accessTier": {
+      "value": "TransactionOptimized"
+    },
+    "shareQuota": {
+      "value": 100
+    },
+    "enabledProtocol": {
+      "value": "SMB"
+    },
+    "tags": {
+      "value": {
+        "Environment": "Production",
+        "Owner": "Shaun Hardneck",
+        "ManagedBy": "thatlazyadmin.com"
+      }
+    }
+  }
+}

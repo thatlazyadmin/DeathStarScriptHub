@@ -1,0 +1,43 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentName": {
+      "value": "dev"
+    },
+    "workloadName": {
+      "value": "winapp"
+    },
+    "location": {
+      "value": "eastus"
+    },
+    "osType": {
+      "value": "Windows"
+    },
+    "vmSize": {
+      "value": "Standard_D2s_v3"
+    },
+    "adminUsername": {
+      "value": "azureadmin"
+    },
+    "adminPasswordOrKey": {
+      "value": "REPLACE_WITH_STRONG_PASSWORD"
+    },
+    "authenticationType": {
+      "value": "password"
+    },
+    "availabilityZone": {
+      "value": ""
+    },
+    "enablePublicIP": {
+      "value": true
+    },
+    "tags": {
+      "value": {
+        "CostCenter": "IT",
+        "Owner": "Platform Team",
+        "Project": "Windows Development"
+      }
+    }
+  }
+}

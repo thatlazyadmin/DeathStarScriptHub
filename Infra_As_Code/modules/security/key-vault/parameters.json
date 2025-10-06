@@ -1,0 +1,59 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "keyVaultName": {
+      "value": "kv-${uniqueString(resourceGroup().id)}"
+    },
+    "location": {
+      "value": "eastus"
+    },
+    "skuName": {
+      "value": "standard"
+    },
+    "enableSoftDelete": {
+      "value": true
+    },
+    "softDeleteRetentionInDays": {
+      "value": 90
+    },
+    "enablePurgeProtection": {
+      "value": true
+    },
+    "enableRbacAuthorization": {
+      "value": true
+    },
+    "publicNetworkAccess": {
+      "value": "Enabled"
+    },
+    "networkAclsDefaultAction": {
+      "value": "Deny"
+    },
+    "ipRules": {
+      "value": []
+    },
+    "virtualNetworkRules": {
+      "value": []
+    },
+    "enableAzureServicesBypass": {
+      "value": true
+    },
+    "tenantId": {
+      "value": "${subscription().tenantId}"
+    },
+    "enableDiagnostics": {
+      "value": true
+    },
+    "logAnalyticsWorkspaceId": {
+      "value": "/subscriptions/{subscription-id}/resourceGroups/{rg-name}/providers/Microsoft.OperationalInsights/workspaces/{workspace-name}"
+    },
+    "tags": {
+      "value": {
+        "Environment": "Production",
+        "ManagedBy": "IaC",
+        "CreatedBy": "Shaun Hardneck",
+        "Website": "thatlazyadmin.com"
+      }
+    }
+  }
+}

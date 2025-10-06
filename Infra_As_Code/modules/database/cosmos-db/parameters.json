@@ -1,0 +1,82 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "accountName": {
+      "value": "cosmos-${uniqueString(resourceGroup().id)}"
+    },
+    "location": {
+      "value": "eastus"
+    },
+    "databaseApiType": {
+      "value": "Sql"
+    },
+    "consistencyLevel": {
+      "value": "Session"
+    },
+    "enableAutomaticFailover": {
+      "value": true
+    },
+    "enableMultipleWriteLocations": {
+      "value": false
+    },
+    "enableServerless": {
+      "value": false
+    },
+    "enableFreeTier": {
+      "value": false
+    },
+    "locations": {
+      "value": [
+        {
+          "locationName": "eastus",
+          "failoverPriority": 0,
+          "isZoneRedundant": false
+        },
+        {
+          "locationName": "westus",
+          "failoverPriority": 1,
+          "isZoneRedundant": false
+        }
+      ]
+    },
+    "enableAnalyticalStorage": {
+      "value": false
+    },
+    "publicNetworkAccess": {
+      "value": "Enabled"
+    },
+    "ipRules": {
+      "value": []
+    },
+    "virtualNetworkRules": {
+      "value": []
+    },
+    "enableBackup": {
+      "value": true
+    },
+    "backupStorageRedundancy": {
+      "value": "Geo"
+    },
+    "backupIntervalInMinutes": {
+      "value": 240
+    },
+    "backupRetentionIntervalInHours": {
+      "value": 8
+    },
+    "enableDiagnostics": {
+      "value": true
+    },
+    "logAnalyticsWorkspaceId": {
+      "value": "/subscriptions/{subscription-id}/resourceGroups/{rg-name}/providers/Microsoft.OperationalInsights/workspaces/{workspace-name}"
+    },
+    "tags": {
+      "value": {
+        "Environment": "Production",
+        "ManagedBy": "IaC",
+        "CreatedBy": "Shaun Hardneck",
+        "Website": "thatlazyadmin.com"
+      }
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "storageAccountName": {
+      "value": "stthatlazyadmin001"
+    },
+    "location": {
+      "value": "eastus"
+    },
+    "skuName": {
+      "value": "Standard_LRS"
+    },
+    "kind": {
+      "value": "StorageV2"
+    },
+    "enableHierarchicalNamespace": {
+      "value": false
+    },
+    "supportsHttpsTrafficOnly": {
+      "value": true
+    },
+    "minimumTlsVersion": {
+      "value": "TLS1_2"
+    },
+    "allowBlobPublicAccess": {
+      "value": false
+    },
+    "tags": {
+      "value": {
+        "Environment": "Production",
+        "Owner": "Shaun Hardneck",
+        "CostCenter": "IT",
+        "ManagedBy": "thatlazyadmin.com"
+      }
+    },
+    "enableDiagnostics": {
+      "value": true
+    },
+    "logAnalyticsWorkspaceId": {
+      "value": "/subscriptions/{subscription-id}/resourceGroups/{rg-name}/providers/Microsoft.OperationalInsights/workspaces/{workspace-name}"
+    }
+  }
+}

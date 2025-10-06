@@ -1,0 +1,64 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "serverName": {
+      "value": "sql-${uniqueString(resourceGroup().id)}"
+    },
+    "databaseName": {
+      "value": "sqldb-app-001"
+    },
+    "location": {
+      "value": "eastus"
+    },
+    "administratorLogin": {
+      "value": "sqladmin"
+    },
+    "administratorLoginPassword": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/{subscription-id}/resourceGroups/{rg-name}/providers/Microsoft.KeyVault/vaults/{vault-name}"
+        },
+        "secretName": "sql-admin-password"
+      }
+    },
+    "skuName": {
+      "value": "GP_Gen5_2"
+    },
+    "skuTier": {
+      "value": "GeneralPurpose"
+    },
+    "maxSizeBytes": {
+      "value": 34359738368
+    },
+    "enableAzureADOnly": {
+      "value": false
+    },
+    "azureADAdminObjectId": {
+      "value": ""
+    },
+    "azureADAdminLogin": {
+      "value": ""
+    },
+    "enableAdvancedThreatProtection": {
+      "value": true
+    },
+    "enableAuditingToLogAnalytics": {
+      "value": true
+    },
+    "logAnalyticsWorkspaceId": {
+      "value": "/subscriptions/{subscription-id}/resourceGroups/{rg-name}/providers/Microsoft.OperationalInsights/workspaces/{workspace-name}"
+    },
+    "allowAzureIPs": {
+      "value": true
+    },
+    "tags": {
+      "value": {
+        "Environment": "Production",
+        "ManagedBy": "IaC",
+        "CreatedBy": "Shaun Hardneck",
+        "Website": "thatlazyadmin.com"
+      }
+    }
+  }
+}

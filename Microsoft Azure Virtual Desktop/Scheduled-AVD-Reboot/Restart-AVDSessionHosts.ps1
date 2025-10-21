@@ -96,7 +96,7 @@ try {
     Import-Module Az.Accounts -ErrorAction Stop
     Import-Module Az.Compute -ErrorAction Stop
     Import-Module Az.DesktopVirtualization -ErrorAction Stop
-    Write-Output "✅ All modules imported successfully"
+    Write-Output "All modules imported successfully"
 }
 catch {
     Write-Error "Failed to import required modules: $($_.Exception.Message)"
@@ -121,7 +121,7 @@ function Write-Log {
     switch ($Level) {
         'Error'   { Write-Error $logMessage }
         'Warning' { Write-Warning $logMessage }
-        'Success' { Write-Output "✅ $logMessage" }
+        'Success' { Write-Output "$logMessage" }
         default   { Write-Output $logMessage }
     }
 }
@@ -433,3 +433,4 @@ catch {
 }
 
 #endregion
+

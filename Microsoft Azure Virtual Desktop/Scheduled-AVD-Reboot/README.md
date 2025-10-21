@@ -30,14 +30,14 @@ Automated PowerShell runbook for Azure Automation Account to safely restart Azur
 
 ## Features
 
-- ✅ **Safe Restarts** - Only restarts session hosts with no active sessions (configurable threshold)
-- ✅ **Drain Mode** - Sets hosts to drain mode before restart to prevent new connections
-- ✅ **VM Monitoring** - Waits for VMs to come back online after restart (configurable timeout)
-- ✅ **Flexible Targeting** - Target specific host pools or all host pools in subscription
-- ✅ **WhatIf Mode** - Test end-to-end without making any actual changes
-- ✅ **Managed Identity** - Uses Azure Automation Managed Identity (no credential storage)
-- ✅ **Comprehensive Logging** - Detailed timestamped logs for auditing and troubleshooting
-- ✅ **Error Recovery** - Re-enables sessions if restart fails
+- **Safe Restarts** - Only restarts session hosts with no active sessions (configurable threshold)
+- **Drain Mode** - Sets hosts to drain mode before restart to prevent new connections
+- **VM Monitoring** - Waits for VMs to come back online after restart (configurable timeout)
+- **Flexible Targeting** - Target specific host pools or all host pools in subscription
+- **WhatIf Mode** - Test end-to-end without making any actual changes
+- **Managed Identity** - Uses Azure Automation Managed Identity (no credential storage)
+- **Comprehensive Logging** - Detailed timestamped logs for auditing and troubleshooting
+- **Error Recovery** - Re-enables sessions if restart fails
 
 ## Prerequisites
 
@@ -164,7 +164,7 @@ New-AzRoleAssignment `
     -RoleDefinitionName "Desktop Virtualization Contributor" `
     -Scope "/subscriptions/$subscriptionId/resourceGroups/$hostPoolRG"
 
-Write-Output "✅ Assigned Desktop Virtualization Contributor on $hostPoolRG"
+Write-Output "Assigned Desktop Virtualization Contributor on $hostPoolRG"
 
 # Assign Virtual Machine Contributor (on session host resource group)
 New-AzRoleAssignment `
@@ -172,7 +172,7 @@ New-AzRoleAssignment `
     -RoleDefinitionName "Virtual Machine Contributor" `
     -Scope "/subscriptions/$subscriptionId/resourceGroups/$sessionHostRG"
 
-Write-Output "✅ Assigned Virtual Machine Contributor on $sessionHostRG"
+Write-Output "Assigned Virtual Machine Contributor on $sessionHostRG"
 
 # Assign Reader at subscription level (to discover host pools)
 New-AzRoleAssignment `
@@ -180,7 +180,7 @@ New-AzRoleAssignment `
     -RoleDefinitionName "Reader" `
     -Scope "/subscriptions/$subscriptionId"
 
-Write-Output "✅ Assigned Reader at subscription level"
+Write-Output "Assigned Reader at subscription level"
 ```
 
 **Note:** If session hosts are in the same resource group as host pools, you only need to assign permissions once on that resource group.
@@ -194,9 +194,9 @@ Modules must be imported in the correct order.
 1. Navigate to your Automation Account
 2. Go to **Modules** → **Browse Gallery**
 3. Import modules in this order:
-   - Search for `Az.Accounts` → Click → **Import** → Wait for completion ✅
-   - Search for `Az.Compute` → Click → **Import** → Wait for completion ✅
-   - Search for `Az.DesktopVirtualization` → Click → **Import** → Wait for completion ✅
+   - Search for `Az.Accounts` → Click → **Import** → Wait for completion
+   - Search for `Az.Compute` → Click → **Import** → Wait for completion
+   - Search for `Az.DesktopVirtualization` → Click → **Import** → Wait for completion
 
 **Important:** Wait for each module to show "Available" status before importing the next.
 
@@ -233,7 +233,7 @@ New-AzAutomationModule `
     -ResourceGroupName $automationAccountRG `
     -AutomationAccountName $automationAccountName
 
-Write-Output "✅ All modules queued for import"
+Write-Output "All modules queued for import"
 ```
 
 ### Step 4: Import Runbook
@@ -276,7 +276,7 @@ Publish-AzAutomationRunbook `
     -ResourceGroupName $automationAccountRG `
     -AutomationAccountName $automationAccountName
 
-Write-Output "✅ Runbook imported and published"
+Write-Output "Runbook imported and published"
 ```
 
 ### Step 5: Test with WhatIf Mode
@@ -288,7 +288,7 @@ Write-Output "✅ Runbook imported and published"
 3. Configure parameters:
    - **HostPoolName:** Your test host pool name (e.g., `hp-test-001`)
    - **HostPoolResourceGroup:** Host pool resource group
-   - **WhatIf:** `True` ✅
+   - **WhatIf:** `True` 
    - Leave other parameters as default
 4. Click **OK**
 5. View **Output** tab to see what would happen:
@@ -297,10 +297,10 @@ Expected output:
 
 ```text
 Importing required Azure modules...
-✅ All modules imported successfully
+All modules imported successfully
 [2025-10-21 14:30:15] [Info] AVD Session Host Restart Automation
 [2025-10-21 14:30:15] [Warning] *** WHATIF MODE ENABLED - No actual changes will be made ***
-[2025-10-21 14:30:16] [Success] ✅ Successfully authenticated with Managed Identity
+[2025-10-21 14:30:16] [Success] Successfully authenticated with Managed Identity
 [2025-10-21 14:30:18] [Info] Processing specific host pool: hp-test-001
 [2025-10-21 14:30:19] [Info] Found 4 session host(s)
 [2025-10-21 14:30:25] [Warning] Skipping restart - session count (2) exceeds threshold (0)
@@ -375,7 +375,7 @@ Register-AzAutomationScheduledRunbook `
     -AutomationAccountName $automationAccountName `
     -ScheduleName $scheduleName
 
-Write-Output "✅ Schedule created and linked to runbook"
+Write-Output "Schedule created and linked to runbook"
 ```
 
 ## Parameters Reference
@@ -384,7 +384,7 @@ Write-Output "✅ Schedule created and linked to runbook"
 |-----------|------|---------|----------|-------------|
 | `HostPoolName` | String | None | No | Name of specific host pool to target. If omitted, processes all host pools. |
 | `HostPoolResourceGroup` | String | None | Conditional* | Resource group of the host pool. Required if `HostPoolName` is specified. |
-| `ForceRestart` | Bool | `False` | No | ⚠️ **NOT RECOMMENDED** - Restarts hosts even with active sessions. |
+| `ForceRestart` | Bool | `False` | No | **NOT RECOMMENDED** - Restarts hosts even with active sessions. |
 | `MaxSessionsBeforeRestart` | Int | `0` | No | Maximum number of active sessions allowed before skipping restart. |
 | `WaitForOnline` | Bool | `True` | No | Wait for VM to come back online after restart. |
 | `WaitTimeoutMinutes` | Int | `15` | No | Maximum minutes to wait for VM to come online. |
@@ -420,7 +420,7 @@ Write-Output "✅ Schedule created and linked to runbook"
 
 - `HostPoolName`: `hp-prod-eastus-001`
 - `HostPoolResourceGroup`: `rg-avd-prod`
-- `WhatIf`: `True` ✅
+- `WhatIf`: `True`
 
 **Behavior:**
 
@@ -444,7 +444,7 @@ Write-Output "✅ Schedule created and linked to runbook"
 
 - Restarts hosts with 0, 1, or 2 active sessions
 - Skips hosts with 3 or more active sessions
-- ⚠️ Users with active sessions may be disconnected
+- Users with active sessions may be disconnected
 
 ### Example 4: Quick Restart Without Waiting
 
@@ -462,9 +462,9 @@ Write-Output "✅ Schedule created and linked to runbook"
 - Sends restart command to VMs
 - Does NOT wait for VMs to come back online
 - Runbook completes faster
-- ⚠️ Drain mode remains enabled until manual intervention
+- Drain mode remains enabled until manual intervention
 
-### Example 5: Force Restart (⚠️ NOT RECOMMENDED)
+### Example 5: Force Restart (NOT RECOMMENDED)
 
 **Scenario:** Restart hosts regardless of active sessions (emergency maintenance).
 
@@ -477,7 +477,7 @@ Write-Output "✅ Schedule created and linked to runbook"
 **Behavior:**
 
 - Restarts ALL hosts regardless of active sessions
-- ⚠️ **WILL DISCONNECT ACTIVE USERS**
+- **WILL DISCONNECT ACTIVE USERS**
 - Use only for emergency maintenance
 - Notify users before running
 
@@ -498,13 +498,13 @@ Write-Output "✅ Schedule created and linked to runbook"
 
 ```text
 Importing required Azure modules...
-✅ All modules imported successfully
+All modules imported successfully
 [2025-10-21 02:00:15] [Info] ========================================
 [2025-10-21 02:00:15] [Info] AVD Session Host Restart Automation
 [2025-10-21 02:00:15] [Info] Started at: 2025-10-21 02:00:15
 [2025-10-21 02:00:15] [Info] ========================================
 [2025-10-21 02:00:16] [Info] Connecting to Azure using Managed Identity...
-✅ [2025-10-21 02:00:20] [Success] Successfully authenticated with Managed Identity
+[2025-10-21 02:00:20] [Success] Successfully authenticated with Managed Identity
 [2025-10-21 02:00:21] [Info] Processing specific host pool: hp-prod-eastus-001
 [2025-10-21 02:00:22] [Info] 
 ========================================
@@ -681,10 +681,10 @@ Configure email alerts for job failures:
 
 ### Managed Identity Benefits
 
-- ✅ **No Credential Storage** - No passwords or secrets stored in Automation Account
-- ✅ **Automatic Rotation** - Azure manages identity lifecycle
-- ✅ **Least Privilege** - Assign only necessary permissions
-- ✅ **Audit Trail** - All actions logged with Managed Identity principal ID
+- **No Credential Storage** - No passwords or secrets stored in Automation Account
+- **Automatic Rotation** - Azure manages identity lifecycle
+- **Least Privilege** - Assign only necessary permissions
+- **Audit Trail** - All actions logged with Managed Identity principal ID
 
 ### RBAC Best Practices
 
@@ -700,12 +700,12 @@ Configure email alerts for job failures:
 
 ### Recommendations
 
-1. ✅ **Always Test with WhatIf** - Test new configurations in WhatIf mode first
-2. ✅ **Monitor First Runs** - Watch job output for first few scheduled runs
-3. ⚠️ **Avoid ForceRestart** - Only use in emergency maintenance with user notification
-4. ✅ **Set Up Alerts** - Configure email alerts for job failures
-5. ✅ **Document Changes** - Keep changelog of parameter modifications
-6. ✅ **User Communication** - Notify users of scheduled maintenance windows
+1. **Always Test with WhatIf** - Test new configurations in WhatIf mode first
+2. **Monitor First Runs** - Watch job output for first few scheduled runs
+3. **Avoid ForceRestart** - Only use in emergency maintenance with user notification
+4. **Set Up Alerts** - Configure email alerts for job failures
+5. **Document Changes** - Keep changelog of parameter modifications
+6. **User Communication** - Notify users of scheduled maintenance windows
 
 ## Recommended Schedules
 
@@ -804,14 +804,14 @@ Feel free to:
 
 ### Version 1.0 (October 2025)
 
-- ✅ Initial release
-- ✅ Support for WhatIf mode
-- ✅ Managed Identity authentication
-- ✅ Drain mode implementation
-- ✅ VM online monitoring
-- ✅ Flexible host pool targeting
-- ✅ Comprehensive logging
-- ✅ Error recovery mechanisms
+- Initial release
+- Support for WhatIf mode
+- Managed Identity authentication
+- Drain mode implementation
+- VM online monitoring
+- Flexible host pool targeting
+- Comprehensive logging
+- Error recovery mechanisms
 
 ## License
 
@@ -828,7 +828,7 @@ This script is provided as-is for use within your organization. Feel free to mod
 - `HostPoolResourceGroup`: `rg-avd-prod`
 - `MaxSessionsBeforeRestart`: `2`
 
-### Example 4: Force Restart (⚠️ NOT RECOMMENDED)
+### Example 4: Force Restart (NOT RECOMMENDED)
 
 **Parameters:**
 - `HostPoolName`: `prd-hp-prd-eastus-001`
@@ -837,7 +837,7 @@ This script is provided as-is for use within your organization. Feel free to mod
 
 **WARNING:** This will restart hosts even with active user sessions!
 
-## 🔍 Monitoring & Troubleshooting
+## Monitoring & Troubleshooting
 
 ### View Runbook Execution Logs
 
@@ -852,18 +852,18 @@ This script is provided as-is for use within your organization. Feel free to mod
 [2025-10-21 02:00:15] [Info] AVD Session Host Restart Automation
 [2025-10-21 02:00:15] [Info] Started at: 2025-10-21 02:00:15
 [2025-10-21 02:00:15] [Info] ========================================
-[2025-10-21 02:00:16] [Success] ✅ Successfully authenticated with Managed Identity
+[2025-10-21 02:00:16] [Success] Successfully authenticated with Managed Identity
 [2025-10-21 02:00:18] [Info] Processing specific host pool: prd-hp-prd-eastus-001
 [2025-10-21 02:00:19] [Info] Found 5 session host(s)
 [2025-10-21 02:00:20] [Info] Processing session host: avd-vm-001.domain.com
 [2025-10-21 02:00:21] [Info] Current active sessions: 0
-[2025-10-21 02:00:22] [Success] ✅ Drain mode enabled for session host 'avd-vm-001.domain.com'
+[2025-10-21 02:00:22] [Success] Drain mode enabled for session host 'avd-vm-001.domain.com'
 [2025-10-21 02:00:23] [Info] Restarting VM: avd-vm-001
-[2025-10-21 02:00:25] [Success] ✅ Restart command sent successfully
+[2025-10-21 02:00:25] [Success] Restart command sent successfully
 [2025-10-21 02:00:26] [Info] Waiting for VM 'avd-vm-001' to come back online...
-[2025-10-21 02:03:15] [Success] ✅ VM 'avd-vm-001' is now online
-[2025-10-21 02:03:16] [Success] ✅ Drain mode disabled for session host 'avd-vm-001.domain.com'
-[2025-10-21 02:03:17] [Success] ✅ Session host restart completed successfully
+[2025-10-21 02:03:15] [Success] VM 'avd-vm-001' is now online
+[2025-10-21 02:03:16] [Success] Drain mode disabled for session host 'avd-vm-001.domain.com'
+[2025-10-21 02:03:17] [Success] Session host restart completed successfully
 ```
 
 ### Common Issues
@@ -880,7 +880,7 @@ This script is provided as-is for use within your organization. Feel free to mod
 **Issue:** Modules not found
 - **Solution:** Import required modules: `Az.Accounts`, `Az.Compute`, `Az.DesktopVirtualization`
 
-## ⚙️ Configuration Options
+## Configuration Options
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
@@ -891,7 +891,7 @@ This script is provided as-is for use within your organization. Feel free to mod
 | `WaitForOnline` | Bool | True | Wait for VM to come back online |
 | `WaitTimeoutMinutes` | Int | 15 | Timeout for waiting for VM online |
 
-## 📊 Recommended Schedule
+## Recommended Schedule
 
 ### Option 1: Weekly Maintenance Window
 - **When:** Sunday 2:00 AM
@@ -908,15 +908,15 @@ This script is provided as-is for use within your organization. Feel free to mod
 - **Frequency:** Every 2 weeks
 - **Best for:** Stable environments with minimal uptime requirements
 
-## 🔒 Security Considerations
+## Security Considerations
 
-1. ✅ **Managed Identity**: No credential storage or management required
-2. ✅ **Least Privilege**: Only assign necessary permissions
-3. ✅ **Audit Logs**: All actions logged in Automation Account job history
-4. ✅ **Drain Mode**: Prevents new connections before restart
-5. ⚠️ **Force Restart**: Use with extreme caution - disconnects active users
+1. **Managed Identity**: No credential storage or management required
+2. **Least Privilege**: Only assign necessary permissions
+3. **Audit Logs**: All actions logged in Automation Account job history
+4. **Drain Mode**: Prevents new connections before restart
+5. **Force Restart**: Use with extreme caution - disconnects active users
 
-## 📞 Support
+## Support
 
 **Created by:** Shaun Hardneck | www.thatlazyadmin.com
 
@@ -926,6 +926,7 @@ For issues or questions:
 3. Ensure required modules are imported
 4. Review session host health in AVD
 
-## 📜 License
+## License
 
 Feel free to use and modify for your organization's needs.
+
